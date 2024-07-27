@@ -1,5 +1,6 @@
-import { app, BrowserWindow } from "electron"
+import { app, BrowserWindow, Menu } from "electron"
 import path from "path"
+import menu from "./menus/_menu"
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {
@@ -16,12 +17,14 @@ const createWindow = () => {
     }
   })
 
+  Menu.setApplicationMenu(menu)
+
   // and load the index.html of the app.
   if (MAIN_WINDOW_VITE_DEV_SERVER_URL) mainWindow.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL)
   else mainWindow.loadFile(path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`))
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools()
+  // mainWindow.webContents.openDevTools()
 }
 
 app.whenReady().then(() => {
