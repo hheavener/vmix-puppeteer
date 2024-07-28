@@ -1,4 +1,4 @@
-import "./globalInit"
+import "./global/init"
 import { app, BrowserWindow, Menu } from "electron"
 import path from "path"
 import menu from "./menus/_menu"
@@ -10,14 +10,16 @@ if (require("electron-squirrel-startup")) app.quit()
 const createWindow = () => {
   const windowState = loadWindowState()
   const mainWindow = new BrowserWindow({
-    x: windowState?.x,
-    y: windowState?.y,
-    width: windowState?.width || 800,
-    height: windowState?.height || 600,
+    x: windowState.x,
+    y: windowState.y,
+    width: windowState.width || 800,
+    height: windowState.height || 600,
     webPreferences: { preload: path.join(__dirname, "preload.js") }
   })
   Menu.setApplicationMenu(menu)
   mainWindow.on("close", () => saveWindowState(mainWindow))
+
+  API.Function("ActivatorRefresh", {})
 
   // Load the index.html of the app.
   if (MAIN_WINDOW_VITE_DEV_SERVER_URL) mainWindow.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL)

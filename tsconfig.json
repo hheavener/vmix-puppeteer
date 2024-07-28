@@ -7,9 +7,6 @@
     {
       "path": "./tsconfig.app.json"
     }
-    // {
-    //   "path": "./tsconfig.vitest.json"
-    // }
   ],
   "compilerOptions": {
     "target": "ESNext",
@@ -23,5 +20,12 @@
     "outDir": "dist",
     "moduleResolution": "node",
     "resolveJsonModule": true
-  }
+  },
+  "include": ["global.d.ts"]
 }
+
+// {
+//   "path": "./tsconfig.vitest.json"
+
+
+// }

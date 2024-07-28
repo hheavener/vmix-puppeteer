@@ -20,13 +20,13 @@ export function saveWindowState(window: BrowserWindow) {
     height: bounds.height
   }
   try {
-    if (fs.existsSync(stateFile)) fs.writeFileSync(stateFile, JSON.stringify(state))
+    fs.writeFileSync(stateFile, JSON.stringify(state))
   } catch (error) {
-    console.error("Error loading window state:", error)
+    console.error("Error saving window state:", error)
   }
 }
 
-export function loadWindowState(): WindowState | undefined {
+export function loadWindowState(): WindowState {
   try {
     if (fs.existsSync(stateFile)) {
       const data = fs.readFileSync(stateFile)
@@ -35,5 +35,5 @@ export function loadWindowState(): WindowState | undefined {
   } catch (error) {
     console.error("Error loading window state:", error)
   }
-  return undefined
+  return {} as WindowState
 }
