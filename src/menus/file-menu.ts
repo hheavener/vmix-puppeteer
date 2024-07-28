@@ -32,12 +32,8 @@ export default function FileMenu(): MenuItemConstructorOptions {
         ]
       },
       {
-        label: "Custom2",
-        submenu: [
-          {
-            label: "Custom Menu Item"
-          }
-        ]
+        label: "Call API Function",
+        click: () => API.Function("SetLayer", { Input: "InputName", Value: "LayerNumber" })
       }
     ]
   }
