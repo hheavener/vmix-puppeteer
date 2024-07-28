@@ -7,7 +7,7 @@ import pkg from "./package.json"
 
 export const aliases = {
   "@": fileURLToPath(new URL("./src", import.meta.url)),
-  "@@": fileURLToPath(new URL(".", import.meta.url))
+  "@@": fileURLToPath(new URL("./global", import.meta.url))
 }
 
 export const builtins = ["electron", ...builtinModules.map((m) => [m, `node:${m}`]).flat()]

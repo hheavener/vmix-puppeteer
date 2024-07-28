@@ -1,29 +1,56 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
+// import { readFileSync } from "fs"
+// import { openFileExplorer } from "./menus/file-menu"
+
+async function getFile() {
+  // try {
+  //   // Call the method exposed in the preload script
+  //   selectedFile.value = await window.electron.openFileDialog();
+  // } catch (error) {
+  //   console.error('Failed to open file dialog:', error);
+  // }
+  // const filePath = await openFileExplorer()
+  // if (!filePath) return
+  // fileContents = readFileSync(filePath).toString()
+}
+
+let fileContents: string
 </script>
 
 <template>
   <header>
     <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
 
-    <div class="wrapper">
+    <!-- <div class="wrapper">
       <HelloWorld msg="You did it!" />
 
       <nav>
         <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/about">About</RouterLink>
       </nav>
-    </div>
+    </div> -->
   </header>
 
-  <RouterView />
+  <div class="file">
+    <button @click="getFile">Open File</button>
+    <code v-if="fileContents">{{ fileContents }}</code>
+  </div>
+
+  <!-- <RouterView /> -->
 </template>
 
 <style scoped>
 header {
   line-height: 1.5;
   max-height: 100vh;
+}
+
+.file {
+  border: 1px solid gray;
+  height: auto;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
 }
 
 .logo {

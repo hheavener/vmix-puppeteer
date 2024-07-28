@@ -30,32 +30,29 @@ export default function FileMenu(): MenuItemConstructorOptions {
   }
 }
 
-function openFileExplorer() {
+export async function openFileExplorer(): Promise<string | undefined> {
   // Get the current window or create a new one if needed
   const window = BrowserWindow.getFocusedWindow()
 
-  if (window) {
-    dialog
-      .showOpenDialog(window, {
-        properties: ["openFile"], // or ['openDirectory'] to allow selecting directories
-        title: "Select a file",
-        filters: [
-          { name: "Text Files", extensions: ["txt"] },
-          { name: "Images", extensions: ["jpg", "png"] },
-          { name: "All Files", extensions: ["*"] }
-        ]
-      })
-      .then((result) => {
-        if (!result.canceled && result.filePaths.length > 0) {
-          console.log("Selected file:", result.filePaths[0])
-          // You can handle the selected file here
-        }
-      })
-      .catch((err) => {
-        console.error("Error selecting file:", err)
-      })
-  } else {
-    console.error("No focused window to show dialog in.")
+  if (!window) return
+  try {
+    const result = await dialog.showOpenDialog(window, {
+      properties: ["openFile"], // or ['openDirectory'] to allow selecting directories
+      title: "Select a file",
+      filters: [
+        { name: "Puppeteer Files", extensions: ["json", "puppetter.json"] },
+        { name: "JSON Files", extensions: ["json"] },
+        { name: "XML Files", extensions: ["xml"] },
+        { name: "All Files", extensions: ["*"] }
+      ]
+    })
+    if (!result.canceled && result.filePaths.length > 0) {
+      console.log("Selected file:", result.filePaths[0])
+      // You can handle the selected file here
+      return result.filePaths[0]
+    }
+  } catch (err) {
+    console.error("Error selecting file:", err)
   }
 }
 

@@ -1,8 +1,7 @@
 {
   "extends": "@tsconfig/node20/tsconfig.json",
   "include": [
-    "global/global.d.ts",
-    "global/init.ts",
+    "global/**/*",
     "forge.env.*",
     "vite.config.*",
     "vite.*.config.*",

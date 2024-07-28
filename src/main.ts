@@ -1,8 +1,9 @@
-import "@@/global/init"
+import "@@/init"
 import { app, BrowserWindow, Menu } from "electron"
 import path from "path"
 import menu from "./menus/_menu"
 import { loadWindowState, saveWindowState } from "./app_data/WindowState"
+import FileDialog from "@@/types/ipc/file-dialog"
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) app.quit()
@@ -37,3 +38,6 @@ app.whenReady().then(() => {
 
 // Quit app when all windows closed unless on mac
 app.on("window-all-closed", () => process.platform !== "darwin" && app.quit())
+
+IPC.mainHandle("FileDialog:getFilePath", FileDialog.getFilePath)
+IPC.mainHandle("FileDialog:getFileContent", FileDialog.getFileContent)

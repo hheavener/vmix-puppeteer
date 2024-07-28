@@ -1,4 +1,6 @@
-import type { API } from "./types/api/api"
+import type { API } from "./types/api/API"
+import type { IPC } from "./types/ipc/IPC"
+import type FileDialog from "./types/ipc/file-dialog"
 
 /* eslint-disable no-var */
 export {}
@@ -20,4 +22,10 @@ declare global {
    */
   var APP_DATA_DIR: string
   var API: API
+  var IPC: IPC
+  // var Window: Window
+
+  interface Window {
+    FileDialog: typeof FileDialog
+  }
 }
