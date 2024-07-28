@@ -4,6 +4,23 @@ type Duration = { Duration: number }
 type Channel = { Channel: number }
 type None = Record<string, never>
 
+/**
+ * List of available functions in vMix 27.
+ * @see https://www.vmix.com/help25/index.htm?ShortcutFunctionReference.html
+ *
+ * @example
+ * // Run this script to get all the functions and their params.
+ * let functions = $x("//table//td[@width='281']//span[@class='rvts120']")
+ * let parameters = $x("//table//td[@width='199']//span[@class='rvts120']")
+ *
+ * let definitions = functions.reduce((total, curr, idx) => {
+ *     const params = parameters[idx].innerText.split(",").join(" & ").replace("\n", "None")
+ *     return { ...total, [curr.innerText]: params }
+ * }, {});
+ *
+ * // Copy into editor and replace all `'"'` with `''`
+ * console.dir(JSON.stringify(definitions))
+ */
 export type Functions = {
   ActivatorRefresh: None
   ActiveInput: Input
