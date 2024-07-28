@@ -1,9 +1,8 @@
 import { type MenuItemConstructorOptions } from "electron"
 
-// { role: 'viewMenu' }
 export default function ViewMenu(): MenuItemConstructorOptions {
   return {
-    label: "View",
+    label: "View", // or { role: 'viewMenu' }
     submenu: [
       { role: "reload" },
       { role: "forceReload" },

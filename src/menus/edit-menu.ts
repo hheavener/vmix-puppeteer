@@ -2,7 +2,6 @@ import { type MenuItemConstructorOptions } from "electron"
 
 const isMac = process.platform === "darwin"
 
-// { role: 'editMenu' }
 export default function EditMenu(): MenuItemConstructorOptions {
   const standardOptions: MenuItemConstructorOptions[] = [
     { role: "delete" },
@@ -22,7 +21,7 @@ export default function EditMenu(): MenuItemConstructorOptions {
   ]
 
   return {
-    label: "Edit",
+    label: "Edit", // or { role: 'editMenu' }
     submenu: [
       { role: "undo" },
       { role: "redo" },

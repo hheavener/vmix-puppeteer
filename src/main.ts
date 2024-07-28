@@ -1,4 +1,4 @@
-import "./global/init"
+import "@@/global/init"
 import { app, BrowserWindow, Menu } from "electron"
 import path from "path"
 import menu from "./menus/_menu"

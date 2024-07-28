@@ -1,9 +1,8 @@
 import electron, { type MenuItemConstructorOptions } from "electron"
 
-// { role: 'helpMenu' }
 export default function HelpMenu(): MenuItemConstructorOptions {
   return {
-    role: "help",
+    role: "help", // or { role: 'helpMenu' }
     submenu: [
       {
         label: "Learn More",

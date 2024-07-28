@@ -3,11 +3,10 @@ import electron, { type MenuItemConstructorOptions } from "electron"
 const { app } = electron
 const isMac = process.platform === "darwin"
 
-// { role: 'appMenu' }
 export default function AppMenu(): MenuItemConstructorOptions {
   if (!isMac) return { label: "" }
   return {
-    label: app.name,
+    label: app.name, // or { role: 'appMenu' }
     submenu: [
       { role: "about" },
       { type: "separator" },

@@ -1,7 +1,12 @@
 import type { ConfigEnv, UserConfig } from "vite"
 import { defineConfig, mergeConfig } from "vite"
-import { getBuildConfig, getBuildDefine, external, pluginHotRestart } from "./vite.base.config"
-import { fileURLToPath, URL } from "node:url"
+import {
+  getBuildConfig,
+  getBuildDefine,
+  external,
+  pluginHotRestart,
+  aliases
+} from "./vite.base.config"
 import vue from "@vitejs/plugin-vue"
 import vueJsx from "@vitejs/plugin-vue-jsx"
 import vueDevTools from "vite-plugin-vue-devtools"
@@ -22,14 +27,9 @@ export default defineConfig((env) => {
         external
       }
     },
-    plugins: [vue(), vueJsx(), vueDevTools(), pluginHotRestart("restart")],
     define,
-    resolve: {
-      alias: {
-        "@": fileURLToPath(new URL("./src", import.meta.url))
-      },
-      mainFields: ["module", "jsnext:main", "jsnext"]
-    }
+    plugins: [vue(), vueJsx(), vueDevTools(), pluginHotRestart("restart")],
+    resolve: { alias: aliases, mainFields: ["module", "jsnext:main", "jsnext"] }
   }
 
   return mergeConfig(getBuildConfig(forgeEnv), config)
