@@ -5,7 +5,11 @@ let filePath = ref("")
 let fileContent = ref("")
 async function getFile() {
   try {
-    const { path, content } = (await window.FileDialog.getFile()) ?? {}
+    const { path, content } =
+      (await window.FileDialog.getFile(
+        "/Users/hunter.heavener/Documents/Projects/hivemind/jsconfig.json",
+        "utf-8"
+      )) ?? {}
     if (!(path && content)) return
     filePath.value = path
     fileContent.value = content

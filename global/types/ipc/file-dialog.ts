@@ -2,11 +2,16 @@ import { BrowserWindow, dialog } from "electron"
 import { readFileSync } from "fs"
 
 const FileDialog = {
+  /**
+   * Opens the system file dialog and prompts the user to
+   * select a file and will return the path to that file.
+   *
+   * @returns path to a file
+   */
   getFilePath: async (): Promise<string | undefined> => {
-    // Get the current window or create a new one if needed
     const window = BrowserWindow.getFocusedWindow()
-
     if (!window) return
+
     try {
       const result = await dialog.showOpenDialog(window, {
         properties: ["openFile"], // or ['openDirectory'] to allow selecting directories
@@ -20,7 +25,6 @@ const FileDialog = {
       })
       if (!result.canceled && result.filePaths.length > 0) {
         console.log("Selected file:", result.filePaths[0])
-        // You can handle the selected file here
         return result.filePaths[0]
       }
     } catch (err) {
@@ -28,21 +32,44 @@ const FileDialog = {
     }
   },
 
-  getFileContent: async (filePath?: string): Promise<Buffer | undefined> => {
+  /**
+   * Reads the file at the path provided and returns the
+   * content of that file as a string. If no path is provided,
+   * will open the system file dialog and prompts the user to
+   * select a file.
+   *
+   * @param filePath (optional) the path to the file to open
+   * @param encoding (optional) specify the file encoding (default utf-8)
+   * @returns the content of a file as a string
+   */
+  getFileContent: async (
+    filePath?: string,
+    encoding: BufferEncoding = "utf8"
+  ): Promise<string | undefined> => {
     try {
       const path = filePath || (await FileDialog.getFilePath())
-      if (path) return readFileSync(path)
+      if (path) return readFileSync(path)?.toString(encoding)
     } catch (err) {
       console.error("Error opening file:", err)
     }
   },
 
-  getFile: async (): Promise<File | undefined> => {
-    const path = await FileDialog.getFilePath()
+  /**
+   * Opens the system file dialog and prompts the user to
+   * select a file and will return the path to that file
+   * and the contents of the file.
+   *
+   * @param path (optional) the path to the file to open
+   * @param encoding (optional) specify the file encoding (default utf-8)
+   * @returns the file path and the content of the file as a string
+   */
+  getFile: async (path?: string, encoding: BufferEncoding = "utf8"): Promise<File | undefined> => {
+    // console.log("GET FILE INVOKED", [path, encoding])
+    if (!path) path = await FileDialog.getFilePath()
     if (!path) return
 
-    const content = await FileDialog.getFileContent(path)
-    if (content) return { path, content: content.toString("utf8") }
+    const content = await FileDialog.getFileContent(path, encoding)
+    if (content) return { path, content }
   }
 }
 

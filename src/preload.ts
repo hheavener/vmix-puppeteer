@@ -5,19 +5,19 @@ import "@@/global.setup"
 
 // It has the same sandbox as a Chrome extension.
 window.addEventListener("DOMContentLoaded", () => {
-  console.log("DOM CONTENT LOADED")
-  const replaceText = (selector: string, text: string | undefined) => {
+  // console.log("DOM CONTENT LOADED")
+  const replaceInnerText = (selector: string, text: string | undefined) => {
     const element = document.getElementById(selector)
     if (element) element.innerText = text ?? ""
   }
 
   for (const dependency of ["chrome", "node", "electron"]) {
-    replaceText(`${dependency}-version`, process.versions[dependency])
+    replaceInnerText(`${dependency}-version`, process.versions[dependency])
   }
 })
 
 IPC.exposeInMainWorld("FileDialog", {
-  getFileContent: () => IPC.rendererInvoke("FileDialog:getFileContent"),
-  getFilePath: () => IPC.rendererInvoke("FileDialog:getFilePath"),
-  getFile: () => IPC.rendererInvoke("FileDialog:getFile")
+  getFileContent: IPC.rendererInvoke("FileDialog:getFileContent"),
+  getFilePath: IPC.rendererInvoke("FileDialog:getFilePath"),
+  getFile: IPC.rendererInvoke("FileDialog:getFile")
 })
