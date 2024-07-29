@@ -4,7 +4,7 @@ import {
   type AllIPCChannels,
   type IPCChannelAction,
   type InferChannelActionType
-} from "@@/types/ipc/_channels"
+} from "./channels"
 
 export type IPC = {
   exposeInMainWorld<T extends IPCChannel>(channel: T, api: AllIPCChannels[T]): void

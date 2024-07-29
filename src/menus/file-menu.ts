@@ -1,10 +1,12 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
+import FileDialog from "@@/types/ipc/impl/FileDialog"
 import { BrowserWindow, dialog, type MenuItemConstructorOptions } from "electron"
 
 const isMac = process.platform === "darwin"
 
 export default function FileMenu(): MenuItemConstructorOptions {
   return {
+    id: "file",
     label: "File", // or { role: 'fileMenu' }
     submenu: [
       isMac ? { role: "close" } : { role: "quit" },
@@ -24,35 +26,23 @@ export default function FileMenu(): MenuItemConstructorOptions {
       },
       {
         label: "Open...",
-        click: openFileExplorer // Need to open file explorer here...
+        click: () => {
+          FileDialog.getFile()
+          // TODO: Load file in editor
+          // TODO: Have an 'Open Recent' menu option
+        }
+      },
+      {
+        label: "Open Recent",
+        role: "recentDocuments",
+        submenu: [
+          {
+            label: "Clear Recent",
+            role: "clearRecentDocuments"
+          }
+        ]
       }
     ]
-  }
-}
-
-export async function openFileExplorer(): Promise<string | undefined> {
-  // Get the current window or create a new one if needed
-  const window = BrowserWindow.getFocusedWindow()
-
-  if (!window) return
-  try {
-    const result = await dialog.showOpenDialog(window, {
-      properties: ["openFile"], // or ['openDirectory'] to allow selecting directories
-      title: "Select a file",
-      filters: [
-        { name: "Puppeteer Files", extensions: ["json", "puppetter.json"] },
-        { name: "JSON Files", extensions: ["json"] },
-        { name: "XML Files", extensions: ["xml"] },
-        { name: "All Files", extensions: ["*"] }
-      ]
-    })
-    if (!result.canceled && result.filePaths.length > 0) {
-      console.log("Selected file:", result.filePaths[0])
-      // You can handle the selected file here
-      return result.filePaths[0]
-    }
-  } catch (err) {
-    console.error("Error selecting file:", err)
   }
 }
 

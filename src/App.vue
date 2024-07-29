@@ -4,18 +4,15 @@ import { ref } from "vue"
 let filePath = ref("")
 let fileContent = ref("")
 async function getFile() {
+  const { FileDialog } = window
   try {
-    const { path, content } =
-      (await window.FileDialog.getFile(
-        "/Users/hunter.heavener/Documents/Projects/hivemind/jsconfig.json",
-        "utf-8"
-      )) ?? {}
-    if (!(path && content)) return
-    filePath.value = path
-    fileContent.value = content
-  } catch (error) {
-    alert("Failed to open file")
-    console.error("Failed to open file dialog:", error)
+    filePath.value = (await FileDialog.getFilePath()) ?? ""
+    if (filePath.value) {
+      fileContent.value = (await FileDialog.getFileContent(filePath.value, "utf8")) ?? ""
+    }
+  } catch (err) {
+    alert(`Failed to open file:\n\n${err}`)
+    console.error("Failed to open file:", err)
   }
 }
 </script>

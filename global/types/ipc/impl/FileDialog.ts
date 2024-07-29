@@ -1,4 +1,4 @@
-import { BrowserWindow, dialog } from "electron"
+import { BrowserWindow, app, dialog } from "electron"
 import { readFileSync } from "fs"
 
 const FileDialog = {
@@ -8,7 +8,7 @@ const FileDialog = {
    *
    * @returns path to a file
    */
-  getFilePath: async (): Promise<string | undefined> => {
+  async getFilePath(): Promise<string | undefined> {
     const window = BrowserWindow.getFocusedWindow()
     if (!window) return
 
@@ -24,8 +24,9 @@ const FileDialog = {
         ]
       })
       if (!result.canceled && result.filePaths.length > 0) {
-        console.log("Selected file:", result.filePaths[0])
-        return result.filePaths[0]
+        const path = result.filePaths[0]
+        app.addRecentDocument(path)
+        return path
       }
     } catch (err) {
       console.error("Error selecting file:", err)
@@ -42,10 +43,10 @@ const FileDialog = {
    * @param encoding (optional) specify the file encoding (default utf-8)
    * @returns the content of a file as a string
    */
-  getFileContent: async (
+  async getFileContent(
     filePath?: string,
     encoding: BufferEncoding = "utf8"
-  ): Promise<string | undefined> => {
+  ): Promise<string | undefined> {
     try {
       const path = filePath || (await FileDialog.getFilePath())
       if (path) return readFileSync(path)?.toString(encoding)
@@ -63,7 +64,7 @@ const FileDialog = {
    * @param encoding (optional) specify the file encoding (default utf-8)
    * @returns the file path and the content of the file as a string
    */
-  getFile: async (path?: string, encoding: BufferEncoding = "utf8"): Promise<File | undefined> => {
+  async getFile(path?: string, encoding: BufferEncoding = "utf8"): Promise<File | undefined> {
     // console.log("GET FILE INVOKED", [path, encoding])
     if (!path) path = await FileDialog.getFilePath()
     if (!path) return

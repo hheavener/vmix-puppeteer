@@ -1,6 +1,7 @@
 import type { API } from "./types/api/API"
+import type { APP } from "./types/app/APP"
 import type { IPC } from "./types/ipc/IPC"
-import type FileDialog from "./types/ipc/file-dialog"
+import type FileDialog from "./types/ipc/impl/FileDialog"
 
 /* eslint-disable no-var */
 export {}
@@ -23,9 +24,17 @@ declare global {
   var APP_DATA_DIR: string
   var API: API
   var IPC: IPC
-  // var Window: Window
+  var APP: APP
+  var console: NodeJS.Console
 
   interface Window {
     FileDialog: typeof FileDialog
+  }
+
+  interface Console {
+    red(message?: any, ...optionalParams: any[]): void
+    green(message?: any, ...optionalParams: any[]): void
+    yellow(message?: any, ...optionalParams: any[]): void
+    blue(message?: any, ...optionalParams: any[]): void
   }
 }

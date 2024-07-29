@@ -1,4 +1,4 @@
-import FileDialog from "./file-dialog"
+import FileDialog from "./impl/FileDialog"
 
 type FunctionType = () => unknown
 type AsyncFunctionType = () => Promise<unknown>

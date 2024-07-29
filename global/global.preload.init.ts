@@ -2,7 +2,7 @@
 import { contextBridge, ipcRenderer, ipcMain } from "electron"
 import type { API } from "./types/api/API"
 import type { IPC } from "./types/ipc/IPC"
-import type { IPCChannelAction, InferChannelActionType } from "./types/ipc/_channels"
+import type { IPCChannelAction, InferChannelActionType } from "./types/ipc/channels"
 
 if (!globalThis.API) globalThis.API = initAPI()
 if (!globalThis.IPC) globalThis.IPC = initIPC()

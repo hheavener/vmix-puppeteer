@@ -1,11 +1,9 @@
 // All the Node.js APIs are available in the preload process.
-// import "@@/global.d.ts"
-import "@@/global.setup"
-// import FileDialog from "@@/types/ipc/file-dialog"
+import "@@/global.preload.init"
 
 // It has the same sandbox as a Chrome extension.
 window.addEventListener("DOMContentLoaded", () => {
-  // console.log("DOM CONTENT LOADED")
+  console.log("DOM CONTENT LOADED")
   const replaceInnerText = (selector: string, text: string | undefined) => {
     const element = document.getElementById(selector)
     if (element) element.innerText = text ?? ""
