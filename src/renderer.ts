@@ -25,6 +25,21 @@
  *  });
  * ```
  */
-// import "./index.css"
+import "./assets/main.css"
+import App from "./App.vue"
+import { createApp } from "vue"
+import { createPinia } from "pinia"
+import router from "./router"
+
+const app = createApp(App)
+app.use(createPinia())
+app.use(router)
+app.mount("#app")
+
 console.log(window.FileDialog)
+// window.FileDialog.getFilePath()
+
+// console.log(window["test-key"])
+// import FileDialog from "@@/types/ipc/file-dialog"
+// console.log(window.FileDialog.message)
 // console.log('👋 This message is being logged by "renderer.ts", included via Vite')

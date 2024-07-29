@@ -1,20 +1,12 @@
 <script setup lang="ts">
-// import { readFileSync } from "fs"
-// import { openFileExplorer } from "./menus/file-menu"
-
-async function getFile() {
-  // try {
-  //   // Call the method exposed in the preload script
-  //   selectedFile.value = await window.electron.openFileDialog();
-  // } catch (error) {
-  //   console.error('Failed to open file dialog:', error);
-  // }
-  // const filePath = await openFileExplorer()
-  // if (!filePath) return
-  // fileContents = readFileSync(filePath).toString()
-}
-
 let fileContents: string
+async function getFile() {
+  try {
+    fileContents = (await window.FileDialog.getFilePath()) ?? ""
+  } catch (error) {
+    console.error("Failed to open file dialog:", error)
+  }
+}
 </script>
 
 <template>

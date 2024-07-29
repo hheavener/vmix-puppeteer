@@ -1,7 +1,11 @@
 // All the Node.js APIs are available in the preload process.
+// import "@@/global.d.ts"
+import "@@/global.setup"
+// import FileDialog from "@@/types/ipc/file-dialog"
 
 // It has the same sandbox as a Chrome extension.
 window.addEventListener("DOMContentLoaded", () => {
+  console.log("DOM CONTENT LOADED")
   const replaceText = (selector: string, text: string | undefined) => {
     const element = document.getElementById(selector)
     if (element) element.innerText = text ?? ""
@@ -11,6 +15,8 @@ window.addEventListener("DOMContentLoaded", () => {
     replaceText(`${dependency}-version`, process.versions[dependency])
   }
 })
+
+// TODO: IPC hasn't been initialized yet. Find a way to initialize it before preload
 
 IPC.exposeInMainWorld("FileDialog", {
   getFileContent: () => IPC.rendererInvoke("FileDialog:getFileContent"),

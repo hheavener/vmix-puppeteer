@@ -4,12 +4,28 @@ import type { AddressInfo } from "node:net"
 import type { ConfigEnv, Plugin, UserConfig } from "vite"
 import { fileURLToPath, URL } from "node:url"
 import pkg from "./package.json"
+import eslintrc from "./.eslintrc.json"
 
-export const aliases = {
-  "@": fileURLToPath(new URL("./src", import.meta.url)),
-  "@@": fileURLToPath(new URL("./global", import.meta.url))
-}
+/*
+ * ==============================
+ *      Project Path Aliases
+ * ==============================
+ */
+const AliasList = eslintrc["import/resolver"].alias
+type AliasKey = keyof typeof AliasList
+type AliasMap = Record<AliasKey, string>
 
+export const aliases: AliasMap = Object.entries(AliasList).reduce((total, current) => {
+  const key: AliasKey = current[0] as AliasKey
+  const path: string = current[1]
+  return { ...total, [key]: fileURLToPath(new URL(path, import.meta.url)) }
+}, {}) as AliasMap
+
+/*
+ * =============================
+ *      Electron-Vite Setup
+ * =============================
+ */
 export const builtins = ["electron", ...builtinModules.map((m) => [m, `node:${m}`]).flat()]
 
 export const external = [

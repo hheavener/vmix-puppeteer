@@ -1,4 +1,5 @@
-import "@@/init"
+import "@@/global.init"
+import "@@/global.setup"
 import { app, BrowserWindow, Menu } from "electron"
 import path from "path"
 import menu from "./menus/_menu"
@@ -10,12 +11,14 @@ if (require("electron-squirrel-startup")) app.quit()
 
 const createWindow = () => {
   const windowState = loadWindowState()
+  const preloadScript = path.join(__dirname, "preload.js")
+  console.log("Preload:", preloadScript)
   const mainWindow = new BrowserWindow({
     x: windowState.x,
     y: windowState.y,
     width: windowState.width || 800,
     height: windowState.height || 600,
-    webPreferences: { preload: path.join(__dirname, "preload.js") }
+    webPreferences: { preload: preloadScript, contextIsolation: true }
   })
   Menu.setApplicationMenu(menu)
   mainWindow.on("close", () => saveWindowState(mainWindow))
@@ -24,8 +27,16 @@ const createWindow = () => {
   if (MAIN_WINDOW_VITE_DEV_SERVER_URL) mainWindow.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL)
   else mainWindow.loadFile(path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`))
 
+  // mainWindow.webContents.once("dom-ready", () => {
+  mainWindow.webContents.once("did-finish-load", () => {
+    console.log("Window finished loading, sending init-data event")
+    mainWindow.webContents.send("test-event", "Hello from main!")
+  })
+
+  // })
+
   // Open the DevTools (can be toggled with "Cmd+Option+i").
-  // mainWindow.webContents.openDevTools()
+  mainWindow.webContents.openDevTools()
 }
 
 app.whenReady().then(() => {
@@ -34,6 +45,7 @@ app.whenReady().then(() => {
     const noWindowsOpen = BrowserWindow.getAllWindows().length === 0
     if (noWindowsOpen) createWindow()
   })
+  console.log(FileDialog)
 })
 
 // Quit app when all windows closed unless on mac
