@@ -12,10 +12,10 @@ const FileDialog = {
         properties: ["openFile"], // or ['openDirectory'] to allow selecting directories
         title: "Select a file",
         filters: [
-          { name: "Puppeteer Files", extensions: ["json", "puppetter.json"] },
-          { name: "JSON Files", extensions: ["json"] },
-          { name: "XML Files", extensions: ["xml"] },
-          { name: "All Files", extensions: ["*"] }
+          { name: "Puppeteer Files", extensions: ["json", "puppeteer.json"] },
+          { name: "JSON Files", extensions: ["json"] }
+          // { name: "XML Files", extensions: ["xml"] },
+          // { name: "All Files", extensions: ["*"] }
         ]
       })
       if (!result.canceled && result.filePaths.length > 0) {
@@ -27,14 +27,28 @@ const FileDialog = {
       console.error("Error selecting file:", err)
     }
   },
-  getFileContent: async (): Promise<Buffer | undefined> => {
+
+  getFileContent: async (filePath?: string): Promise<Buffer | undefined> => {
     try {
-      const fileName = await FileDialog.getFilePath()
-      if (fileName) return readFileSync(fileName)
+      const path = filePath || (await FileDialog.getFilePath())
+      if (path) return readFileSync(path)
     } catch (err) {
       console.error("Error opening file:", err)
     }
+  },
+
+  getFile: async (): Promise<File | undefined> => {
+    const path = await FileDialog.getFilePath()
+    if (!path) return
+
+    const content = await FileDialog.getFileContent(path)
+    if (content) return { path, content: content.toString("utf8") }
   }
+}
+
+type File = {
+  path: string
+  content: string
 }
 
 export default FileDialog

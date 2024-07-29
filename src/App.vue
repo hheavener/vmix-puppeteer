@@ -1,9 +1,16 @@
 <script setup lang="ts">
-let fileContents: string
+import { ref } from "vue"
+
+let filePath = ref("")
+let fileContent = ref("")
 async function getFile() {
   try {
-    fileContents = (await window.FileDialog.getFilePath()) ?? ""
+    const { path, content } = (await window.FileDialog.getFile()) ?? {}
+    if (!(path && content)) return
+    filePath.value = path
+    fileContent.value = content
   } catch (error) {
+    alert("Failed to open file")
     console.error("Failed to open file dialog:", error)
   }
 }
@@ -25,7 +32,13 @@ async function getFile() {
 
   <div class="file">
     <button @click="getFile">Open File</button>
-    <code v-if="fileContents">{{ fileContents }}</code>
+    <br />
+    <code id="filename" v-if="filePath"><b>File:</b> {{ filePath }}</code>
+    <code id="filename" v-else>No file selected</code>
+    <code v-if="fileContent"><b>Content:</b></code>
+    <div class="container" v-if="filePath">
+      <code id="filecontent">{{ fileContent }}</code>
+    </div>
   </div>
 
   <!-- <RouterView /> -->
@@ -38,11 +51,21 @@ header {
 }
 
 .file {
-  border: 1px solid gray;
-  height: auto;
-  width: 100%;
-  display: flex;
-  flex-direction: row;
+  button {
+    max-width: max-content;
+  }
+  #filename {
+    display: block;
+    margin-top: 1em;
+  }
+  .container {
+    border: 1px solid gray;
+    height: auto;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    word-wrap: break-word;
+  }
 }
 
 .logo {

@@ -16,9 +16,8 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 })
 
-// TODO: IPC hasn't been initialized yet. Find a way to initialize it before preload
-
 IPC.exposeInMainWorld("FileDialog", {
   getFileContent: () => IPC.rendererInvoke("FileDialog:getFileContent"),
-  getFilePath: () => IPC.rendererInvoke("FileDialog:getFilePath")
+  getFilePath: () => IPC.rendererInvoke("FileDialog:getFilePath"),
+  getFile: () => IPC.rendererInvoke("FileDialog:getFile")
 })
