@@ -17,13 +17,22 @@ function initAPI(): API {
 
 function initIPC(): IPC {
   return {
-    exposeInMainWorld: (channel, api) => contextBridge.exposeInMainWorld(channel, api),
+    exposeInMainWorld: (channel, api) => {
+      console.log("EXPOSE MAIN:", channel)
+      contextBridge.exposeInMainWorld(channel, api)
+    },
     rendererInvoke: <T extends IPCChannelAction>(channelAction: T) => {
       return ((...args: any[]) => {
-        console.log("RECEIVED:", channelAction, args)
+        console.log("RENDER INVOKE:", channelAction, args)
         return ipcRenderer.invoke(channelAction, args)
       }) as InferChannelActionType<T>
     },
-    mainHandle: (channelAction, listener) => ipcMain.handle(channelAction, listener)
+    mainHandle: (channelAction, listener) => {
+      console.log("MAIN HANDLE:", channelAction)
+      // function wrappedListener(event: Electron.IpcMainInvokeEvent, ...args: any[]) {
+      //   return listener(event, ...args)
+      // }
+      return ipcMain.handle(channelAction, listener)
+    }
   }
 }

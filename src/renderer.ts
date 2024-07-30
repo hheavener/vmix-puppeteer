@@ -38,7 +38,7 @@ app.mount("#app")
 
 // console.log(window.FileDialog)
 // window.FileDialog.getFilePath()
-// console.log(window["TEST"].myFunction())
+// console.log(window["random-key"].sendRandomMessage())
 // import FileDialog from "@@/types/ipc/file-dialog"
 // console.log(window.FileDialog.message)
 // console.log('👋 This message is being logged by "renderer.ts", included via Vite')

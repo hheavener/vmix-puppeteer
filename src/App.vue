@@ -1,30 +1,18 @@
 <script setup lang="ts">
-import { ref } from "vue"
 import CounterButton from "@/components/CounterButton.vue"
 import MouseTracker from "./components/MouseTracker.vue"
+import FileLoader from "./components/FileLoader.vue"
+import { useCounterStore } from "./stores/counter"
 
-let filePath = ref("")
-let fileContent = ref("")
-async function getFile() {
-  const { FileDialog } = window
-  try {
-    filePath.value = (await FileDialog.getFilePath()) ?? ""
-    if (filePath.value) {
-      fileContent.value = (await FileDialog.getFileContent(filePath.value, "utf8")) ?? ""
-    }
-  } catch (err) {
-    alert(`Failed to open file:\n\n${err}`)
-    console.error("Failed to open file:", err)
-  }
-}
-
-// const { x, y } = useMouse()
+const counter = useCounterStore()
 </script>
 
 <template>
   <header>
+    <CounterButton class="counter-button" />
+    <MouseTracker class="mouse-tracker" />
     <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
-
+    <h2>{{ counter.count }}</h2>
     <!-- <div class="wrapper">
       <HelloWorld msg="You did it!" />
 
@@ -36,18 +24,7 @@ async function getFile() {
   </header>
   <!-- x: {{ x }} y:{{ y }} -->
 
-  <MouseTracker />
-  <CounterButton />
-  <div class="file">
-    <button @click="getFile">Open File</button>
-    <br />
-    <code id="filename" v-if="filePath"><b>File:</b> {{ filePath }}</code>
-    <code id="filename" v-else>No file selected</code>
-    <code v-if="fileContent"><b>Content:</b></code>
-    <div class="container" v-if="filePath">
-      <code id="filecontent">{{ fileContent }}</code>
-    </div>
-  </div>
+  <FileLoader />
 
   <!-- <RouterView /> -->
 </template>
@@ -56,23 +33,21 @@ async function getFile() {
 header {
   line-height: 1.5;
   max-height: 100vh;
-}
+  text-align: center;
+  padding-bottom: 25px;
+  margin-bottom: 25px;
+  /* border-bottom: 1px solid; */
 
-.file {
-  button {
-    max-width: max-content;
+  .counter-button {
+    position: fixed;
+    left: 20px;
+    top: 20px;
   }
-  #filename {
-    display: block;
-    margin-top: 1em;
-  }
-  .container {
-    border: 1px solid gray;
-    height: auto;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    word-wrap: break-word;
+
+  .mouse-tracker {
+    position: fixed;
+    right: 20px;
+    top: 10px;
   }
 }
 

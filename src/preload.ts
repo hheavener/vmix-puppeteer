@@ -19,3 +19,5 @@ IPC.exposeInMainWorld("FileDialog", {
   getFilePath: IPC.rendererInvoke("FileDialog:getFilePath"),
   getFile: IPC.rendererInvoke("FileDialog:getFile")
 })
+
+// ipcRenderer.on("test-event", (e, data) => console.log(data))
