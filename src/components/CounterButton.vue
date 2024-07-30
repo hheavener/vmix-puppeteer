@@ -1,14 +1,14 @@
-<template>
-  <div>
-    <p>Count: {{ counterStore.count }}</p>
-    <button @click="counterStore.increment">Increment</button>
-  </div>
-</template>
-
 <script setup>
 import { useCounterStore } from "@/stores/counter"
-const counterStore = useCounterStore()
+const store = useCounterStore()
 </script>
+
+<template>
+  <div>
+    <p>Count: {{ store.count }}</p>
+    <button @click="store.increment">Increment</button>
+  </div>
+</template>
 
 <style scoped>
 /* Add component-specific styles here */

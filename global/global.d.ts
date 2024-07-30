@@ -7,9 +7,6 @@ import type FileDialog from "./types/ipc/impl/FileDialog"
 export {}
 /// <reference types="vite/client" />
 
-// Allows TypeScript to recognize Vue file extensions
-declare module "*.vue"
-
 /**
  * Global values that are resolved by typescript at
  * compile-time and can be used without needing to

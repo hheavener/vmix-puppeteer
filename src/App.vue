@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue"
+import CounterButton from "@/components/CounterButton.vue"
+import MouseTracker from "./components/MouseTracker.vue"
 
 let filePath = ref("")
 let fileContent = ref("")
@@ -15,6 +17,8 @@ async function getFile() {
     console.error("Failed to open file:", err)
   }
 }
+
+// const { x, y } = useMouse()
 </script>
 
 <template>
@@ -30,7 +34,10 @@ async function getFile() {
       </nav>
     </div> -->
   </header>
+  <!-- x: {{ x }} y:{{ y }} -->
 
+  <MouseTracker />
+  <CounterButton />
   <div class="file">
     <button @click="getFile">Open File</button>
     <br />
