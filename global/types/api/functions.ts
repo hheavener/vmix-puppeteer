@@ -2,7 +2,10 @@ type Value = { Value: string }
 type Input = { Input: string | number }
 type Duration = { Duration: number }
 type Channel = { Channel: number }
+type SelectedName = { SelectedName: string }
 type None = Record<string, never>
+
+export type VmixFunctionName = keyof VmixFunction
 
 /**
  * List of available functions in vMix 27.
@@ -21,7 +24,7 @@ type None = Record<string, never>
  * // Copy into editor and replace all `'"'` with `''`
  * console.dir(JSON.stringify(definitions))
  */
-export type Functions = {
+export type VmixFunction = {
   ActivatorRefresh: None
   ActiveInput: Input
   AddInput: Value
@@ -440,7 +443,7 @@ export type Functions = {
   SetPosition: Value & Input
   SetRate: Value & Input
   SetRateSlowMotion: Value & Input
-  SetText: Value & Input
+  SetText: Value & Input & SelectedName
   SetTextColour: Value & Input
   SetTextVisible: Input
   SetTextVisibleOff: Input

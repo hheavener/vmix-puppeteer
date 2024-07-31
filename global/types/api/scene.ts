@@ -1,0 +1,162 @@
+import type { VmixFunction, VmixFunctionName } from "./functions"
+
+// TODO: configure these through UI eventually?
+const NDISources = ["SOUTH", "REAR", "NORTH", "FRONT"] as const
+type NDISource = (typeof NDISources)[number]
+type PIPPosition = `${"BOTTOM" | "TOP"}_${"LEFT" | "RIGHT"}`
+const Transitions = [
+  // Standard
+  "Merge",
+  "CrossZoom",
+  "Cube",
+  "CubeZoom",
+  "Fade",
+  "Fly",
+  "FlyRotate",
+  "Zoom",
+  "Slide",
+  "SlideReverse",
+  "VerticalSlide",
+  "VerticalSlideReverse",
+  "Wipe",
+  "WipeReverse",
+  "VerticalWipe",
+  "VerticalWipeReverse",
+  // Custom
+  "Stinger1",
+  "Stinger2",
+  "Stinger3",
+  "Stinger4",
+  "Transition1",
+  "Transition2",
+  "Transition3",
+  "Transition4"
+] as const
+type Transition = (typeof Transitions)[number]
+
+const LayerIndexes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as const
+type LayerIndex = (typeof LayerIndexes)[number]
+
+export type LayerConfig = {
+  index: LayerIndex
+  /**
+   * The input for the PIP.
+   * (Be careful, this could create an infinite loop)
+   */
+  source: string
+  /**
+   * (Experimental - Proposed)
+   * Size scaling for the PIP
+   */
+  scale?: "sm" | "md" | "lg"
+}
+
+export type Input = {
+  /**
+   * Input title (as according to VMIX XML)
+   */
+  title: string
+  /**
+   * The NDI source camera.
+   *
+   * This will help inform what options are
+   * available for staging the next input in
+   * a given scene.
+   */
+  source?: NDISource
+  /**
+   * The PIP information.
+   */
+  layers?: LayerConfig[]
+}
+
+export type PTZInput = {
+  /**
+   * The NDI source camera.
+   */
+  source: NDISource
+  /**
+   * The name of the input containing the
+   * position for this camera to move to.
+   */
+  input: string
+}
+
+// TODO: These functions need to be converted
+// to a concrete value and then the type can
+// be created from the value
+export type FunctionCall<T extends VmixFunctionName = VmixFunctionName> = {
+  function: VmixFunctionName
+  params: VmixFunction[T]
+  /**
+   * Amount of time to sleep
+   * after calling the function.
+   */
+  sleep?: number
+}
+
+export type Scene = {
+  /**
+   * Section heading, really.
+   */
+  title: string
+  /**
+   * How smart can we make a chain of scenes?
+   * Can it know which inputs to point where
+   * based on reading ahead?
+   */
+  activeInput: Input
+  /**
+   * Inputs to prepare before next scene.
+   */
+  prepare: PTZInput[]
+  /**
+   * Will be skipped if true.
+   */
+  disabled?: boolean
+  /**
+   * The input to preview. This will allow us
+   * to toggle inputs back/forth for a given
+   * scene when there are multiple transitions
+   * to/from the same two inputs (such as going
+   * from PIP to no PIP for the same camera).
+   */
+  alternate?: {
+    input: Input | string
+    /**
+     * // TODO: Allow user to configure default transition?
+     */
+    transition?: Transition
+    willTransition?: FunctionCall[]
+    onTransitioned?: FunctionCall[]
+  }
+  /**
+   * The transition it should use to move to
+   * the next scene in the list.
+   */
+  transition?: Transition
+  /**
+   * Actions the user can perform at-will when
+   * this scene is live.
+   */
+  actions?: FunctionCall[]
+  /**
+   * Called when scene is transitioned.
+   */
+  onTransitioned?: FunctionCall[]
+  /**
+   * Called right before transitioning.
+   */
+  willTransition?: FunctionCall[]
+  /**
+   * (Experimental - Proposed)
+   * The amount of time this scene should hold
+   * before moving to the next one automatically.
+   */
+  duration?: number
+  /**
+   * (Experimental - Proposed)
+   * The time this scene should start.
+   */
+  startTime?: Date
+}
