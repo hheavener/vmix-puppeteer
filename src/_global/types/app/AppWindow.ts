@@ -9,16 +9,19 @@ export type AppWindowState = {
   y: number
   width: number
   height: number
+  devToolsOpen: boolean
 }
 
 export const AppWindow = {
   saveWindowState(window: BrowserWindow) {
     const bounds = window.getBounds()
+    const { webContents } = window
     const state: AppWindowState = {
       x: bounds.x,
       y: bounds.y,
       width: bounds.width,
-      height: bounds.height
+      height: bounds.height,
+      devToolsOpen: webContents.isDevToolsOpened()
     }
     try {
       fs.writeFileSync(stateFile, JSON.stringify(state))

@@ -3,16 +3,35 @@ import CounterButton from "./components/CounterButton.vue"
 import MouseTracker from "./components/MouseTracker.vue"
 import FileLoader from "./components/FileLoader.vue"
 import { useCounterStore } from "./stores/counter"
+import { ref } from "vue"
 
 const counter = useCounterStore()
+const isHidden = ref(false)
+const toggleIsHidden = () => (isHidden.value = !isHidden.value)
 </script>
 
 <template>
   <header>
-    <CounterButton class="counter-button" />
+    <div class="top-left-button">
+      <button v-if="isHidden" @click="toggleIsHidden">Show Logo</button>
+      <button v-else @click="toggleIsHidden">Hide Logo</button>
+    </div>
     <MouseTracker class="mouse-tracker" />
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
+    <div class="h-125">
+      <Transition name="bounce">
+        <img
+          v-show="!isHidden"
+          alt="Vue logo"
+          class="logo"
+          src="@/assets/logo.svg"
+          width="125"
+          height="125"
+        />
+      </Transition>
+    </div>
     <h2>{{ counter.count }}</h2>
+    <CounterButton />
+
     <!-- <div class="wrapper">
       <HelloWorld msg="You did it!" />
 
@@ -38,7 +57,11 @@ header {
   margin-bottom: 25px;
   /* border-bottom: 1px solid; */
 
-  .counter-button {
+  .h-125 {
+    height: 150px;
+  }
+
+  .top-left-button {
     position: fixed;
     left: 20px;
     top: 20px;

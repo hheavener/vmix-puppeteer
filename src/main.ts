@@ -31,7 +31,7 @@ const createWindow = () => {
   // })
 
   // Open the DevTools (can be toggled with "Cmd+Option+i").
-  mainWindow.webContents.openDevTools()
+  if (windowState.devToolsOpen) mainWindow.webContents.openDevTools()
   mainWindow.on("close", () => APP.AppWindow.saveWindowState(mainWindow))
 }
 
