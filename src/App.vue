@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import CounterButton from "@/components/CounterButton.vue"
+import CounterButton from "./components/CounterButton.vue"
 import MouseTracker from "./components/MouseTracker.vue"
 import FileLoader from "./components/FileLoader.vue"
 import { useCounterStore } from "./stores/counter"

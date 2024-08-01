@@ -16,7 +16,7 @@
   "import/resolver": {
     "alias": {
       "@": "./src",
-      "@@": "./global"
+      "@@": "./src/_global"
     }
   }
 }
