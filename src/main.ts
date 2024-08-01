@@ -1,7 +1,7 @@
 import "@@/global.init"
 import "@@/global.main.init"
 import "@@/global.preload.init"
-import { app, BrowserWindow, Menu } from "electron"
+import { app, BrowserWindow, Menu, session } from "electron"
 import path from "path"
 import menu from "./menus/_menu"
 import FileDialog from "@@/types/ipc/impl/FileDialog"
@@ -41,7 +41,20 @@ app.whenReady().then(() => {
     const noWindowsOpen = BrowserWindow.getAllWindows().length === 0
     if (noWindowsOpen) createWindow()
   })
-  console.log(FileDialog)
+  // Attach CSP to application headers
+  session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
+    callback({
+      responseHeaders: {
+        ...details.responseHeaders,
+        "Content-Security-Policy": [
+          "default-src 'self';",
+          "img-src 'self';",
+          "script-src 'self' 'unsafe-inline';",
+          "style-src-elem 'self' 'unsafe-inline';"
+        ].join("")
+      }
+    })
+  })
 })
 
 // Quit app when all windows closed unless on mac
