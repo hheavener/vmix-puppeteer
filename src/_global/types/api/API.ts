@@ -1,5 +1,9 @@
-import type { VmixFunction } from "./functions"
+import type { VmixFunction, VmixFunctionName } from "./VmixFunction"
+import type { VmixTransition } from "./scene"
 
 export type API = {
-  Function<Name extends keyof VmixFunction>(functionName: Name, params: VmixFunction[Name]): void
+  Function<Name extends VmixFunctionName | VmixTransition>(
+    functionName: Name,
+    params: VmixFunction["params"]
+  ): Promise<void>
 }

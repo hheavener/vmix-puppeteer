@@ -47,8 +47,8 @@ const Program: Scene[] = [
     ],
     // TODO: Show status popups or handle PIP
     prepare: [
-      { source: "SOUTH", input: "PTZ - [SOUTH] - Musicians" },
-      { source: "NORTH", input: "PTZ - [NORTH] - Lectern" }
+      { source: "NORTH", input: "PTZ - [NORTH] - Lectern" },
+      { source: "SOUTH", input: "PTZ - [SOUTH] - Musicians" }
     ],
     willTransition: [{ function: "ScriptStart", params: { Value: "AlternateStinger" } }]
   },
@@ -160,8 +160,12 @@ const Program: Scene[] = [
     onTransitioned: [
       { function: "ActiveInput", params: { Input: "Stinger 1 - RED" } },
       { function: "SelectTitlePreset", params: { Value: "2", Input: "Status Popups" } },
-      { function: "OverlayInput2In", params: { Input: "Status Popups" }, sleep: 10 * 1000 },
-      { function: "OverlayInput2Out", params: {}, sleep: 3 * 1000 },
+      {
+        function: "OverlayInput2In",
+        params: { Input: "Status Popups" },
+        sleep: { amount: 10, unit: Time.Seconds }
+      },
+      { function: "OverlayInput2Out", params: {}, sleep: { amount: 3, unit: Time.Seconds } },
       { function: "StopStreaming", params: {} } // TODO: Move to action?
     ],
     prepare: []

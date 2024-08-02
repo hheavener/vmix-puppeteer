@@ -1,10 +1,10 @@
-import type { VmixFunction, VmixFunctionName } from "./functions"
+import type { VmixFunctionCall } from "./VmixFunction"
 
 // TODO: configure these through UI eventually?
 const NDISources = ["SOUTH", "REAR", "NORTH", "FRONT"] as const
 type NDISource = (typeof NDISources)[number]
 type PIPPosition = `${"BOTTOM" | "TOP"}_${"LEFT" | "RIGHT"}`
-const Transitions = [
+export const VmixTransitions = [
   // Standard
   "Merge",
   "CrossZoom",
@@ -32,7 +32,8 @@ const Transitions = [
   "Transition3",
   "Transition4"
 ] as const
-type Transition = (typeof Transitions)[number]
+
+export type VmixTransition = (typeof VmixTransitions)[number]
 
 const LayerIndexes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as const
 type LayerIndex = (typeof LayerIndexes)[number]
@@ -82,19 +83,6 @@ export type PTZInput = {
   input: string
 }
 
-// TODO: These functions need to be converted
-// to a concrete value and then the type can
-// be created from the value
-export type FunctionCall<T extends VmixFunctionName = VmixFunctionName> = {
-  function: VmixFunctionName
-  params: VmixFunction[T]
-  /**
-   * Amount of time to sleep
-   * after calling the function.
-   */
-  sleep?: number
-}
-
 export type Scene = {
   /**
    * Section heading, really.
@@ -126,28 +114,28 @@ export type Scene = {
     /**
      * // TODO: Allow user to configure default transition?
      */
-    transition?: Transition
-    willTransition?: FunctionCall[]
-    onTransitioned?: FunctionCall[]
+    transition?: VmixTransition
+    willTransition?: VmixFunctionCall[]
+    onTransitioned?: VmixFunctionCall[]
   }
   /**
    * The transition it should use to move to
    * the next scene in the list.
    */
-  transition?: Transition
+  transition?: VmixTransition
   /**
    * Actions the user can perform at-will when
    * this scene is live.
    */
-  actions?: FunctionCall[]
+  actions?: VmixFunctionCall[]
   /**
    * Called when scene is transitioned.
    */
-  onTransitioned?: FunctionCall[]
+  onTransitioned?: VmixFunctionCall[]
   /**
    * Called right before transitioning.
    */
-  willTransition?: FunctionCall[]
+  willTransition?: VmixFunctionCall[]
   /**
    * (Experimental - Proposed)
    * The amount of time this scene should hold

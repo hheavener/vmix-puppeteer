@@ -23,6 +23,12 @@ declare global {
   var IPC: IPC
   var APP: APP
   var console: NodeJS.Console
+  var Sleep: (amount: number, unit = Time.Milliseconds) => Promise<void>
+  enum Time {
+    Milliseconds = 1,
+    Seconds = Milliseconds * 1000,
+    Minutes = Seconds * 60
+  }
 
   interface Window {
     FileDialog: typeof FileDialog

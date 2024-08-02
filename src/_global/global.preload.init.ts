@@ -6,10 +6,15 @@ import type { IPCChannelAction, InferChannelActionType } from "./types/ipc/chann
 
 if (!globalThis.API) globalThis.API = initAPI()
 if (!globalThis.IPC) globalThis.IPC = initIPC()
+if (!globalThis.Sleep) {
+  globalThis.Sleep = async (amount, unit = Time.Milliseconds) => {
+    await new Promise((resolve) => setTimeout(resolve, amount * unit.valueOf()))
+  }
+}
 
 function initAPI(): API {
   return {
-    Function: (functionName, params) => {
+    Function: async (functionName, params) => {
       console.log(`Function: ${functionName}`, params)
     }
   }
