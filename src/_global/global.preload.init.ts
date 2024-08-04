@@ -3,11 +3,15 @@ import { contextBridge, ipcRenderer, ipcMain } from "electron"
 import type { API } from "./types/api/API"
 import type { IPC } from "./types/ipc/IPC"
 import type { IPCChannelAction, InferChannelActionType } from "./types/ipc/channels"
+import { TIME } from "./types/time/TIME"
 
 if (!globalThis.API) globalThis.API = initAPI()
 if (!globalThis.IPC) globalThis.IPC = initIPC()
-if (!globalThis.Sleep) {
-  globalThis.Sleep = async (amount, unit = Time.Milliseconds) => {
+if (!globalThis.Sleep) globalThis.Sleep = initSleep()
+if (!globalThis.TIME) globalThis.TIME = TIME
+
+function initSleep(): typeof Sleep {
+  return async (amount, unit = TIME.Milliseconds) => {
     await new Promise((resolve) => setTimeout(resolve, amount * unit.valueOf()))
   }
 }
@@ -34,9 +38,6 @@ function initIPC(): IPC {
     },
     mainHandle: (channelAction, listener) => {
       console.log("MAIN HANDLE:", channelAction)
-      // function wrappedListener(event: Electron.IpcMainInvokeEvent, ...args: any[]) {
-      //   return listener(event, ...args)
-      // }
       return ipcMain.handle(channelAction, listener)
     }
   }

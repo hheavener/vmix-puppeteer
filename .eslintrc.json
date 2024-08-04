@@ -15,8 +15,8 @@
   "parser": "@typescript-eslint/parser",
   "import/resolver": {
     "alias": {
-      "@": "./src",
-      "@@": "./src/_global"
+      "@@": "./src/_global",
+      "@": "./src"
     }
   }
 }

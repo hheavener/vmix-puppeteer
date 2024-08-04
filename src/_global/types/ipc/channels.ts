@@ -1,7 +1,7 @@
 import FileDialog from "./impl/FileDialog"
 
-type FunctionType = () => unknown
-type AsyncFunctionType = () => Promise<unknown>
+type FunctionType = (...params: any[]) => unknown
+type AsyncFunctionType = (...params: any[]) => Promise<unknown>
 type ChannelMember = string | boolean | number | FunctionType | AsyncFunctionType
 
 type Channel = Record<string, ChannelMember>

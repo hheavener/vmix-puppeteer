@@ -2,6 +2,7 @@ import type { API } from "./types/api/API"
 import type { APP } from "./types/app/APP"
 import type { IPC } from "./types/ipc/IPC"
 import type FileDialog from "./types/ipc/impl/FileDialog"
+import { TIME as ENUM_TIME } from "./types/time/TIME"
 
 /* eslint-disable no-var */
 export {}
@@ -24,11 +25,7 @@ declare global {
   var APP: APP
   var console: NodeJS.Console
   var Sleep: (amount: number, unit = Time.Milliseconds) => Promise<void>
-  enum Time {
-    Milliseconds = 1,
-    Seconds = Milliseconds * 1000,
-    Minutes = Seconds * 60
-  }
+  var TIME: typeof ENUM_TIME
 
   interface Window {
     FileDialog: typeof FileDialog

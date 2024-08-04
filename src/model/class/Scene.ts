@@ -1,4 +1,4 @@
-import { type VmixFunctionCall } from "@/_global/types/api/VmixFunction"
+import { type VmixFunctionCall } from "@@/types/api/VmixFunction"
 import { type Input, type Scene, type VmixTransition } from "@@/types/api/scene"
 
 export default class ScenePlayer {
@@ -34,8 +34,16 @@ export default class ScenePlayer {
     const { prepare } = this.scene
     if (!prepare?.length) return
     for (let p of prepare) {
-      await API.Function("PreviewInput", { Input: p.input })
-      await Sleep(3, Time.Seconds) // TODO: allow override?
+      const activeSource = this.scene.activeInput.source
+      if (p.source === activeSource) {
+        console.yellow(
+          `WARNING: Cannot prepare input '${p.input}' which uses 
+          the same PTZ optic as the active input '${activeSource}'`
+        )
+        continue
+      }
+      await API.Function("PTZMoveToVirtualInputPosition", { Input: p.input })
+      await Sleep(3, Time.Seconds) // TODO: move to some kind of user settings later on?
     }
     // TODO: Get reference to next scene to determine which
     // camera should be active in the preview
@@ -60,7 +68,13 @@ async function callFunction(fc: VmixFunctionCall | VmixTransition): Promise<void
   if (amount) await Sleep(amount, unit)
 }
 
-async function callFunctions(list: VmixFunctionCall[] = []): Promise<void> {
+async function callFunctions(
+  list: VmixFunctionCall[] = [],
+  delayMilliseconds: number = 1 * Time.Second
+): Promise<void> {
   if (!list?.length) return
-  for (let func of list) await callFunction(func)
+  for (let func of list) {
+    await callFunction(func)
+    if (delayMilliseconds) await Sleep(delayMilliseconds)
+  }
 }

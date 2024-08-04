@@ -15,9 +15,10 @@ window.addEventListener("DOMContentLoaded", () => {
 })
 
 IPC.exposeInMainWorld("FileDialog", {
-  getFileContent: IPC.rendererInvoke("FileDialog:getFileContent"),
+  getFile: IPC.rendererInvoke("FileDialog:getFile"),
   getFilePath: IPC.rendererInvoke("FileDialog:getFilePath"),
-  getFile: IPC.rendererInvoke("FileDialog:getFile")
+  getFileContent: IPC.rendererInvoke("FileDialog:getFileContent"),
+  getVmixPresets: IPC.rendererInvoke("FileDialog:getVmixPresets")
 })
 
 // ipcRenderer.on("test-event", (e, data) => console.log(data))

@@ -61,6 +61,7 @@ app.whenReady().then(() => {
 app.on("window-all-closed", () => process.platform !== "darwin" && app.quit())
 app.on("open-file", (_, path) => console.yellow("OPENING", path))
 
+IPC.mainHandle("FileDialog:getFile", (_, [path, encoding]) => FileDialog.getFile(path, encoding))
 IPC.mainHandle("FileDialog:getFilePath", FileDialog.getFilePath)
 IPC.mainHandle("FileDialog:getFileContent", (_, [path]) => FileDialog.getFileContent(path))
-IPC.mainHandle("FileDialog:getFile", (_, [path, encoding]) => FileDialog.getFile(path, encoding))
+IPC.mainHandle("FileDialog:getVmixPresets", (_, [zip]) => FileDialog.getVmixPresets(zip))

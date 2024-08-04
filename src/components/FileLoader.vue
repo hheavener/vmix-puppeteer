@@ -2,11 +2,20 @@
 import { useFileStore } from "@/stores/file"
 
 const store = useFileStore()
+
+const loadVmixFile = async () => {
+  const presets = await FileDialog.getVmixPresets()
+  console.log(presets)
+  // const xmlJson = new VmixPresets(vmixZip).getPresets()
+  // const xmlJson = new VmixPresets()
+  // console.log({ xmlJson })
+}
 </script>
 
 <template>
   <div class="btn-wrapper">
-    <button @click="store.getFile">Open File</button>
+    <!-- <button @click="store.getFile">Open File</button> -->
+    <button @click="loadVmixFile">Open File</button>
     <!-- Add green background on hover-->
     <code id="filename" v-if="store.filePath"><b>File:</b> {{ store.filePath }}</code>
     <code id="filename" v-else>No file selected</code>

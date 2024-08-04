@@ -1,5 +1,7 @@
 import { BrowserWindow, app, dialog } from "electron"
 import { readFileSync } from "fs"
+import AdmZip from "adm-zip"
+import VmixPreset from "@/model/class/VmixPresets"
 
 const FileDialog = {
   /**
@@ -17,6 +19,7 @@ const FileDialog = {
         properties: ["openFile"], // or ['openDirectory'] to allow selecting directories
         title: "Select a file",
         filters: [
+          { name: "vMix Archive", extensions: ["vmixZip"] },
           { name: "Puppeteer Files", extensions: ["json", "puppeteer.json"] },
           { name: "JSON Files", extensions: ["json"] }
           // { name: "XML Files", extensions: ["xml"] },
@@ -47,12 +50,8 @@ const FileDialog = {
     filePath?: string,
     encoding: BufferEncoding = "utf8"
   ): Promise<string | undefined> {
-    try {
-      const path = filePath || (await FileDialog.getFilePath())
-      if (path) return readFileSync(path)?.toString(encoding)
-    } catch (err) {
-      console.error("Error opening file:", err)
-    }
+    const path = filePath || (await FileDialog.getFilePath())
+    if (path) return (await getFileBuffer(path))?.toString(encoding)
   },
 
   /**
@@ -65,12 +64,33 @@ const FileDialog = {
    * @returns the file path and the content of the file as a string
    */
   async getFile(path?: string, encoding: BufferEncoding = "utf8"): Promise<File | undefined> {
-    // console.log("GET FILE INVOKED", [path, encoding])
-    if (!path) path = await FileDialog.getFilePath()
+    path = path || (await FileDialog.getFilePath())
     if (!path) return
 
     const content = await FileDialog.getFileContent(path, encoding)
     if (content) return { path, content }
+  },
+
+  /**
+   * Gets the vMix preset data at the file path provided
+   * or prompts the user to select a vMix ZIP archive if
+   * a file path is not provided.
+   *
+   * Returns the preset data (saved as XML) as a JSON object.
+   * Attributes for XML nodes are parsed as properties that
+   * being with `@_`.
+   *
+   * @param vmixZip vMix ZIP archive
+   * @returns presets XML as a string
+   */
+  async getVmixPresets(filePath?: string): Promise<any> {
+    const path = filePath || (await FileDialog.getFilePath())
+    if (!path) return
+    const buffer = await getFileBuffer(path)
+    if (!buffer) return
+
+    const zip = new AdmZip(buffer)
+    return new VmixPreset(zip).getXmlData()
   }
 }
 
@@ -80,3 +100,12 @@ type File = {
 }
 
 export default FileDialog
+
+async function getFileBuffer(filePath?: string): Promise<Buffer | undefined> {
+  try {
+    const path = filePath || (await FileDialog.getFilePath())
+    if (path) return readFileSync(path)
+  } catch (err) {
+    console.error("Error opening file:", err)
+  }
+}
