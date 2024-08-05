@@ -83,7 +83,7 @@ export type PTZInput = {
   input: string
 }
 
-export type Scene = {
+export type SceneProps = {
   /**
    * Section heading, really.
    */

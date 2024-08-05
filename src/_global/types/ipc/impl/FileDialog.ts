@@ -83,7 +83,7 @@ const FileDialog = {
    * @param vmixZip vMix ZIP archive
    * @returns presets XML as a string
    */
-  async getVmixPresets(filePath?: string): Promise<any> {
+  async getVmixPreset(filePath?: string): Promise<any> {
     const path = filePath || (await FileDialog.getFilePath())
     if (!path) return
     const buffer = await getFileBuffer(path)
@@ -94,12 +94,12 @@ const FileDialog = {
   }
 }
 
+export default FileDialog
+
 type File = {
   path: string
   content: string
 }
-
-export default FileDialog
 
 async function getFileBuffer(filePath?: string): Promise<Buffer | undefined> {
   try {

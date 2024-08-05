@@ -3,23 +3,17 @@ import { contextBridge, ipcRenderer, ipcMain } from "electron"
 import type { API } from "./types/api/API"
 import type { IPC } from "./types/ipc/IPC"
 import type { IPCChannelAction, InferChannelActionType } from "./types/ipc/channels"
-import { TIME } from "./types/time/TIME"
+import { Time } from "./types/ipc/impl/Time"
 
 if (!globalThis.API) globalThis.API = initAPI()
 if (!globalThis.IPC) globalThis.IPC = initIPC()
-if (!globalThis.Sleep) globalThis.Sleep = initSleep()
-if (!globalThis.TIME) globalThis.TIME = TIME
-
-function initSleep(): typeof Sleep {
-  return async (amount, unit = TIME.Milliseconds) => {
-    await new Promise((resolve) => setTimeout(resolve, amount * unit.valueOf()))
-  }
-}
+if (!globalThis.Time) globalThis.Time = Time
+if (!globalThis.Sleep) globalThis.Sleep = Time.Sleep
 
 function initAPI(): API {
   return {
     Function: async (functionName, params) => {
-      console.log(`Function: ${functionName}`, params)
+      console.log("API.Function:", functionName, params)
     }
   }
 }

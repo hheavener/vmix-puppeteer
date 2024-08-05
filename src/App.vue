@@ -1,9 +1,9 @@
 <script setup lang="ts">
+import { ref } from "vue"
 import CounterButton from "./components/CounterButton.vue"
 import MouseTracker from "./components/MouseTracker.vue"
-import FileLoader from "./components/FileLoader.vue"
 import { useCounterStore } from "./stores/counter"
-import { ref } from "vue"
+import Program from "./components/Program.vue"
 
 const counter = useCounterStore()
 const isHidden = ref(false)
@@ -41,9 +41,9 @@ const toggleIsHidden = () => (isHidden.value = !isHidden.value)
       </nav>
     </div> -->
   </header>
-  <!-- x: {{ x }} y:{{ y }} -->
 
-  <FileLoader />
+  <!-- <FileLoader /> -->
+  <Program />
 
   <!-- <RouterView /> -->
 </template>

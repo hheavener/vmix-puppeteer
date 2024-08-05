@@ -1,3 +1,4 @@
+import type { TimeUnit } from "../ipc/impl/Time"
 import FunctionReference from "./reference"
 
 export type VmixFunctionName = (typeof FunctionReference)[number]["name"]
@@ -23,6 +24,6 @@ export type VmixFunctionCall = {
    */
   sleep?: {
     amount: number
-    unit: Time
+    unit: TimeUnit
   }
 }

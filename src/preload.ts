@@ -18,7 +18,11 @@ IPC.exposeInMainWorld("FileDialog", {
   getFile: IPC.rendererInvoke("FileDialog:getFile"),
   getFilePath: IPC.rendererInvoke("FileDialog:getFilePath"),
   getFileContent: IPC.rendererInvoke("FileDialog:getFileContent"),
-  getVmixPresets: IPC.rendererInvoke("FileDialog:getVmixPresets")
+  getVmixPreset: IPC.rendererInvoke("FileDialog:getVmixPreset")
 })
+
+IPC.exposeInMainWorld("API", API)
+IPC.exposeInMainWorld("Time", Time)
+IPC.exposeInMainWorld("Sleep", Time.Sleep)
 
 // ipcRenderer.on("test-event", (e, data) => console.log(data))
