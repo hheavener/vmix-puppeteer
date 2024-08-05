@@ -5,6 +5,8 @@ import { app, BrowserWindow, Menu, session } from "electron"
 import path from "path"
 import menu from "./menus/_menu"
 import FileDialog from "@@/types/ipc/impl/FileDialog"
+import { Util } from "@@/types/ipc/impl/Util"
+import { LogStream } from "@@/types/ipc/impl/LogStream"
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) app.quit()
@@ -65,3 +67,7 @@ IPC.mainHandle("FileDialog:getFile", (_, [path, encoding]) => FileDialog.getFile
 IPC.mainHandle("FileDialog:getFilePath", FileDialog.getFilePath)
 IPC.mainHandle("FileDialog:getFileContent", (_, [path]) => FileDialog.getFileContent(path))
 IPC.mainHandle("FileDialog:getVmixPreset", (_, [zip]) => FileDialog.getVmixPreset(zip))
+IPC.mainHandle("Util:format", (_, [fmt, ...args]) => Util.format(fmt, ...args))
+IPC.mainHandle("LogStream:Push", (_, [fmt, ...args]) => LogStream.Push(fmt, ...args))
+IPC.mainHandle("LogStream:Get", LogStream.Get)
+IPC.mainHandle("LogStream:Clear", LogStream.Clear)

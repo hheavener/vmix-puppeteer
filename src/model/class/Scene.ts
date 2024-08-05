@@ -7,31 +7,33 @@ export default class ScenePlayer {
   // private prepare: PTZInput
   // private activeInput: Input
   private scene: SceneProps
+  private logStream: any[] | undefined
 
   public title: string
   public disabled: boolean
   public actions?: VmixFunctionCall[]
 
-  constructor(scene: SceneProps) {
+  constructor(scene: SceneProps, logStream?: any[]) {
     this.scene = scene
     this.title = scene.title
     this.disabled = !!scene.disabled
     this.actions = scene.actions
+    this.logStream = logStream
   }
 
   // TODO: Input needs a class model
   public GetActiveInput(): Input {
-    console.log("ScenePlayer:GetActiveInput")
+    this._log("ScenePlayer::GetActiveInput")
     return this.scene.activeInput
   }
 
   public async OnTransitioned(): Promise<void> {
-    console.log("ScenePlayer:OnTransitioned")
+    this._log("ScenePlayer::OnTransitioned")
     await callFunctions(this.scene.onTransitioned)
   }
 
   public async Prepare(): Promise<void> {
-    console.log("ScenePlayer:Prepare")
+    this._log("ScenePlayer::Prepare")
     // TODO: Query the save file to determine if
     // PTZ Input source is the same as the active
     // camera. If it is, don't do it.
@@ -54,20 +56,51 @@ export default class ScenePlayer {
   }
 
   public async WillTransition(): Promise<void> {
-    console.log("ScenePlayer:WillTransition")
+    this._log("ScenePlayer::WillTransition")
     await callFunctions(this.scene.willTransition)
   }
 
   public async Transition(): Promise<void> {
-    console.log("ScenePlayer:Transition")
+    this._log("ScenePlayer::Transition")
     if (this.scene.transition) {
       await callFunction(this.scene.transition)
     }
   }
 
+  public _getRaw() {
+    // this._log("ScenePlayer:_getRaw")
+    return this.scene
+  }
+
   public _getJSON(indent = 2) {
-    console.log("ScenePlayer:_getJSON")
+    // this._log("ScenePlayer:_getJSON")
     return JSON.stringify(this.scene, null, indent)
+  }
+
+  public _getPrintable(indent = 2) {
+    // this._log("ScenePlayer:_getPrintable")
+
+    let output = ""
+    const recurse = (root: Object = this.scene, level = 0) => {
+      Object.entries(root).forEach(([key, val]) => {
+        output += " ".repeat(level * indent)
+        if (["string", "number", "boolean"].includes(typeof val)) {
+          output += `${key}: ${val}\n`
+        } else {
+          output += `${key}:\n`
+          output += recurse(val, level + 1)
+        }
+      })
+    }
+    return output
+  }
+
+  private async _log(fmt: string, ...args: any[]): Promise<void> {
+    if (this.logStream) {
+      const format = await window.Util.format(fmt, ...args)
+      console.log("Pushing to log stream...", format)
+      this.logStream.push(format)
+    } else console.log(...args)
   }
 }
 

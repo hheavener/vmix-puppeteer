@@ -1,16 +1,19 @@
 import type { API } from "../api/API"
+import type { IPC } from "./IPC"
 import FileDialog from "./impl/FileDialog"
+import type { LogStream } from "./impl/LogStream"
 import Time from "./impl/Time"
+import type { Util } from "./impl/Util"
 
 type FunctionType = (...params: any[]) => unknown
 type AsyncFunctionType = (...params: any[]) => Promise<unknown>
-type ChannelMember = string | boolean | number | FunctionType | AsyncFunctionType
+type ChannelMember = string | boolean | number | any[] | FunctionType | AsyncFunctionType
 
 type Channel = Record<string, ChannelMember>
 /**
  * Infers the available list of actions from all channels.
  */
-type ChannelProperties<T extends Record<string, Channel | FunctionType>> = {
+type ChannelProperties<T extends Record<string, Channel | ChannelMember>> = {
   [K in keyof T]: `${string & K}:${keyof T[K] & string}`
 }[keyof T]
 /**
@@ -26,8 +29,12 @@ export type InferChannelActionType<T extends IPCChannelAction> =
 export type IPCChannel = keyof AllIPCChannels
 export type IPCChannelAction = ChannelProperties<AllIPCChannels>
 export type AllIPCChannels = {
-  FileDialog: typeof FileDialog
-  Time: typeof Time
+  IPC: IPC
   API: API
+  Util: typeof Util
+  Time: typeof Time
   Sleep: typeof Time.Sleep
+  FileDialog: typeof FileDialog
+  LogStream: typeof LogStream
+  Logs: any[]
 }

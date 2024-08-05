@@ -3,6 +3,8 @@ import type { APP } from "./types/app/APP"
 import type { IPC } from "./types/ipc/IPC"
 import type FileDialog from "./types/ipc/impl/FileDialog"
 import { Time as TimeImpl } from "./types/ipc/impl/Time"
+import type { Util } from "./types/ipc/impl/Util"
+import type { LogStream as LogStreamImpl } from "./types/ipc/impl/LogStream"
 
 /* eslint-disable no-var */
 export {}
@@ -26,10 +28,15 @@ declare global {
   var console: NodeJS.Console
   var Time: typeof TimeImpl
   var Sleep: typeof Time.Sleep
+  var LogStream: typeof LogStreamImpl
+  var Logs: string[]
 
   interface Window {
     FileDialog: typeof FileDialog
+    LogStream: typeof LogStreamImpl
+    Logs: string[]
     Time: typeof TimeImpl
+    Util: typeof Util
   }
 
   interface Console {

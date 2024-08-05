@@ -1,4 +1,4 @@
-import { ref, type Ref } from "vue"
+import { computed, ref, type Ref } from "vue"
 import { defineStore } from "pinia"
 import type { SceneProps } from "@@/types/api/scene"
 import Program from "@/model/class/Program"
@@ -8,25 +8,28 @@ export const useProgramStore = defineStore("program", () => {
   let program: Program
   let vMixPreset: Ref<Object | null> = ref(null)
   let scene: Ref<ScenePlayer | undefined> = ref(undefined)
+  let scenes: Ref<SceneProps[] | undefined> = ref([])
   let programLoaded = ref(false)
+  let logs = computed(() => window.Logs)
 
   async function loadProgram(): Promise<void> {
     // TODO: load saved program
+    scenes.value = MockProgram
     program = new Program(MockProgram)
     programLoaded.value = true
   }
 
   async function next() {
     console.log("ProgramStore:next::start")
+    scene.value = program.GetNextScene() || undefined
     await program.MoveToNextScene()
-    scene.value = program.GetCurrentScene()
     console.log("ProgramStore:next::end")
   }
 
   async function previous() {
     console.log("ProgramStore:previous::start")
+    scene.value = program.GetPreviousScene() || undefined
     await program.MoveToPreviousScene()
-    scene.value = program.GetCurrentScene()
     console.log("ProgramStore:previous::end")
   }
 
@@ -36,7 +39,17 @@ export const useProgramStore = defineStore("program", () => {
     if (p) vMixPreset.value = p
   }
 
-  return { vMixPreset, programLoaded, loadVmixPreset, loadProgram, next, previous, scene }
+  return {
+    vMixPreset,
+    programLoaded,
+    loadVmixPreset,
+    loadProgram,
+    next,
+    previous,
+    scenes,
+    scene,
+    logs
+  }
 })
 
 const MockProgram: SceneProps[] = [
