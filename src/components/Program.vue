@@ -14,13 +14,7 @@ const loadProgram = async () => await store.loadProgram()
   <div v-else class="program">
     <div class="button-container">
       <button @click="store.previous"><< Previous</button>
-      <div>
-        <button @click="store.clearLogs">Clear Logs</button>
-        <!-- <button @click="logLogs">Update Logs</button> -->
-      </div>
-      <!-- <button @click="store.program.GetPreviousScene">Previous?</button>
-      <button @click="store.program.GetCurrentScene">Current?</button>
-      <button @click="store.program.GetNextScene">Next?</button> -->
+      <button @click="store.clearLogs">Clear Logs</button>
       <button @click="store.next">Next >></button>
     </div>
     <div class="program-container">
@@ -31,10 +25,7 @@ const loadProgram = async () => await store.loadProgram()
         </li>
       </ul>
       <div class="scroll">
-        <!-- <div class="program-json"> -->
-        <!-- <code>{{ store.scene?._getPrintable() }}</code> -->
-        <JsonViewer v-if="store.scene" :json="store.scene?._getRaw()" />
-        <!-- </div> -->
+        <JsonViewer v-if="store.scene" :json="store.scene?.GetSceneProps()" />
       </div>
       <div class="logs">
         <ul>

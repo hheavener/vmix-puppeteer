@@ -69,35 +69,11 @@ export default class ScenePlayer {
     await this._log("\n")
   }
 
-  public _getRaw() {
-    // this._log("ScenePlayer:_getRaw")
+  public GetSceneProps(): SceneProps {
     return this.scene
   }
 
-  public _getJSON(indent = 2) {
-    // this._log("ScenePlayer:_getJSON")
-    return JSON.stringify(this.scene, null, indent)
-  }
-
-  public _getPrintable(indent = 2) {
-    // this._log("ScenePlayer:_getPrintable")
-
-    let output = ""
-    const recurse = (root: Object = this.scene, level = 0) => {
-      Object.entries(root).forEach(([key, val]) => {
-        output += " ".repeat(level * indent)
-        if (["string", "number", "boolean"].includes(typeof val)) {
-          output += `${key}: ${val}\n`
-        } else {
-          output += `${key}:\n`
-          output += recurse(val, level + 1)
-        }
-      })
-    }
-    return output
-  }
-
-  async callFunction(vfc: VmixFunctionCall | VmixTransition): Promise<void> {
+  private async callFunction(vfc: VmixFunctionCall | VmixTransition): Promise<void> {
     console.log("ScenePlayer::callFunction")
     try {
       if (typeof vfc === "string") return this._log(await API.Function(vfc, {}))
@@ -112,7 +88,7 @@ export default class ScenePlayer {
     }
   }
 
-  async callFunctions(
+  private async callFunctions(
     list: VmixFunctionCall[] = [],
     delayMilliseconds: number = 1 * Time.Second
   ): Promise<void> {
