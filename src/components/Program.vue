@@ -1,13 +1,9 @@
 <script setup lang="ts">
 import { useProgramStore } from "@/stores/program"
 import JsonViewer from "./JsonViewer.vue"
-import { ref } from "vue"
 
-const logs = ref(globalThis.Logs)
 const store = useProgramStore()
 const loadProgram = async () => await store.loadProgram()
-const logLogs = async () => (logs.value = await IPC.rendererInvoke("LogStream:Get")())
-const clearLogs = async () => await IPC.rendererInvoke("LogStream:Clear")()
 </script>
 
 <template>
@@ -19,8 +15,8 @@ const clearLogs = async () => await IPC.rendererInvoke("LogStream:Clear")()
     <div class="button-container">
       <button @click="store.previous"><< Previous</button>
       <div>
-        <button @click="clearLogs">Clear Logs</button>
-        <button @click="logLogs">Update Logs</button>
+        <button @click="store.clearLogs">Clear Logs</button>
+        <!-- <button @click="logLogs">Update Logs</button> -->
       </div>
       <!-- <button @click="store.program.GetPreviousScene">Previous?</button>
       <button @click="store.program.GetCurrentScene">Current?</button>
@@ -37,13 +33,13 @@ const clearLogs = async () => await IPC.rendererInvoke("LogStream:Clear")()
       <div class="scroll">
         <!-- <div class="program-json"> -->
         <!-- <code>{{ store.scene?._getPrintable() }}</code> -->
-        <JsonViewer :json="store.scene?._getRaw()" />
+        <JsonViewer v-if="store.scene" :json="store.scene?._getRaw()" />
         <!-- </div> -->
       </div>
       <div class="logs">
-        <ol>
-          <li v-for="log in logs">{{ log }}</li>
-        </ol>
+        <ul>
+          <li v-for="log in store.logs">{{ log }}</li>
+        </ul>
       </div>
     </div>
   </div>
@@ -70,11 +66,6 @@ const clearLogs = async () => await IPC.rendererInvoke("LogStream:Clear")()
   grid-template-columns: auto 1fr minmax(auto, 350px);
   border: 1px solid white;
 
-  ul {
-    list-style: none;
-    padding: 10px 20px;
-  }
-
   .logs {
     overflow: scroll;
     white-space: nowrap;
@@ -95,5 +86,14 @@ const clearLogs = async () => await IPC.rendererInvoke("LogStream:Clear")()
 }
 .active {
   color: #00bd1c;
+}
+ul {
+  list-style: none;
+  padding: 10px 20px;
+
+  li {
+    display: block;
+    height: 24px;
+  }
 }
 </style>

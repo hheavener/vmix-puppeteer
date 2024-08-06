@@ -5,11 +5,13 @@ export default class Program {
   private program: Scene[]
   private programJson: SceneProps[]
   private activeIdx: number
+  private logDest: string[] | undefined
 
-  constructor(scenes: SceneProps[]) {
-    this.program = scenes.map((s) => new Scene(s))
+  constructor(scenes: SceneProps[], logDest?: string[]) {
+    this.program = scenes.map((s) => new Scene(s, logDest))
     this.programJson = scenes
     this.activeIdx = -1
+    this.logDest = logDest
   }
 
   public GetScenesJson(): SceneProps[] {
@@ -38,7 +40,7 @@ export default class Program {
   }
 
   public async MoveToNextScene(): Promise<Scene | undefined> {
-    console.log("Program::MoveToNextScene")
+    await this._log("Program::MoveToNextScene")
     const current = this.program[this.activeIdx]
     await current?.WillTransition()
     await current?.Transition?.()
@@ -49,7 +51,7 @@ export default class Program {
   }
 
   public async MoveToPreviousScene(): Promise<Scene | undefined> {
-    console.log("Program::MoveToPreviousScene")
+    await this._log("Program::MoveToPreviousScene")
     // TODO: Determine how to handle transition to a previous scene
     const prevIdx = this.findPreviousEnabledScene()
     if (prevIdx === null) return
@@ -57,7 +59,7 @@ export default class Program {
   }
 
   public async MoveToScene(sceneIdx: number): Promise<Scene> {
-    console.log("Program::MoveToScene[%d]", sceneIdx)
+    this._log("Program::MoveToScene[%d]", sceneIdx)
     IPC.rendererInvoke("LogStream:Push")("Program::MoveToScene[%d]", sceneIdx)
     this.activeIdx = sceneIdx
     const scene = this.program[sceneIdx]
@@ -80,6 +82,12 @@ export default class Program {
       if (!program[i].disabled) return i
     }
     return null
+  }
+
+  private async _log(fmt: string, ...params: any[]): Promise<void> {
+    if (!this.logDest) return console.log(fmt, ...params)
+    const message = await IPC.rendererInvoke("Util:format")(fmt, ...params)
+    this.logDest.push(message)
   }
 }
 

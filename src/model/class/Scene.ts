@@ -7,18 +7,18 @@ export default class ScenePlayer {
   // private prepare: PTZInput
   // private activeInput: Input
   private scene: SceneProps
-  private logStream: any[] | undefined
+  private logDest: string[] | undefined
 
   public title: string
   public disabled: boolean
   public actions?: VmixFunctionCall[]
 
-  constructor(scene: SceneProps, logStream?: any[]) {
+  constructor(scene: SceneProps, logDest?: any[]) {
     this.scene = scene
     this.title = scene.title
     this.disabled = !!scene.disabled
     this.actions = scene.actions
-    this.logStream = logStream
+    this.logDest = logDest
   }
 
   // TODO: Input needs a class model
@@ -29,7 +29,7 @@ export default class ScenePlayer {
 
   public async OnTransitioned(): Promise<void> {
     this._log("ScenePlayer::OnTransitioned")
-    await callFunctions(this.scene.onTransitioned)
+    await this.callFunctions(this.scene.onTransitioned)
   }
 
   public async Prepare(): Promise<void> {
@@ -48,7 +48,8 @@ export default class ScenePlayer {
         )
         continue
       }
-      await API.Function("PTZMoveToVirtualInputPosition", { Input: p.input })
+      this._log(await API.Function("PTZMoveToVirtualInputPosition", { Input: p.input }))
+      this._log("Sleep 3 Seconds")
       await Sleep(3, "Seconds") // TODO: move to some kind of user settings later on?
     }
     // TODO: Get reference to next scene to determine which
@@ -57,14 +58,15 @@ export default class ScenePlayer {
 
   public async WillTransition(): Promise<void> {
     this._log("ScenePlayer::WillTransition")
-    await callFunctions(this.scene.willTransition)
+    await this.callFunctions(this.scene.willTransition)
   }
 
   public async Transition(): Promise<void> {
     this._log("ScenePlayer::Transition")
     if (this.scene.transition) {
-      await callFunction(this.scene.transition)
+      await this.callFunction(this.scene.transition)
     }
+    await this._log("\n")
   }
 
   public _getRaw() {
@@ -95,35 +97,38 @@ export default class ScenePlayer {
     return output
   }
 
-  private async _log(fmt: string, ...args: any[]): Promise<void> {
-    if (this.logStream) {
-      const format = await window.Util.format(fmt, ...args)
-      console.log("Pushing to log stream...", format)
-      this.logStream.push(format)
-    } else console.log(...args)
+  async callFunction(vfc: VmixFunctionCall | VmixTransition): Promise<void> {
+    console.log("ScenePlayer::callFunction")
+    try {
+      if (typeof vfc === "string") return this._log(await API.Function(vfc, {}))
+      await this._log(await API.Function(vfc.function, vfc.params))
+      const { amount, unit } = vfc.sleep ?? {}
+      if (amount) {
+        this._log(`Sleep ${amount} ${unit}`)
+        await Sleep(amount, unit)
+      }
+    } catch (err) {
+      console.log(err)
+    }
   }
-}
 
-async function callFunction(fc: VmixFunctionCall | VmixTransition): Promise<void> {
-  console.log("ScenePlayer:callFunction")
-  try {
-    if (typeof fc === "string") return await API.Function(fc, {})
-    console.log(fc)
-    await API.Function(fc.function, fc.params)
-    const { amount, unit } = fc.sleep ?? {}
-    if (amount) await Sleep(amount, unit)
-  } catch (err) {
-    console.log(err)
+  async callFunctions(
+    list: VmixFunctionCall[] = [],
+    delayMilliseconds: number = 1 * Time.Second
+  ): Promise<void> {
+    if (!list?.length) return
+    for (let func of list) {
+      await this.callFunction(func)
+      if (delayMilliseconds) {
+        this._log(`Sleep ${delayMilliseconds} Milliseconds`)
+        await Sleep(delayMilliseconds)
+      }
+    }
   }
-}
 
-async function callFunctions(
-  list: VmixFunctionCall[] = [],
-  delayMilliseconds: number = 1 * Time.Second
-): Promise<void> {
-  if (!list?.length) return
-  for (let func of list) {
-    await callFunction(func)
-    if (delayMilliseconds) await Sleep(delayMilliseconds)
+  private async _log(fmt: string, ...params: any[]): Promise<void> {
+    if (!this.logDest) return console.log(fmt, ...params)
+    const message = await IPC.rendererInvoke("Util:format")(fmt, ...params)
+    this.logDest.push(message)
   }
 }

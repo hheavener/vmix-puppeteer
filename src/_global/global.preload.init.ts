@@ -14,8 +14,9 @@ if (!globalThis.Sleep) globalThis.Sleep = Time.Sleep
 function initAPI(): API {
   return {
     Function: async (functionName, params) => {
-      IPC.rendererInvoke("LogStream:Push")("API.Function:", functionName, params)
-      console.log("API.Function:", functionName, params)
+      // IPC.rendererInvoke("LogStream:Push")("API.Function:", functionName, params)
+      return IPC.rendererInvoke("Util:format")("API.Function:", functionName, params)
+      // console.log("API.Function:", functionName, params)
     }
   }
 }
