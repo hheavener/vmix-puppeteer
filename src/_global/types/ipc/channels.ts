@@ -1,8 +1,9 @@
 import type { API } from "../api/API"
 import type { IPC } from "./IPC"
 import FileDialog from "./impl/FileDialog"
-import type { LogStream } from "./impl/LogStream"
+import XmlParser from "./impl/XmlParser"
 import Time from "./impl/Time"
+import type { LogStream } from "./impl/LogStream"
 import type { Util } from "./impl/Util"
 
 type FunctionType = (...params: any[]) => unknown
@@ -30,11 +31,12 @@ export type IPCChannel = keyof AllIPCChannels
 export type IPCChannelAction = ChannelProperties<AllIPCChannels>
 export type AllIPCChannels = {
   IPC: IPC
-  API: API
+  API: typeof API
   Util: typeof Util
   Time: typeof Time
   Sleep: typeof Time.Sleep
   FileDialog: typeof FileDialog
+  XmlParser: typeof XmlParser
   LogStream: typeof LogStream
   Logs: any[]
 }

@@ -13,10 +13,14 @@ body {
 }
 @keyframes bounce-in {
   0% {
+    height: 0;
+  }
+  10% {
     transform: scale(0);
   }
   50% {
-    transform: scale(1.25);
+    transform: scale(1.5);
+    height: 125px;
   }
   100% {
     transform: scale(1);

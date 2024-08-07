@@ -9,10 +9,18 @@
 
 a,
 .green {
-  text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
+  color: #00bd7e;
+  /* text-decoration: none;
   transition: 0.4s;
-  padding: 3px;
+  padding: 3px; */
+}
+
+.orange {
+  color: #eab658;
+}
+
+.blue {
+  color: #4988e7;
 }
 
 @media (hover: hover) {

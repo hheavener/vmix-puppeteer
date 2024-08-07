@@ -7,6 +7,7 @@ import menu from "./menus/_menu"
 import FileDialog from "@@/types/ipc/impl/FileDialog"
 import { Util } from "@@/types/ipc/impl/Util"
 import { LogStream } from "@@/types/ipc/impl/LogStream"
+import XmlParser from "@@/types/ipc/impl/XmlParser"
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) app.quit()
@@ -19,7 +20,8 @@ const createWindow = () => {
     y: windowState.y,
     width: windowState.width || 800,
     height: windowState.height || 600,
-    webPreferences: { preload: preloadScript, contextIsolation: true }
+    webPreferences: { preload: preloadScript, contextIsolation: true },
+    title: "vMix Puppeteer"
   })
   Menu.setApplicationMenu(menu)
 
@@ -39,6 +41,7 @@ const createWindow = () => {
 
 app.whenReady().then(() => {
   createWindow()
+  app.commandLine.appendSwitch("disable-features", "Autofill")
   app.on("activate", () => {
     const noWindowsOpen = BrowserWindow.getAllWindows().length === 0
     if (noWindowsOpen) createWindow()
@@ -52,7 +55,8 @@ app.whenReady().then(() => {
           "default-src 'self';",
           "img-src 'self';",
           "script-src 'self' 'unsafe-inline';",
-          "style-src-elem 'self' 'unsafe-inline';"
+          "style-src-elem 'self' 'unsafe-inline';",
+          "connect-src 'self' http://127.0.0.1:8088;"
         ].join("")
       }
     })
@@ -71,3 +75,4 @@ IPC.mainHandle("Util:format", (_, [fmt, ...args]) => Util.format(fmt, ...args))
 IPC.mainHandle("LogStream:Push", (_, [fmt, ...args]) => LogStream.Push(fmt, ...args))
 IPC.mainHandle("LogStream:Get", LogStream.Get)
 IPC.mainHandle("LogStream:Clear", LogStream.Clear)
+IPC.mainHandle("XmlParser:ParseXml", (_, [xml]) => XmlParser.ParseXml(xml))

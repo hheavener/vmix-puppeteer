@@ -1,4 +1,4 @@
-import type { API } from "./types/api/API"
+import { API as APIImpl } from "./types/api/API"
 import type { APP } from "./types/app/APP"
 import type { IPC } from "./types/ipc/IPC"
 import type FileDialog from "./types/ipc/impl/FileDialog"
@@ -22,7 +22,7 @@ declare global {
    * Directory for storing app data.
    */
   var APP_DATA_DIR: string
-  var API: API
+  var API: typeof APIImpl
   var IPC: IPC
   var APP: APP
   var console: NodeJS.Console

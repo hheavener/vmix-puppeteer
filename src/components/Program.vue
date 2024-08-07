@@ -29,7 +29,7 @@ const loadProgram = async () => await store.loadProgram()
       </div>
       <div class="logs">
         <ul>
-          <li v-for="log in store.logs">{{ log }}</li>
+          <li v-for="log in store.logs" v-html="log"></li>
         </ul>
       </div>
     </div>
@@ -56,10 +56,18 @@ const loadProgram = async () => await store.loadProgram()
   display: grid;
   grid-template-columns: auto 1fr minmax(auto, 350px);
   border: 1px solid white;
+  max-height: 70vh;
+  overflow: hidden;
 
-  .logs {
+  & > * {
+    max-height: inherit;
     overflow: scroll;
     white-space: nowrap;
+    padding: 10px 15px 20px;
+  }
+
+  .logs ul {
+    padding-left: 5px;
   }
 }
 .program-json {

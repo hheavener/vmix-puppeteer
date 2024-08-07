@@ -5,13 +5,33 @@ import Program from "./components/Program.vue"
 // const counter = useCounterStore()
 const isHidden = ref(false)
 const toggleIsHidden = () => (isHidden.value = !isHidden.value)
+const logActiveInput = async () => {
+  const inputs = await API.GetActiveInputs()
+  console.log(inputs)
+}
+const logVmixPresetJson = async () => {
+  const json = await window.FileDialog.getVmixPreset(
+    "/Users/hunter.heavener/Documents/Projects/vMix/Backup/HunterExperimentalPresets.vmixZip"
+  )
+  const vInputKeyMap: Record<string, string[]> = {}
+  json.XML.Input.forEach((i: any) => {
+    const key: string = i["@_VirtualInputKey"]
+    if (!vInputKeyMap[key]) vInputKeyMap[key] = []
+    vInputKeyMap[key].push(i["@_Title"] || i["@_OriginalTitle"])
+  })
+  console.log(json)
+}
 </script>
 
 <template>
   <header>
-    <div class="top-left-button">
+    <div class="top-left">
       <button v-if="isHidden" @click="toggleIsHidden">Show Logo</button>
       <button v-else @click="toggleIsHidden">Hide Logo</button>
+    </div>
+    <div class="top-right">
+      <button @click="logActiveInput">Log Active Input</button>
+      <button @click="logVmixPresetJson">Log vMix Preset JSON</button>
     </div>
     <!-- <MouseTracker class="mouse-tracker" /> -->
     <div class="logo-wrapper">
@@ -61,16 +81,16 @@ header {
     height: 150px;
   } */
 
-  .top-left-button {
+  .top-left {
     position: fixed;
     left: 20px;
     top: 20px;
   }
 
-  .mouse-tracker {
+  .top-right {
     position: fixed;
     right: 20px;
-    top: 10px;
+    top: 20px;
   }
 
   .logo-wrapper {

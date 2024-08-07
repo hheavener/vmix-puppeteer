@@ -25,6 +25,7 @@ IPC.exposeInMainWorld("FileDialog", {
   getFileContent: IPC.rendererInvoke("FileDialog:getFileContent"),
   getVmixPreset: IPC.rendererInvoke("FileDialog:getVmixPreset")
 })
+IPC.exposeInMainWorld("XmlParser", { ParseXml: IPC.rendererInvoke("XmlParser:ParseXml") })
 IPC.exposeInMainWorld("Util", { format: IPC.rendererInvoke("Util:format") })
 IPC.exposeInMainWorld("LogStream", {
   Push: IPC.rendererInvoke("LogStream:Push"),

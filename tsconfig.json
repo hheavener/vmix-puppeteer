@@ -25,9 +25,3 @@
   },
   "include": ["global.d.ts"]
 }
-
-// {
-//   "path": "./tsconfig.vitest.json"
-
-
-// }

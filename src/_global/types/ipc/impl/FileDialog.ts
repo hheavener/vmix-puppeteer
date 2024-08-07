@@ -1,7 +1,7 @@
 import { BrowserWindow, app, dialog } from "electron"
 import { readFileSync } from "fs"
 import AdmZip from "adm-zip"
-import VmixPreset from "@/model/class/VmixPresets"
+import VmixPreset from "@/model/class/VmixPreset"
 
 const FileDialog = {
   /**

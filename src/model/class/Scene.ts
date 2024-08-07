@@ -7,24 +7,29 @@ export default class ScenePlayer {
   // private prepare: PTZInput
   // private activeInput: Input
   private scene: SceneProps
+  private virtualKeyMap: Record<string, string>
   private logDest: string[] | undefined
 
   public title: string
   public disabled: boolean
   public actions?: VmixFunctionCall[]
 
-  constructor(scene: SceneProps, logDest?: any[]) {
+  constructor(scene: SceneProps, virtualKeyMap: Record<string, string>, logDest?: any[]) {
     this.scene = scene
+    this.virtualKeyMap = virtualKeyMap
     this.title = scene.title
     this.disabled = !!scene.disabled
     this.actions = scene.actions
     this.logDest = logDest
   }
 
-  // TODO: Input needs a class model
-  public GetActiveInput(): Input {
-    this._log("ScenePlayer::GetActiveInput")
-    return this.scene.activeInput
+  public async TransitionIn(): Promise<void> {
+    this._log("ScenePlayer::TransitionIn")
+    const inputs = await API.GetActiveInputs()
+    const sceneInputTitle = this.scene.activeInput.title
+    if (sceneInputTitle !== inputs.output.title) {
+      this._log(await API.Function("Merge", { Input: sceneInputTitle }))
+    }
   }
 
   public async OnTransitioned(): Promise<void> {
@@ -34,26 +39,32 @@ export default class ScenePlayer {
 
   public async Prepare(): Promise<void> {
     this._log("ScenePlayer::Prepare")
-    // TODO: Query the save file to determine if
-    // PTZ Input source is the same as the active
-    // camera. If it is, don't do it.
+    console.log(this.virtualKeyMap)
     const { prepare } = this.scene
     if (!prepare?.length) return
-    for (let p of prepare) {
-      const activeSource = this.scene.activeInput.source
-      if (p.source === activeSource) {
-        console.yellow(
-          `WARNING: Cannot prepare input '${p.input}' which uses 
-          the same PTZ optic as the active input '${activeSource}'`
-        )
+
+    const activeTitle = this.scene.activeInput.title
+    for (let i = 0; i < prepare.length; i++) {
+      const prepareTitle = prepare[i].input
+      const activeKey = this.virtualKeyMap[activeTitle]
+      const prepareKey = this.virtualKeyMap[prepareTitle]
+      console.log({ activeTitle, prepareTitle })
+      console.log({ activeKey, prepareKey })
+
+      if (activeKey === prepareKey) {
+        this._log(`WARNING: Cannot prepare input '${prepareTitle}' which uses 
+          the same PTZ optic as the active input '${activeTitle}'`)
         continue
       }
-      this._log(await API.Function("PTZMoveToVirtualInputPosition", { Input: p.input }))
-      this._log("Sleep 3 Seconds")
-      await Sleep(3, "Seconds") // TODO: move to some kind of user settings later on?
+
+      this._log(await API.Function("PTZMoveToVirtualInputPosition", { Input: prepareTitle }))
+
+      if (i < prepare.length - 1) {
+        this._log("Sleep 3 Seconds")
+        await Sleep(3, "Seconds")
+        this.logDest?.pop()
+      } // TODO: move to some kind of user settings later on?
     }
-    // TODO: Get reference to next scene to determine which
-    // camera should be active in the preview
   }
 
   public async WillTransition(): Promise<void> {
@@ -61,12 +72,18 @@ export default class ScenePlayer {
     await this.callFunctions(this.scene.willTransition)
   }
 
-  public async Transition(): Promise<void> {
-    this._log("ScenePlayer::Transition")
+  public async TransitionOut(): Promise<void> {
+    this._log("ScenePlayer::TransitionOut")
     if (this.scene.transition) {
       await this.callFunction(this.scene.transition)
     }
     await this._log("\n")
+  }
+
+  // TODO: Input needs a class model?
+  public GetActiveInput(): Input {
+    this._log("ScenePlayer::GetActiveInput")
+    return this.scene.activeInput
   }
 
   public GetSceneProps(): SceneProps {
@@ -82,6 +99,7 @@ export default class ScenePlayer {
       if (amount) {
         this._log(`Sleep ${amount} ${unit}`)
         await Sleep(amount, unit)
+        this.logDest?.pop()
       }
     } catch (err) {
       console.log(err)
@@ -98,13 +116,18 @@ export default class ScenePlayer {
       if (delayMilliseconds) {
         this._log(`Sleep ${delayMilliseconds} Milliseconds`)
         await Sleep(delayMilliseconds)
+        this.logDest?.pop()
       }
     }
   }
 
   private async _log(fmt: string, ...params: any[]): Promise<void> {
     if (!this.logDest) return console.log(fmt, ...params)
-    const message = await IPC.rendererInvoke("Util:format")(fmt, ...params)
+    const color = fmt.startsWith("API") ? "blue" : "orange"
+    const message = await IPC.rendererInvoke("Util:format")(
+      `<span class="${color}">${fmt}</span>`,
+      ...params
+    )
     this.logDest.push(message)
   }
 }

@@ -148,3 +148,8 @@ export type SceneProps = {
    */
   startTime?: Date
 }
+
+export type ProgramProps = {
+  vmixPreset: string
+  scenes: SceneProps[]
+}
