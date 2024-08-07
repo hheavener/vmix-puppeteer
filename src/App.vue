@@ -74,7 +74,7 @@ header {
   line-height: 1.5;
   max-height: 100vh;
   text-align: center;
-  margin-bottom: 25px;
+  margin-bottom: 60px;
   /* border-bottom: 1px solid; */
 
   /* .h-125 {

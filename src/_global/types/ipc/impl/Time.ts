@@ -15,8 +15,9 @@ export type TimeUnit = keyof typeof TimeUnits
 
 export const Time = {
   ...TimeUnits,
-  Sleep: async (amount: number, unit: TimeUnit = "Milliseconds"): Promise<void> => {
+  Sleep: async (amount: number, unit: TimeUnit = "Milliseconds"): Promise<string> => {
     await new Promise((resolve) => setTimeout(resolve, amount * Time[unit]))
+    return IPC.rendererInvoke("Util:format")("Sleep:", amount, unit)
   }
 } as const
 

@@ -1,9 +1,40 @@
 <script setup lang="ts">
 import { useProgramStore } from "@/stores/program"
 import JsonViewer from "./JsonViewer.vue"
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/shadcn/ui/resizable"
+import { watch } from "vue"
 
 const store = useProgramStore()
 const loadProgram = async () => await store.loadProgram()
+
+// TODO: Move logs container into separate component
+function smoothScrollToBottom() {
+  const container = document.querySelector("[data-panel-id='log-container']")
+  if (!container) return
+  const targetScrollTop = container.scrollHeight
+  const startScrollTop = container.scrollTop
+  const duration = 2000 // Duration in milliseconds
+  let startTime: number | null = null
+
+  function animateScroll(currentTime: number) {
+    if (startTime === null) startTime = currentTime
+    const elapsedTime = currentTime - startTime
+    const progress = Math.min(elapsedTime / duration, 1)
+    container!.scrollTop =
+      startScrollTop + (targetScrollTop - startScrollTop) * easeInOutQuad(progress)
+
+    if (elapsedTime < duration) requestAnimationFrame(animateScroll)
+    else container!.scrollTop = targetScrollTop // Ensure it’s exactly at the bottom
+  }
+  requestAnimationFrame(animateScroll)
+}
+
+// Easing function for smooth animation
+function easeInOutQuad(t: number) {
+  return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t
+}
+
+watch(store.logs, smoothScrollToBottom, { deep: true })
 </script>
 
 <template>
@@ -24,14 +55,21 @@ const loadProgram = async () => await store.loadProgram()
           <div v-else>{{ scene.title }}</div>
         </li>
       </ul>
-      <div class="scroll">
-        <JsonViewer v-if="store.scene" :json="store.scene?.GetSceneProps()" />
-      </div>
-      <div class="logs">
-        <ul>
-          <li v-for="log in store.logs" v-html="log"></li>
-        </ul>
-      </div>
+      <ResizablePanelGroup id="resize-group" direction="horizontal">
+        <ResizablePanel :min-size="10" collapsible>
+          <!-- <div class="scroll"> -->
+          <JsonViewer v-if="store.scene" :json="store.scene?.GetSceneProps()" />
+          <!-- </div> -->
+        </ResizablePanel>
+        <ResizableHandle />
+        <ResizablePanel :min-size="10" collapsible id="log-container">
+          <!-- <div class="logs"> -->
+          <ul>
+            <li v-for="(log, idx) in store.logs" :key="idx" v-html="log"></li>
+          </ul>
+          <!-- </div> -->
+        </ResizablePanel>
+      </ResizablePanelGroup>
     </div>
   </div>
 </template>
@@ -54,22 +92,28 @@ const loadProgram = async () => await store.loadProgram()
 }
 .program-container {
   display: grid;
-  grid-template-columns: auto 1fr minmax(auto, 350px);
+  grid-template-columns: auto 1fr;
   border: 1px solid white;
-  max-height: 70vh;
+  height: 70vh;
   overflow: hidden;
 
-  & > * {
+  & > [data-panel-group-id="resize-group"] > div:nth-of-type(odd) {
     max-height: inherit;
-    overflow: scroll;
+    overflow: scroll !important;
     white-space: nowrap;
-    padding: 10px 15px 20px;
-  }
+    height: 70vh;
+    border-left: 1px solid;
+    & > * {
+      padding: 10px 15px 20px;
+    }
 
-  .logs ul {
-    padding-left: 5px;
+    /* ul {
+      padding: 0;
+      padding-left: 5px;
+    } */
   }
 }
+
 .program-json {
   border: 1px solid gray;
   height: auto;

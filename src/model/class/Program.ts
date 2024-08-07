@@ -67,7 +67,8 @@ export default class Program {
   }
 
   public async MoveToScene(sceneIdx: number): Promise<Scene> {
-    this._log("Program::MoveToScene[%d]", sceneIdx)
+    this._log("\n")
+    this._log("<b>Program::MoveToScene[%d]</b> - %s", sceneIdx + 1, this.scenes[sceneIdx].title)
     this.activeIdx = sceneIdx
     const scene = this.scenes[sceneIdx]
     await scene.TransitionIn()

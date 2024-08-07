@@ -3,6 +3,10 @@ body {
   margin: auto;
   max-width: 38rem;
   padding: 2rem;
+
+  b {
+    font-weight: bold !important;
+  }
 }
 
 .bounce-enter-active {

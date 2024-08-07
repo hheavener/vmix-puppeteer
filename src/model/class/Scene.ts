@@ -48,8 +48,6 @@ export default class ScenePlayer {
       const prepareTitle = prepare[i].input
       const activeKey = this.virtualKeyMap[activeTitle]
       const prepareKey = this.virtualKeyMap[prepareTitle]
-      console.log({ activeTitle, prepareTitle })
-      console.log({ activeKey, prepareKey })
 
       if (activeKey === prepareKey) {
         this._log(`WARNING: Cannot prepare input '${prepareTitle}' which uses 
@@ -58,12 +56,7 @@ export default class ScenePlayer {
       }
 
       this._log(await API.Function("PTZMoveToVirtualInputPosition", { Input: prepareTitle }))
-
-      if (i < prepare.length - 1) {
-        this._log("Sleep 3 Seconds")
-        await Sleep(3, "Seconds")
-        this.logDest?.pop()
-      } // TODO: move to some kind of user settings later on?
+      if (i < prepare.length - 1) this._log(await Sleep(3, "Seconds")) // TODO: move to some kind of user settings later on?
     }
   }
 
@@ -77,7 +70,6 @@ export default class ScenePlayer {
     if (this.scene.transition) {
       await this.callFunction(this.scene.transition)
     }
-    await this._log("\n")
   }
 
   // TODO: Input needs a class model?
@@ -96,11 +88,7 @@ export default class ScenePlayer {
       if (typeof vfc === "string") return this._log(await API.Function(vfc, {}))
       await this._log(await API.Function(vfc.function, vfc.params))
       const { amount, unit } = vfc.sleep ?? {}
-      if (amount) {
-        this._log(`Sleep ${amount} ${unit}`)
-        await Sleep(amount, unit)
-        this.logDest?.pop()
-      }
+      if (amount) this._log(await Sleep(amount, unit))
     } catch (err) {
       console.log(err)
     }
@@ -113,11 +101,7 @@ export default class ScenePlayer {
     if (!list?.length) return
     for (let func of list) {
       await this.callFunction(func)
-      if (delayMilliseconds) {
-        this._log(`Sleep ${delayMilliseconds} Milliseconds`)
-        await Sleep(delayMilliseconds)
-        this.logDest?.pop()
-      }
+      if (delayMilliseconds) this._log(await Sleep(delayMilliseconds))
     }
   }
 
