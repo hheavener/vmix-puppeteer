@@ -40,7 +40,7 @@ export const useProgramStore = defineStore("program", () => {
   }
 
   function clearLogs() {
-    logs.value = []
+    logs.value.length = 0
   }
 
   return {

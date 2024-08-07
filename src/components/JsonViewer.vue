@@ -39,6 +39,8 @@ function formatJson(obj) {
   font-family: monospace;
   white-space: pre-wrap;
   overflow-x: scroll;
+  scrollbar-width: none !important;
+  height: 100%;
 }
 .blue {
   color: blue;

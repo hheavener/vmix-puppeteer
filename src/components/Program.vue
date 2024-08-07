@@ -99,10 +99,14 @@ watch(store.logs, smoothScrollToBottom, { deep: true })
 
   & > [data-panel-group-id="resize-group"] > div:nth-of-type(odd) {
     max-height: inherit;
-    overflow: scroll !important;
-    white-space: nowrap;
     height: 70vh;
     border-left: 1px solid;
+    white-space: nowrap;
+    overflow: scroll !important;
+    scrollbar-width: none !important; /* For Firefox */
+    &::-webkit-scrollbar {
+      display: none; /* Hide scrollbars in WebKit browsers */
+    }
     & > * {
       padding: 10px 15px 20px;
     }

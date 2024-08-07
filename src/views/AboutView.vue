@@ -1,12 +1,12 @@
+<!-- <script setup lang="ts">
+import CounterButton from "@/components/CounterButton.vue"
+</script>
+
 <template>
   <div class="about">
     <CounterButton />
   </div>
 </template>
-
-<script setup lang="ts">
-import CounterButton from "@/components/CounterButton.vue"
-</script>
 
 <style>
 @media (min-width: 1024px) {
@@ -16,4 +16,4 @@ import CounterButton from "@/components/CounterButton.vue"
     align-items: center;
   }
 }
-</style>
+</style> -->
