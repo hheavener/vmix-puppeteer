@@ -1,6 +1,6 @@
 import { ref, type Ref } from "vue"
 import { defineStore } from "pinia"
-import type { ProgramProps, SceneProps } from "@@/types/api/scene"
+import type { ProgramProps, SceneProps } from "@/model/types/scene"
 import Program from "@/model/class/Program"
 import type ScenePlayer from "@/model/class/Scene"
 import ProgramBuilder from "@/model/class/ProgramBuilder"

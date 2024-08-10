@@ -1,4 +1,4 @@
-import type { ProgramProps, SceneProps } from "@@/types/api/scene"
+import type { ProgramProps, SceneProps } from "@/model/types/scene"
 import Scene from "./Scene"
 
 export default class Program {

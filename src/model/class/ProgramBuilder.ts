@@ -1,4 +1,4 @@
-import type { ProgramProps } from "@@/types/api/scene"
+import type { ProgramProps } from "@/model/types/scene"
 import Scene from "./Scene"
 import Program from "./Program"
 

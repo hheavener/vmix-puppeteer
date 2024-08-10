@@ -1,5 +1,5 @@
 import type { VmixFunction, VmixFunctionName } from "./VmixFunction"
-import type { VmixTransition } from "./scene"
+import type { VmixTransition } from "@/model/types/scene"
 
 // export type API = {
 //   /**
@@ -54,7 +54,7 @@ export const API = {
    * @returns
    */
   GetActiveInputs: async (): Promise<ActiveInputs> => {
-    const res = await fetch("http://127.0.0.1:8088/API", {
+    const res = await fetch(window.API_URL, {
       headers: { "Content-Type": "application/xml", Accept: "application/xml" }
     }).catch((err) => console.log(err))
 

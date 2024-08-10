@@ -32,6 +32,7 @@ export type IPCChannelAction = ChannelProperties<AllIPCChannels>
 export type AllIPCChannels = {
   IPC: IPC
   API: typeof API
+  API_URL: string
   Util: typeof Util
   Time: typeof Time
   Sleep: typeof Time.Sleep

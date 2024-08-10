@@ -22,6 +22,7 @@ declare global {
    * Directory for storing app data.
    */
   var APP_DATA_DIR: string
+  var API_URL: string
   var API: typeof APIImpl
   var IPC: IPC
   var APP: APP

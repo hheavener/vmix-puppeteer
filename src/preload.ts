@@ -16,6 +16,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
 IPC.exposeInMainWorld("IPC", IPC)
 IPC.exposeInMainWorld("API", API)
+IPC.exposeInMainWorld("API_URL", globalThis.API_URL)
 IPC.exposeInMainWorld("Time", Time)
 IPC.exposeInMainWorld("Sleep", Time.Sleep)
 IPC.exposeInMainWorld("Logs", Logs)

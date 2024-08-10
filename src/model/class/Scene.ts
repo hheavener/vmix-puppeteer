@@ -1,5 +1,5 @@
 import { type VmixFunctionCall } from "@@/types/api/VmixFunction"
-import { type Input, type SceneProps, type VmixTransition } from "@@/types/api/scene"
+import { type Input, type SceneProps, type VmixTransition } from "@/model/types/scene"
 import Time from "@@/types/ipc/impl/Time"
 
 export default class ScenePlayer {
