@@ -24,22 +24,23 @@ export default class ScenePlayer {
   }
 
   public async TransitionIn(): Promise<void> {
-    this._log("ScenePlayer::TransitionIn")
+    this._log("ScenePlayer:", "TransitionIn")
     const inputs = await API.GetActiveInputs()
     const sceneInputTitle = this.scene.activeInput.title
     if (sceneInputTitle !== inputs.output.title) {
-      this._log(await API.Function("Merge", { Input: sceneInputTitle }))
+      await API.Function("Merge", { Input: sceneInputTitle }, (fmt, ...args) =>
+        this._log(fmt, ...args)
+      )
     }
   }
 
   public async OnTransitioned(): Promise<void> {
-    this._log("ScenePlayer::OnTransitioned")
+    this._log("ScenePlayer:", "OnTransitioned")
     await this.callFunctions(this.scene.onTransitioned)
   }
 
   public async Prepare(): Promise<void> {
-    this._log("ScenePlayer::Prepare")
-    console.log(this.virtualKeyMap)
+    this._log("ScenePlayer:", "Prepare")
     const { prepare } = this.scene
     if (!prepare?.length) return
 
@@ -55,7 +56,9 @@ export default class ScenePlayer {
         continue
       }
 
-      this._log(await API.Function("PTZMoveToVirtualInputPosition", { Input: prepareTitle }))
+      await API.Function("PTZMoveToVirtualInputPosition", { Input: prepareTitle }, (fmt, ...args) =>
+        this._log(fmt, ...args)
+      )
       if (i < prepare.length - 1) this._log(await Sleep(3, "Seconds")) // TODO: move to some kind of user settings later on?
     }
   }
@@ -66,7 +69,7 @@ export default class ScenePlayer {
   }
 
   public async TransitionOut(): Promise<void> {
-    this._log("ScenePlayer::TransitionOut")
+    this._log("ScenePlayer:", "TransitionOut")
     if (this.scene.transition) {
       await this.callFunction(this.scene.transition)
     }
@@ -74,7 +77,7 @@ export default class ScenePlayer {
 
   // TODO: Input needs a class model?
   public GetActiveInput(): Input {
-    this._log("ScenePlayer::GetActiveInput")
+    this._log("ScenePlayer:", "GetActiveInput")
     return this.scene.activeInput
   }
 
@@ -83,10 +86,13 @@ export default class ScenePlayer {
   }
 
   private async callFunction(vfc: VmixFunctionCall | VmixTransition): Promise<void> {
-    console.log("ScenePlayer::callFunction")
+    console.log("ScenePlayer:callFunction")
     try {
-      if (typeof vfc === "string") return this._log(await API.Function(vfc, {}))
-      await this._log(await API.Function(vfc.function, vfc.params))
+      if (typeof vfc === "string") {
+        await API.Function(vfc, {}, (fmt, ...args) => this._log(fmt, ...args))
+        return
+      }
+      await API.Function(vfc.function, vfc.params, (fmt, ...args) => this._log(fmt, ...args))
       const { amount, unit } = vfc.sleep ?? {}
       if (amount) this._log(await Sleep(amount, unit))
     } catch (err) {
@@ -106,12 +112,14 @@ export default class ScenePlayer {
   }
 
   private async _log(fmt: string, ...params: any[]): Promise<void> {
-    if (!this.logDest) return console.log(fmt, ...params)
     const color = fmt.startsWith("API") ? "blue" : "orange"
-    const message = await IPC.rendererInvoke("Util:format")(
+    const message = await IPC.rendererInvoke("Util:format")(fmt, ...params)
+    const htmlMessage = await IPC.rendererInvoke("Util:format")(
       `<span class="${color}">${fmt}</span>`,
       ...params
     )
-    this.logDest.push(message)
+    console.log(fmt, ...params)
+    this.logDest?.push(htmlMessage)
+    IPC.rendererInvoke("FileDialog:debug")(message)
   }
 }

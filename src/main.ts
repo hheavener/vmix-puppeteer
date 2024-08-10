@@ -76,3 +76,5 @@ IPC.mainHandle("LogStream:Push", (_, [fmt, ...args]) => LogStream.Push(fmt, ...a
 IPC.mainHandle("LogStream:Get", LogStream.Get)
 IPC.mainHandle("LogStream:Clear", LogStream.Clear)
 IPC.mainHandle("XmlParser:ParseXml", (_, [xml]) => XmlParser.ParseXml(xml))
+IPC.mainHandle("FileDialog:debug", (_, [data]) => FileDialog.debug(data))
+IPC.mainHandle("FileDialog:getSampleApiXmlFilePath", FileDialog.getSampleApiXmlFilePath)

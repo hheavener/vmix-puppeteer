@@ -1,7 +1,11 @@
 import { BrowserWindow, app, dialog } from "electron"
-import { readFileSync } from "fs"
+import { appendFileSync, readFileSync } from "fs"
 import AdmZip from "adm-zip"
 import VmixPreset from "@/model/class/VmixPreset"
+import { Util } from "./Util"
+import path from "path"
+
+const debugFile = path.join(APP_DATA_DIR, "debug.log")
 
 const FileDialog = {
   /**
@@ -51,7 +55,12 @@ const FileDialog = {
     encoding: BufferEncoding = "utf8"
   ): Promise<string | undefined> {
     const path = filePath || (await FileDialog.getFilePath())
-    if (path) return (await getFileBuffer(path))?.toString(encoding)
+    if (!path) return
+
+    const buffer = await getFileBuffer(path)
+    const content = buffer?.toString(encoding)
+    debug(await Util.format("FileDialog::getFileBuffer: BufferExists -", !!content))
+    return content
   },
 
   /**
@@ -91,7 +100,9 @@ const FileDialog = {
 
     const zip = new AdmZip(buffer)
     return new VmixPreset(zip).getXmlData()
-  }
+  },
+  debug,
+  getSampleApiXmlFilePath
 }
 
 export default FileDialog
@@ -104,8 +115,29 @@ type File = {
 async function getFileBuffer(filePath?: string): Promise<Buffer | undefined> {
   try {
     const path = filePath || (await FileDialog.getFilePath())
-    if (path) return readFileSync(path)
+
+    debug(await Util.format("FileDialog::getFileBuffer: path:", path))
+    if (!path) return debug("No file path") as undefined
+    const buffer = readFileSync(path)
+    debug(
+      await Util.format("FileDialog::getFileBuffer: bufferHasContent:", !!buffer.toString("utf8"))
+    )
+    return buffer
   } catch (err) {
+    debug(await Util.format("Error opening file:", err))
     console.error("Error opening file:", err)
   }
+}
+
+function debug(data: string | Uint8Array) {
+  console.log(data)
+  appendFileSync(debugFile, `${data}\n`)
+}
+
+function getSampleApiXmlFilePath(): string {
+  const fileName = "sample.vmix.xml"
+  debug(`FileDialog::app.isPackaged=${app.isPackaged}`)
+  return app.isPackaged
+    ? path.join(process.resourcesPath, fileName)
+    : path.join("src/resources", fileName)
 }

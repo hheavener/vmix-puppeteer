@@ -94,11 +94,13 @@ export default class Program {
   }
 
   private async _log(fmt: string, ...params: any[]): Promise<void> {
-    if (!this.logDest) return console.log(fmt, ...params)
-    const message = await IPC.rendererInvoke("Util:format")(
+    const message = await IPC.rendererInvoke("Util:format")(fmt, ...params)
+    const htmlMessage = await IPC.rendererInvoke("Util:format")(
       `<span class="green">${fmt}</span>`,
       ...params
     )
-    this.logDest.push(message)
+    console.log(fmt, ...params)
+    this.logDest?.push(htmlMessage)
+    IPC.rendererInvoke("FileDialog:debug")(message)
   }
 }

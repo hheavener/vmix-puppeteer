@@ -33,8 +33,18 @@ export const API = {
    */
   Function: async <Name extends VmixFunctionName | VmixTransition>(
     functionName: Name,
-    params: VmixFunction["params"]
-  ): Promise<string> => IPC.rendererInvoke("Util:format")("API.Function:", functionName, params),
+    params: VmixFunction["params"],
+    logFunc?: (fmt: string, ...args: any[]) => void
+  ): Promise<string> => {
+    const msg = await IPC.rendererInvoke("Util:format")(
+      "API.Function:",
+      `Name: ${functionName}`,
+      `Params: ${params}`
+    )
+    console.log(msg)
+    logFunc?.("API.Function:", `Name = ${functionName},`, "Params =", params)
+    return msg
+  },
 
   /**
    * Queries the vMix API to see which input is
@@ -50,11 +60,13 @@ export const API = {
 
     let xml: string
     if (res?.status !== 200) {
-      // TODO: Remove this
-      const sampleXml = "/Users/hunter.heavener/Documents/Projects/vMix/v3/sample.vmix.xml"
+      // TODO: Remove this?
+      console.log("vMix API unavailable - loading sample XML...")
+      const sampleXml = await IPC.rendererInvoke("FileDialog:getSampleApiXmlFilePath")()
       xml = (await IPC.rendererInvoke("FileDialog:getFileContent")(sampleXml)) ?? ""
     } else xml = await res.text()
 
+    if (!xml) throw Error("Failed to load vMix API XML")
     const json = await IPC.rendererInvoke("XmlParser:ParseXml")(xml)
     const outputNumber = json.vmix.active
     const previewNumber = json.vmix.preview

@@ -21,6 +21,10 @@ const logVmixPresetJson = async () => {
   })
   console.log(json)
 }
+
+const testHandler = async () => {
+  console.log(await window.FileDialog.getSampleApiXmlFilePath())
+}
 </script>
 
 <template>
@@ -32,6 +36,8 @@ const logVmixPresetJson = async () => {
     <div class="top-right">
       <button @click="logActiveInput">Log Active Input</button>
       <button @click="logVmixPresetJson">Log vMix Preset JSON</button>
+      <button @click="testHandler">Test</button>
+      <!-- <button @click="logVmixPresetJson">Log vMix Preset JSON</button> -->
     </div>
     <!-- <MouseTracker class="mouse-tracker" /> -->
     <div class="logo-wrapper">

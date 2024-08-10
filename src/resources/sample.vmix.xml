@@ -1,0 +1,146 @@
+<vmix>
+    <version>27.0.0.81</version>
+    <edition>4K</edition>
+    <preset>C:\Users\firstarp\Documents\HunterExperimentalPresets.vmixZip</preset>
+    <inputs>
+        <input key="8b8008ef-6b1e-496b-8332-df951f98d5bf" number="1" type="NDI" title="SOUTH Camera" shortTitle="SOUTH Camera" state="Running" position="0" duration="0" loop="False" muted="True" volume="100" balance="0" solo="False" soloPFL="False" audiobusses="M" meterF1="0" meterF2="0" gainDb="0" selectedIndex="0">SOUTH Camera</input>
+        <input key="40ee892d-b154-477f-9f33-77a325fa58d5" number="2" type="NDI" title="REAR Camera" shortTitle="REAR Camera" state="Running" position="0" duration="0" loop="False" muted="True" volume="100" balance="0" solo="False" soloPFL="False" audiobusses="M" meterF1="0" meterF2="0" gainDb="0" selectedIndex="0">REAR Camera</input>
+        <input key="f8a38e77-9e47-4449-9f03-9f58b486269f" number="3" type="NDI" title="NORTH Camera" shortTitle="NORTH Camera" state="Running" position="0" duration="0" loop="False" muted="True" volume="100" balance="0" solo="False" soloPFL="False" audiobusses="M" meterF1="0" meterF2="0" gainDb="0" selectedIndex="0">NORTH Camera</input>
+        <input key="09d87469-2bf6-494a-b07c-fac471c95531" number="4" type="NDI" title="FRONT Camera" shortTitle="FRONT Camera" state="Running" position="0" duration="0" loop="False" muted="True" volume="100" balance="0" solo="False" soloPFL="False" audiobusses="M" meterF1="0" meterF2="0" gainDb="0" selectedIndex="0">FRONT Camera
+            <position zoomX="1.059" zoomY="1.059"/>
+        </input>
+        <input key="90c15c8b-4cb9-4088-a661-95f4ec20c7aa" number="5" type="NDI" title="Proclaim - NDI Slides" shortTitle="Proclaim - NDI Slides" state="Running" position="0" duration="0" loop="False" muted="False" volume="100" balance="0" solo="False" soloPFL="False" audiobusses="M" meterF1="0" meterF2="0" gainDb="0">Proclaim - NDI Slides</input>
+        <input key="19082e51-e084-4b2b-a1b4-38da5560c15e" number="6" type="Virtual" title="Virtual - PIP Slides" shortTitle="PIP Slides" state="Paused" position="0" duration="0" loop="False">Virtual - PIP Slides
+            <overlay index="0" key="700a12a6-fc4c-4575-9ece-c1963bab18ec">
+                <position panX="-0.7317708" panY="-0.6396295" zoomX="0.3192708" zoomY="0.3192592" x="-49" y="713" width="613" height="344.8"/>
+            </overlay>
+            <overlay index="1" key="700a12a6-fc4c-4575-9ece-c1963bab18ec">
+                <position panX="-0.7317708" panY="0.6251851" zoomX="0.3192708" zoomY="0.3192593" x="-49" y="30" width="613" height="344.8"/>
+            </overlay>
+            <overlay index="2" key="700a12a6-fc4c-4575-9ece-c1963bab18ec">
+                <position panX="0.7463541" panY="0.6251851" zoomX="0.3192707" zoomY="0.3192593" x="1370" y="30" width="613" height="344.8"/>
+            </overlay>
+            <overlay index="3" key="700a12a6-fc4c-4575-9ece-c1963bab18ec">
+                <position panX="0.7463543" panY="-0.6396295" zoomX="0.3192708" zoomY="0.3192592" x="1370" y="713" width="613" height="344.8"/>
+            </overlay>
+        </input>
+        <input key="6c5ff57e-4543-45a8-8e30-5a80b1516792" number="7" type="NDI" title="Proclaim - NDI Text" shortTitle="Proclaim - NDI Text" state="Running" position="0" duration="0" loop="False" muted="True" volume="100" balance="0" solo="False" soloPFL="False" audiobusses="M" meterF1="0" meterF2="0" gainDb="0">Proclaim - NDI Text</input>
+        <input key="52fdc028-950e-4790-a464-c91a355b59a2" number="8" type="GT" title="Stinger 1 - RED" shortTitle="Stinger 1 - RED" state="Paused" position="0" duration="0" loop="False" selectedIndex="0">Stinger 1 - RED
+            <image index="0" name="Image1.Source">C:\Users\firstarp\Pictures\FARPfulllogo.png</image>
+        </input>
+        <input key="0c471e30-1ad6-4f30-895a-c6fab88df95e" number="9" type="GT" title="Stinger 2 - BLUE" shortTitle="Stinger 2 - BLUE" state="Paused" position="0" duration="0" loop="False" selectedIndex="0">Stinger 2 - BLUE
+            <image index="0" name="Image 600px.Source">C:\Users\firstarp\Pictures\FARPfulllogo.png</image>
+        </input>
+        <input key="9976c8bc-c13e-44a1-a166-b6a0857a19e9" number="10" type="GT" title="Status Popups" shortTitle="Status Popups" state="Paused" position="0" duration="0" loop="False" selectedIndex="0">Status Popups
+            <text index="0" name="Headline.Text">Psalm 98:1-3</text>
+            <text index="1" name="Description.Text">Call to Worship</text>
+        </input>
+        <input key="84ede192-d0cb-4f0f-9a4a-9ec475fb466b" number="11" type="Colour" title="PIP Preview" shortTitle="PIP Preview" state="Paused" position="0" duration="0" loop="False">PIP Preview
+            <overlay index="0" key="700a12a6-fc4c-4575-9ece-c1963bab18ec"/>
+        </input>
+        <input key="e687a742-f359-4171-bf16-5cea8850ffd6" number="12" type="Mix" title="Mix2" shortTitle="Mix2" state="Paused" position="0" duration="0" loop="False">Mix2</input>
+        <input key="deba690b-770c-4fc0-a640-e0deaeaff152" number="13" type="Image" title="Technical Difficulties" shortTitle="Technical Difficulties" state="Paused" position="0" duration="0" loop="False">Technical Difficulties</input>
+        <input key="ebc36051-289b-48cb-887a-15fb1bdff419" number="14" type="Image" title="Stream Paused" shortTitle="Stream Paused" state="Paused" position="0" duration="0" loop="False">Stream Paused</input>
+        <input key="1157ffce-4b2e-4751-9551-8748adcce8ab" number="15" type="Image" title="Stream Ending" shortTitle="Stream Ending" state="Paused" position="0" duration="0" loop="False">Stream Ending</input>
+        <input key="24abc3b2-0e3f-4a4e-9671-5c64947168eb" number="16" type="Audio" title="Audio Line" shortTitle="Audio Line" state="Running" position="0" duration="0" loop="False" muted="False" volume="7.890479" balance="0" solo="False" soloPFL="False" audiobusses="M" meterF1="6.910723E-05" meterF2="7.201375E-05" gainDb="0">Audio Line</input>
+        <input key="868ef2b3-b68b-4133-af32-85a7e920fc8d" number="17" type="Virtual" title="PTZ - [SOUTH] - Pulpit" shortTitle="[SOUTH] - Pulpit" state="Paused" position="0" duration="0" loop="False">PTZ - [SOUTH] - Pulpit</input>
+        <input key="96ac869b-ae3a-4035-8997-4f8b53c37ce1" number="18" type="Virtual" title="PTZ - [REAR] - Pulpit" shortTitle="[REAR] - Pulpit" state="Paused" position="0" duration="0" loop="False">PTZ - [REAR] - Pulpit</input>
+        <input key="f5fa35aa-0d3b-4285-8f73-a00fd7915151" number="19" type="Virtual" title="PTZ - [NORTH] - Pulpit" shortTitle="[NORTH] - Pulpit" state="Paused" position="0" duration="0" loop="False">PTZ - [NORTH] - Pulpit</input>
+        <input key="7605d06f-c747-4f7d-868d-e93ba3ded83c" number="20" type="Virtual" title="PTZ - [SOUTH] - Lectern" shortTitle="[SOUTH] - Lectern" state="Paused" position="0" duration="0" loop="False">PTZ - [SOUTH] - Lectern</input>
+        <input key="bc874746-555c-444e-834a-c39eea66b8b5" number="21" type="Virtual" title="PTZ - [REAR] - Lectern" shortTitle="[REAR] - Lectern" state="Paused" position="0" duration="0" loop="False">PTZ - [REAR] - Lectern</input>
+        <input key="e13e4977-7af0-4230-a02b-8b687ab233eb" number="22" type="Virtual" title="PTZ - [NORTH] - Lectern" shortTitle="[NORTH] - Lectern" state="Paused" position="0" duration="0" loop="False">PTZ - [NORTH] - Lectern</input>
+        <input key="4cd0fd20-4972-4ca8-ac50-56937d719b92" number="23" type="Virtual" title="PTZ - [NORTH] - Lectern (Wide)" shortTitle="[NORTH] - Lectern (Wide)" state="Paused" position="0" duration="0" loop="False">PTZ - [NORTH] - Lectern (Wide)</input>
+        <input key="480f52f1-ab30-484b-b5ae-3c23489b325e" number="24" type="Virtual" title="PTZ - [SOUTH] - Piano" shortTitle="[SOUTH] - Piano" state="Paused" position="0" duration="0" loop="False">PTZ - [SOUTH] - Piano</input>
+        <input key="31003d8d-ce8f-49af-8bc9-e97d2fa8c059" number="25" type="Virtual" title="PTZ - [NORTH] - Piano" shortTitle="[NORTH] - Piano" state="Paused" position="0" duration="0" loop="False">PTZ - [NORTH] - Piano</input>
+        <input key="4173e2a7-75fd-40f9-9116-79413c29cf02" number="26" type="Virtual" title="PTZ - [SOUTH] - Musicians" shortTitle="[SOUTH] - Musicians" state="Paused" position="0" duration="0" loop="False">PTZ - [SOUTH] - Musicians</input>
+        <input key="0a562147-d169-45bd-90e2-d44dc9133fa2" number="27" type="Virtual" title="PTZ - [REAR] - Center Stage (Speaker)" shortTitle="[REAR] - Center Stage (Speaker)" state="Paused" position="0" duration="0" loop="False">PTZ - [REAR] - Center Stage (Speaker)</input>
+        <input key="0f399978-1a82-4143-8ef5-52b9b3b05489" number="28" type="Virtual" title="PTZ - [REAR] - Center Stage (Full)" shortTitle="[REAR] - Center Stage (Full)" state="Paused" position="0" duration="0" loop="False">PTZ - [REAR] - Center Stage (Full)</input>
+        <input key="7f7445c7-a970-41d2-b06c-9fa9825f1bf2" number="29" type="Virtual" title="PTZ - [REAR] - Center Stage (Floor)" shortTitle="[REAR] - Center Stage (Floor)" state="Paused" position="0" duration="0" loop="False">PTZ - [REAR] - Center Stage (Floor)</input>
+        <input key="98065b75-894f-462a-8d8c-6849f80bb888" number="30" type="Virtual" title="PTZ - [REAR] - Center Stage (Wide)" shortTitle="[REAR] - Center Stage (Wide)" state="Paused" position="0" duration="0" loop="False">PTZ - [REAR] - Center Stage (Wide)</input>
+        <input key="cec6748c-93b6-41c8-a765-73d62f242a04" number="31" type="Virtual" title="PTZ - [REAR] - Center (Choir - Kids)" shortTitle="[REAR] - Center (Choir - Kids)" state="Paused" position="0" duration="0" loop="False">PTZ - [REAR] - Center (Choir - Kids)</input>
+        <input key="81d5e903-4525-46fe-b174-16626c289cec" number="32" type="Virtual" title="PTZ - [SOUTH] - Children's Message" shortTitle="[SOUTH] - Children's Message" state="Paused" position="0" duration="0" loop="False">PTZ - [SOUTH] - Children's Message</input>
+        <input key="dad38efa-4978-409c-8a55-dafff1ddb6ab" number="33" type="Virtual" title="PTZ - [NORTH] - Children's Message" shortTitle="[NORTH] - Children's Message" state="Paused" position="0" duration="0" loop="False">PTZ - [NORTH] - Children's Message</input>
+        <input key="df83f4d1-3d44-4265-a438-98849126410b" number="34" type="Virtual" title="PTZ - [NORTH] - Center Stage (Wide)" shortTitle="[NORTH] - Center Stage (Wide)" state="Paused" position="0" duration="0" loop="False">PTZ - [NORTH] - Center Stage (Wide)</input>
+        <input key="989d3568-f041-480e-b6f1-61a7590b7aed" number="35" type="Virtual" title="PTZ - [SOUTH] - Communion" shortTitle="[SOUTH] - Communion" state="Paused" position="0" duration="0" loop="False">PTZ - [SOUTH] - Communion</input>
+        <input key="d328080f-beac-43ce-8226-6eaf9c785c1b" number="36" type="Virtual" title="PTZ - [SOUTH] - Baptism Right" shortTitle="[SOUTH] - Baptism Right" state="Paused" position="0" duration="0" loop="False">PTZ - [SOUTH] - Baptism Right</input>
+        <input key="9fa8100b-58b1-4eaa-b336-4817d521c006" number="37" type="Virtual" title="PTZ - [REAR] - Baptism Right" shortTitle="[REAR] - Baptism Right" state="Paused" position="0" duration="0" loop="False">PTZ - [REAR] - Baptism Right</input>
+        <input key="274b6f43-2cad-4cde-9620-2a6e7e5e7da5" number="38" type="Virtual" title="PTZ - [NORTH] - Baptism Right" shortTitle="[NORTH] - Baptism Right" state="Paused" position="0" duration="0" loop="False">PTZ - [NORTH] - Baptism Right</input>
+        <input key="f85daeed-d7a3-48a5-96ac-0da7fecf218d" number="39" type="Virtual" title="PTZ - [SOUTH] - Baptism Left" shortTitle="[SOUTH] - Baptism Left" state="Paused" position="0" duration="0" loop="False">PTZ - [SOUTH] - Baptism Left</input>
+        <input key="98f7affc-757b-4f50-b5fa-f2ad27f853ea" number="40" type="Virtual" title="PTZ - [NORTH] - Baptism Left" shortTitle="[NORTH] - Baptism Left" state="Paused" position="0" duration="0" loop="False">PTZ - [NORTH] - Baptism Left</input>
+        <input key="3133275f-dac5-4245-85e9-cf481bb83ef4" number="41" type="Virtual" title="PTZ - [REAR] - Sanctuary" shortTitle="[REAR] - Sanctuary" state="Paused" position="0" duration="0" loop="False">PTZ - [REAR] - Sanctuary</input>
+        <input key="5ba8dbb0-1a26-40a0-801b-5fd968173334" number="42" type="Virtual" title="PTZ - [FRONT] - Sanctuary" shortTitle="[FRONT] - Sanctuary" state="Paused" position="0" duration="0" loop="False">PTZ - [FRONT] - Sanctuary</input>
+        <input key="05be1e4c-8057-4414-9b68-b34b2e08a80f" number="43" type="Virtual" title="PTZ - [FRONT] - Doors" shortTitle="[FRONT] - Doors" state="Paused" position="0" duration="0" loop="False">PTZ - [FRONT] - Doors</input>
+        <input key="94fe61f3-d05e-4027-bc24-0291af607ed9" number="44" type="Virtual" title="PTZ - [FRONT] - Benediction" shortTitle="[FRONT] - Benediction" state="Paused" position="0" duration="0" loop="False">PTZ - [FRONT] - Benediction</input>
+        <input key="11fa2a48-199e-4c2a-9904-90c15ef17cba" number="45" type="Image" title="Mask_Circle" shortTitle="Mask_Circle" state="Paused" position="0" duration="0" loop="False">Mask_Circle</input>
+        <input key="554cb992-10a1-49ea-a277-512e71a1b8b5" number="46" type="Image" title="Mask_SkewRight" shortTitle="Mask_SkewRight" state="Paused" position="0" duration="0" loop="False">Mask_SkewRight</input>
+        <input key="974ebf4b-3da8-44e4-b4c0-6b4713f8a16a" number="47" type="Image" title="Mask_SkewRightShadow" shortTitle="Mask_SkewRightShadow" state="Paused" position="0" duration="0" loop="False">Mask_SkewRightShadow</input>
+        <input key="51f70e62-cc73-41df-90bd-ec6e12c67357" number="48" type="Virtual" title="Virtual - SOUTH Camera" shortTitle="SOUTH Camera" state="Paused" position="0" duration="0" loop="False">Virtual - SOUTH Camera</input>
+        <input key="66d30bcd-ecfd-4856-a1c4-ac9c398f9cc8" number="49" type="Virtual" title="Virtual - REAR Camera" shortTitle="REAR Camera" state="Paused" position="0" duration="0" loop="False">Virtual - REAR Camera</input>
+        <input key="7054362c-f16d-4188-be3f-0df03eacb9b9" number="50" type="Virtual" title="Virtual - NORTH Camera" shortTitle="NORTH Camera" state="Paused" position="0" duration="0" loop="False">Virtual - NORTH Camera</input>
+        <input key="ec5b5db9-52aa-416b-a6f0-a74dfb855034" number="51" type="Virtual" title="Virtual - SOUTH Camera (C)" shortTitle="SOUTH Camera (C)" state="Paused" position="0" duration="0" loop="False">Virtual - SOUTH Camera (C)</input>
+        <input key="e59533ce-d649-4aa6-8405-04653fa57c93" number="52" type="Virtual" title="Virtual - REAR Camera (C)" shortTitle="REAR Camera (C)" state="Paused" position="0" duration="0" loop="False">Virtual - REAR Camera (C)</input>
+        <input key="2e52812d-df88-46cf-a2b5-8793b61a5c76" number="53" type="Virtual" title="Virtual - NORTH Camera (C)" shortTitle="NORTH Camera (C)" state="Paused" position="0" duration="0" loop="False">Virtual - NORTH Camera (C)</input>
+        <input key="3c25e1af-5521-4633-8c97-bfe304669ea7" number="54" type="Virtual" title="Virtual - SOUTH Camera (SR)" shortTitle="SOUTH Camera (SR)" state="Paused" position="0" duration="0" loop="False">Virtual - SOUTH Camera (SR)
+            <overlay index="0" key="974ebf4b-3da8-44e4-b4c0-6b4713f8a16a">
+                <position panX="-0.0003124755" panY="-0.005555514" zoomX="1.029688" zoomY="1.02963" x="-28.8" y="-13" width="1977" height="1112"/>
+            </overlay>
+        </input>
+        <input key="700a12a6-fc4c-4575-9ece-c1963bab18ec" number="55" type="Virtual" title="Virtual - REAR Camera (SR)" shortTitle="REAR Camera (SR)" state="Paused" position="0" duration="0" loop="False">Virtual - REAR Camera (SR)
+            <overlay index="0" key="974ebf4b-3da8-44e4-b4c0-6b4713f8a16a">
+                <position panX="-0.0003124755" panY="-0.005555514" zoomX="1.029688" zoomY="1.02963" x="-28.8" y="-13" width="1977" height="1112"/>
+            </overlay>
+        </input>
+        <input key="ee80bcd8-7ea3-4507-ab9d-8ad5fdf09237" number="56" type="Virtual" title="Virtual - NORTH Camera (SR)" shortTitle="NORTH Camera (SR)" state="Paused" position="0" duration="0" loop="False">Virtual - NORTH Camera (SR)
+            <overlay index="0" key="974ebf4b-3da8-44e4-b4c0-6b4713f8a16a">
+                <position panX="-0.0003124755" panY="-0.005555514" zoomX="1.029688" zoomY="1.02963" x="-28.8" y="-13" width="1977" height="1112"/>
+            </overlay>
+        </input>
+        <input key="4fd3bc10-4764-452a-8577-5bde6d52f622" number="57" type="Colour" title="Transparent" shortTitle="Transparent" state="Paused" position="0" duration="0" loop="False">Transparent</input>
+    </inputs>
+    <overlays>
+        <overlay number="1"/>
+        <overlay number="2"/>
+        <overlay number="3"/>
+        <overlay number="4"/>
+        <overlay number="5"/>
+        <overlay number="6"/>
+        <overlay number="7"/>
+        <overlay number="8"/>
+    </overlays>
+    <preview>5</preview>
+    <active>6</active>
+    <fadeToBlack>False</fadeToBlack>
+    <transitions>
+        <transition number="1" effect="Merge" duration="1500"/>
+        <transition number="2" effect="Stinger1" duration="1000"/>
+        <transition number="3" effect="Stinger2" duration="1000"/>
+        <transition number="4" effect="Fade" duration="750"/>
+    </transitions>
+    <recording>False</recording>
+    <external>False</external>
+    <streaming>False</streaming>
+    <playList>False</playList>
+    <multiCorder>False</multiCorder>
+    <fullscreen>False</fullscreen>
+    <mix number="2">
+        <preview>57</preview>
+        <active>51</active>
+    </mix>
+    <audio>
+        <master volume="12.11736" muted="False" meterF1="9.818075E-06" meterF2="1.02284E-05" headphonesVolume="100"/>
+    </audio>
+    <dynamic>
+        <input1>Virtual - REAR Camera (SR)</input1>
+        <input2>Virtual - REAR Camera (SR)</input2>
+        <input3/>
+        <input4/>
+        <value1>2</value1>
+        <value2/>
+        <value3>
+            <xml>
+                <Stinger>Stinger 1 - RED</Stinger>
+            </xml>
+        </value3>
+        <value4/>
+    </dynamic>
+</vmix>

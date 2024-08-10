@@ -23,7 +23,9 @@ IPC.exposeInMainWorld("FileDialog", {
   getFile: IPC.rendererInvoke("FileDialog:getFile"),
   getFilePath: IPC.rendererInvoke("FileDialog:getFilePath"),
   getFileContent: IPC.rendererInvoke("FileDialog:getFileContent"),
-  getVmixPreset: IPC.rendererInvoke("FileDialog:getVmixPreset")
+  getVmixPreset: IPC.rendererInvoke("FileDialog:getVmixPreset"),
+  debug: IPC.rendererInvoke("FileDialog:debug"),
+  getSampleApiXmlFilePath: IPC.rendererInvoke("FileDialog:getSampleApiXmlFilePath")
 })
 IPC.exposeInMainWorld("XmlParser", { ParseXml: IPC.rendererInvoke("XmlParser:ParseXml") })
 IPC.exposeInMainWorld("Util", { format: IPC.rendererInvoke("Util:format") })
