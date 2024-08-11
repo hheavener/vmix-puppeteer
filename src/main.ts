@@ -8,6 +8,7 @@ import FileDialog from "@@/types/ipc/impl/FileDialog"
 import { Util } from "@@/types/ipc/impl/Util"
 import { LogStream } from "@@/types/ipc/impl/LogStream"
 import XmlParser from "@@/types/ipc/impl/XmlParser"
+import Http from "@@/types/ipc/impl/Http"
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) app.quit()
@@ -71,10 +72,11 @@ IPC.mainHandle("FileDialog:getFile", (_, [path, encoding]) => FileDialog.getFile
 IPC.mainHandle("FileDialog:getFilePath", FileDialog.getFilePath)
 IPC.mainHandle("FileDialog:getFileContent", (_, [path]) => FileDialog.getFileContent(path))
 IPC.mainHandle("FileDialog:getVmixPreset", (_, [zip]) => FileDialog.getVmixPreset(zip))
+IPC.mainHandle("FileDialog:getSampleApiXmlFilePath", FileDialog.getSampleApiXmlFilePath)
+IPC.mainHandle("Http:Get", (_, [url, params]) => Http.Get(url, params))
 IPC.mainHandle("Util:format", (_, [fmt, ...args]) => Util.format(fmt, ...args))
 IPC.mainHandle("LogStream:Push", (_, [fmt, ...args]) => LogStream.Push(fmt, ...args))
 IPC.mainHandle("LogStream:Get", LogStream.Get)
 IPC.mainHandle("LogStream:Clear", LogStream.Clear)
 IPC.mainHandle("XmlParser:ParseXml", (_, [xml]) => XmlParser.ParseXml(xml))
 IPC.mainHandle("FileDialog:debug", (_, [data]) => FileDialog.debug(data))
-IPC.mainHandle("FileDialog:getSampleApiXmlFilePath", FileDialog.getSampleApiXmlFilePath)

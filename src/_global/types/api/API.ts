@@ -36,11 +36,6 @@ export const API = {
     params: VmixFunction["params"],
     logFunc?: (fmt: string, ...args: any[]) => void
   ): Promise<boolean> => {
-    const paramArray = Object.entries(params)
-    let url = `${window.API_URL}`
-    url += `Function=${functionName}${paramArray.length ? "&" : ""}`
-    url += paramArray.map(([key, val]) => `${key}=${val}`).join("&")
-
     const msg = await IPC.rendererInvoke("Util:format")(
       "API.Function:",
       `Name: ${functionName}`,
@@ -49,11 +44,10 @@ export const API = {
     IPC.rendererInvoke("FileDialog:debug")(msg)
     logFunc?.("API.Function:", `Name = ${functionName},`, "Params =", params)
 
-    const res = await fetch(url, {
-      headers: { "Content-Type": "application/xml", Accept: "application/xml" }
-    }).catch((err) => console.log(err))
-
-    const resOk = res?.status === 200
+    const resOk = await IPC.rendererInvoke("Http:Get")(window.API_URL, {
+      Function: functionName,
+      ...params
+    })
     IPC.rendererInvoke("FileDialog:debug")(`API.Function OK: ${resOk}`)
     logFunc?.("API.Function:", resOk ? "SUCCESS" : "FAILURE")
 

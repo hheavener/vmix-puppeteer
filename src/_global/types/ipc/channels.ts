@@ -1,6 +1,7 @@
 import type { API } from "../api/API"
 import type { IPC } from "./IPC"
 import FileDialog from "./impl/FileDialog"
+import Http from "./impl/Http"
 import XmlParser from "./impl/XmlParser"
 import Time from "./impl/Time"
 import type { LogStream } from "./impl/LogStream"
@@ -33,6 +34,7 @@ export type AllIPCChannels = {
   IPC: IPC
   API: typeof API
   API_URL: string
+  Http: typeof Http
   Util: typeof Util
   Time: typeof Time
   Sleep: typeof Time.Sleep

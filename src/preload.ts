@@ -28,6 +28,7 @@ IPC.exposeInMainWorld("FileDialog", {
   debug: IPC.rendererInvoke("FileDialog:debug"),
   getSampleApiXmlFilePath: IPC.rendererInvoke("FileDialog:getSampleApiXmlFilePath")
 })
+IPC.exposeInMainWorld("Http", { Get: IPC.rendererInvoke("Http:Get") })
 IPC.exposeInMainWorld("XmlParser", { ParseXml: IPC.rendererInvoke("XmlParser:ParseXml") })
 IPC.exposeInMainWorld("Util", { format: IPC.rendererInvoke("Util:format") })
 IPC.exposeInMainWorld("LogStream", {
