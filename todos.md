@@ -20,3 +20,7 @@ See this [reddit post](https://www.reddit.com/r/vuejs/comments/18ecyja/vue_ui_ki
 When creating a new program, it should be backed by a vmix preset file.
 
 - Programs should be given a unique name (possibly UUID also) and saved with a pointer to the vmix save file they were created from
+
+### Change API.Function to be IPC
+
+VMIX will likely block requests coming from client-side JS so this should be done with Node-Fetch or axios from the main process
