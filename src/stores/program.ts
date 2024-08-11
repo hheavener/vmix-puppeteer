@@ -24,13 +24,18 @@ export const useProgramStore = defineStore("program", () => {
   }
 
   async function next() {
-    scene.value = program.GetNextScene() || undefined
+    scene.value = program.GetNextScene()
     await program.MoveToNextScene()
   }
 
   async function previous() {
-    scene.value = program.GetPreviousScene() || undefined
+    scene.value = program.GetPreviousScene()
     await program.MoveToPreviousScene()
+  }
+
+  async function jump(sceneIdx: number) {
+    scene.value = program.GetScene(sceneIdx)
+    await program.MoveToScene(sceneIdx)
   }
 
   async function loadVmixPreset() {
@@ -50,6 +55,7 @@ export const useProgramStore = defineStore("program", () => {
     loadProgram,
     next,
     previous,
+    jump,
     scenes,
     scene,
     logs,

@@ -10,6 +10,7 @@ if (!globalThis.Logs) globalThis.Logs = []
 if (!globalThis.API) globalThis.API = API
 if (!globalThis.Time) globalThis.Time = Time
 if (!globalThis.Sleep) globalThis.Sleep = Time.Sleep
+if (!globalThis.API_URL) globalThis.API_URL = "http://127.0.0.1:8088/API"
 
 function initIPC(): IPC {
   return {

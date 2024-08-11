@@ -59,7 +59,7 @@ const FileDialog = {
 
     const buffer = await getFileBuffer(path)
     const content = buffer?.toString(encoding)
-    debug(await Util.format("FileDialog::getFileBuffer: BufferExists -", !!content))
+    FileDialog.debug(await Util.format("FileDialog::getFileBuffer: BufferExists -", !!content))
     return content
   },
 
@@ -101,8 +101,19 @@ const FileDialog = {
     const zip = new AdmZip(buffer)
     return new VmixPreset(zip).getXmlData()
   },
-  debug,
-  getSampleApiXmlFilePath
+
+  debug(data: string | Uint8Array) {
+    console.log(data)
+    appendFileSync(debugFile, `${data}\n`)
+  },
+
+  getSampleApiXmlFilePath(): string {
+    const fileName = "sample.vmix.xml"
+    FileDialog.debug(`FileDialog::app.isPackaged=${app.isPackaged}`)
+    return app.isPackaged
+      ? path.join(process.resourcesPath, fileName)
+      : path.join("src/resources", fileName)
+  }
 }
 
 export default FileDialog
@@ -116,28 +127,15 @@ async function getFileBuffer(filePath?: string): Promise<Buffer | undefined> {
   try {
     const path = filePath || (await FileDialog.getFilePath())
 
-    debug(await Util.format("FileDialog::getFileBuffer: path:", path))
-    if (!path) return debug("No file path") as undefined
+    FileDialog.debug(await Util.format("FileDialog::getFileBuffer: path:", path))
+    if (!path) return FileDialog.debug("No file path") as undefined
     const buffer = readFileSync(path)
-    debug(
+    FileDialog.debug(
       await Util.format("FileDialog::getFileBuffer: bufferHasContent:", !!buffer.toString("utf8"))
     )
     return buffer
   } catch (err) {
-    debug(await Util.format("Error opening file:", err))
+    FileDialog.debug(await Util.format("Error opening file:", err))
     console.error("Error opening file:", err)
   }
-}
-
-function debug(data: string | Uint8Array) {
-  console.log(data)
-  appendFileSync(debugFile, `${data}\n`)
-}
-
-function getSampleApiXmlFilePath(): string {
-  const fileName = "sample.vmix.xml"
-  debug(`FileDialog::app.isPackaged=${app.isPackaged}`)
-  return app.isPackaged
-    ? path.join(process.resourcesPath, fileName)
-    : path.join("src/resources", fileName)
 }

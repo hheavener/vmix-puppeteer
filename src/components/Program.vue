@@ -49,25 +49,25 @@ watch(store.logs, smoothScrollToBottom, { deep: true })
       <button @click="store.next">Next >></button>
     </div>
     <div class="program-container">
-      <ul>
-        <li v-for="scene of store.scenes">
-          <div v-if="scene.title === store.scene?.title" class="active">{{ scene.title }}</div>
+      <ul class="scene-list">
+        <li v-for="(scene, idx) of store.scenes" :key="idx" @click="store.jump(idx)">
+          <div v-if="scene.title === store.scene?.title" class="active">
+            {{ scene.title }}
+          </div>
           <div v-else>{{ scene.title }}</div>
         </li>
       </ul>
-      <ResizablePanelGroup id="resize-group" direction="horizontal">
-        <ResizablePanel :min-size="10" collapsible>
-          <!-- <div class="scroll"> -->
+      <ResizablePanelGroup id="resize-group" direction="vertical">
+        <ResizablePanel :min-size="10" collapsible :default-size="1">
           <JsonViewer v-if="store.scene" :json="store.scene?.GetSceneProps()" />
-          <!-- </div> -->
+          <div v-else class="placeholder"><h2>No scene selected</h2></div>
         </ResizablePanel>
         <ResizableHandle />
-        <ResizablePanel :min-size="10" collapsible id="log-container">
-          <!-- <div class="logs"> -->
-          <ul>
+        <ResizablePanel :min-size="10" collapsible id="log-container" class="custom-scroll">
+          <ul v-if="store.logs.length">
             <li v-for="(log, idx) in store.logs" :key="idx" v-html="log"></li>
           </ul>
-          <!-- </div> -->
+          <div v-else class="placeholder"><h2>No log data</h2></div>
         </ResizablePanel>
       </ResizablePanelGroup>
     </div>
@@ -79,6 +79,12 @@ watch(store.logs, smoothScrollToBottom, { deep: true })
   width: 80vw;
   max-height: 20vh;
   position: relative;
+}
+.scene-list {
+  li:hover {
+    cursor: pointer;
+    color: var(--color-green-light);
+  }
 }
 .button-container {
   display: grid;
@@ -97,27 +103,30 @@ watch(store.logs, smoothScrollToBottom, { deep: true })
   height: 70vh;
   overflow: hidden;
 
-  & > [data-panel-group-id="resize-group"] > div:nth-of-type(odd) {
-    max-height: inherit;
-    height: 70vh;
+  /* & > [data-panel-group-id="resize-group"] > div:nth-of-type(odd) { */
+  & > [data-panel-group-id="resize-group"] {
     border-left: 1px solid;
-    white-space: nowrap;
-    overflow: scroll !important;
-    scrollbar-width: none !important; /* For Firefox */
-    &::-webkit-scrollbar {
-      display: none; /* Hide scrollbars in WebKit browsers */
+    & > div:first-of-type {
+      max-height: inherit;
+      height: 70vh;
+      border-bottom: 1px solid;
+      white-space: nowrap;
+      overflow: scroll !important;
+      scrollbar-width: none !important; /* For Firefox */
+      &::-webkit-scrollbar {
+        display: none; /* Hide scrollbars in WebKit browsers */
+      }
+      & > * {
+        padding: 10px 15px 20px;
+      }
     }
-    & > * {
-      padding: 10px 15px 20px;
-    }
-
-    /* ul {
-      padding: 0;
-      padding-left: 5px;
-    } */
   }
 }
-
+#log-container {
+  li {
+    white-space: nowrap;
+  }
+}
 .program-json {
   border: 1px solid gray;
   height: auto;
@@ -132,15 +141,21 @@ watch(store.logs, smoothScrollToBottom, { deep: true })
   border-right: 1px solid;
 }
 .active {
-  color: #00bd1c;
+  color: var(--color-green);
 }
 ul {
   list-style: none;
   padding: 10px 20px;
+  display: inline-block;
 
   li {
     display: block;
     height: 24px;
   }
+}
+.placeholder {
+  display: grid;
+  height: 100%;
+  place-content: center;
 }
 </style>

@@ -6,4 +6,3 @@ import fs from "fs"
 
 globalThis.APP_DATA_DIR = path.join(os.homedir(), `.${app.name}`)
 if (!fs.existsSync(APP_DATA_DIR)) fs.mkdirSync(APP_DATA_DIR)
-if (!globalThis.API_URL) globalThis.API_URL = "http://127.0.0.1:8088/API"

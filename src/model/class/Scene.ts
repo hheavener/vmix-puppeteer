@@ -59,12 +59,12 @@ export default class ScenePlayer {
       await API.Function("PTZMoveToVirtualInputPosition", { Input: prepareTitle }, (fmt, ...args) =>
         this._log(fmt, ...args)
       )
-      if (i < prepare.length - 1) this._log(await Sleep(3, "Seconds")) // TODO: move to some kind of user settings later on?
+      if (i < prepare.length - 1) this._log("ScenePlayer:", await Sleep(3, "Seconds")) // TODO: move to some kind of user settings later on?
     }
   }
 
   public async WillTransition(): Promise<void> {
-    this._log("ScenePlayer::WillTransition")
+    this._log("ScenePlayer:", "WillTransition")
     await this.callFunctions(this.scene.willTransition)
   }
 
@@ -77,7 +77,6 @@ export default class ScenePlayer {
 
   // TODO: Input needs a class model?
   public GetActiveInput(): Input {
-    this._log("ScenePlayer:", "GetActiveInput")
     return this.scene.activeInput
   }
 
@@ -94,7 +93,7 @@ export default class ScenePlayer {
       }
       await API.Function(vfc.function, vfc.params, (fmt, ...args) => this._log(fmt, ...args))
       const { amount, unit } = vfc.sleep ?? {}
-      if (amount) this._log(await Sleep(amount, unit))
+      if (amount) this._log("ScenePlayer:", await Sleep(amount, unit))
     } catch (err) {
       console.log(err)
     }
@@ -107,7 +106,7 @@ export default class ScenePlayer {
     if (!list?.length) return
     for (let func of list) {
       await this.callFunction(func)
-      if (delayMilliseconds) this._log(await Sleep(delayMilliseconds))
+      if (delayMilliseconds) this._log("ScenePlayer:", await Sleep(delayMilliseconds))
     }
   }
 

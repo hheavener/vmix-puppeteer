@@ -1,5 +1,5 @@
 import type { TimeUnit } from "../ipc/impl/Time"
-import FunctionReference from "./reference"
+import FunctionReference from "./VmixFunctionReference"
 
 export type VmixFunctionName = (typeof FunctionReference)[number]["name"]
 export type VmixFunctionParams = {

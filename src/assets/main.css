@@ -1,5 +1,12 @@
 @import "./base.css";
 
+:root {
+  --color-green: #00bd7e;
+  --color-green-light: #00f2a1;
+  --color-orange: #eab658;
+  --color-blue: #4988e7;
+}
+
 #app {
   /* max-width: 1280px; */
   margin: 0 auto;
@@ -9,18 +16,15 @@
 
 a,
 .green {
-  color: #00bd7e;
-  /* text-decoration: none;
-  transition: 0.4s;
-  padding: 3px; */
+  color: var(--color-green);
 }
 
 .orange {
-  color: #eab658;
+  color: var(--color-orange);
 }
 
 .blue {
-  color: #4988e7;
+  color: var(--color-blue);
 }
 
 @media (hover: hover) {
@@ -43,30 +47,34 @@ body {
   }
 } */
 
-.custom-scrollbar {
-  overflow: auto;
+.custom-scroll {
+  overflow: auto !important;
   height: 100%;
 }
 
-.custom-scrollbar::-webkit-scrollbar {
-  width: 7px;
-  height: 10px;
+.custom-scroll::-webkit-scrollbar {
+  /* width: 7px;
+  height: 10px; */
+  width: 0;
+  height: 0;
 }
 
-.custom-scrollbar::-webkit-scrollbar-track {
+.custom-scroll::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #313131cc;
-  border-radius: 10px;
+.custom-scroll::-webkit-scrollbar-thumb {
+  /* background: #313131cc;
+  border-radius: 10px; */
+  background: transparent;
 }
 
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 0, 0, 1);
+.custom-scroll::-webkit-scrollbar-thumb:hover {
+  /* background: rgba(0, 0, 0, 1); */
+  background: transparent;
 }
 
-.custom-scrollbar::-webkit-scrollbar-corner {
+.custom-scroll::-webkit-scrollbar-corner {
   background: transparent;
   display: none;
 }

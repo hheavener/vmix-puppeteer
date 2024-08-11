@@ -29,25 +29,27 @@ export default class Program {
     return this.scenes?.[this.activeIdx]
   }
 
-  public GetNextScene(): Scene | null {
-    const nextIdx = this.activeIdx + 1
-    if (nextIdx > this.scenes.length - 1) return null
+  public GetNextScene(): Scene | undefined {
+    const nextIdx = this.findNextEnabledScene()
+    if (nextIdx == null || nextIdx > this.scenes.length - 1) return undefined
     return this.scenes[nextIdx]
   }
 
-  public GetPreviousScene(): Scene | null {
-    const previousIdx = this.activeIdx - 1
-    if (previousIdx < 0) return null
+  public GetPreviousScene(): Scene | undefined {
+    const previousIdx = this.findPreviousEnabledScene()
+    if (!previousIdx || previousIdx < 0) return undefined
     return this.scenes[previousIdx]
   }
 
   public async MoveToNextScene(): Promise<Scene | undefined> {
-    await this._log("Program::MoveToNextScene")
+    await this._log("Program:", "MoveToNextScene")
     const nextIdx = this.findNextEnabledScene()
     const nextScene = nextIdx && this.scenes[nextIdx]
     if (nextScene) {
       const input = nextScene.GetActiveInput().title
-      this._log(await API.Function("PreviewInput", { Input: input }))
+      await API.Function("PreviewInput", { Input: input }, (fmt, ...args) => {
+        this._log(fmt, ...args)
+      })
     }
 
     const current = this.scenes[this.activeIdx]
@@ -64,6 +66,11 @@ export default class Program {
     const prevIdx = this.findPreviousEnabledScene()
     if (prevIdx === null) return
     return this.MoveToScene(prevIdx)
+  }
+
+  public GetScene(sceneIdx: number): Scene | undefined {
+    if (sceneIdx < 0 || sceneIdx > this.scenes.length - 1) return
+    return this.scenes[sceneIdx]
   }
 
   public async MoveToScene(sceneIdx: number): Promise<Scene> {
@@ -94,9 +101,10 @@ export default class Program {
   }
 
   private async _log(fmt: string, ...params: any[]): Promise<void> {
+    const color = fmt.startsWith("API") ? "blue" : "green"
     const message = await IPC.rendererInvoke("Util:format")(fmt, ...params)
     const htmlMessage = await IPC.rendererInvoke("Util:format")(
-      `<span class="green">${fmt}</span>`,
+      `<span class="${color}">${fmt}</span>`,
       ...params
     )
     console.log(fmt, ...params)
