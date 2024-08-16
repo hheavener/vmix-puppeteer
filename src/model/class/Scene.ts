@@ -1,6 +1,7 @@
 import { type VmixFunctionCall } from "@@/types/api/VmixFunction"
 import { type Input, type SceneProps, type VmixTransition } from "@/model/types/scene"
-import Time from "@@/types/ipc/impl/Time"
+
+const LogPrefix = "ScenePlayer:"
 
 export default class ScenePlayer {
   // private title: string
@@ -23,30 +24,38 @@ export default class ScenePlayer {
     this.logDest = logDest
   }
 
+  // public async Prepare(): Promise<void> {
+  //   this._log("ScenePlayer:", "Prepare")
+  //   const
+  // }
+
   public async TransitionIn(): Promise<void> {
-    this._log("ScenePlayer:", "TransitionIn")
+    this._log(LogPrefix, "TransitionIn")
     const inputs = await API.GetActiveInputs()
     const sceneInputTitle = this.scene.activeInput.title
     if (sceneInputTitle !== inputs.output.title) {
       await API.Function("Merge", { Input: sceneInputTitle }, (fmt, ...args) =>
         this._log(fmt, ...args)
       )
+      this._log(LogPrefix, await Sleep(1, "Second"))
+    } else {
+      this._log(LogPrefix, `Cannot merge '${sceneInputTitle}' because of '${inputs.output.title}'`)
     }
   }
 
   public async OnTransitioned(): Promise<void> {
-    this._log("ScenePlayer:", "OnTransitioned")
+    this._log(LogPrefix, "OnTransitioned")
     await this.callFunctions(this.scene.onTransitioned)
   }
 
-  public async Prepare(): Promise<void> {
-    this._log("ScenePlayer:", "Prepare")
-    const { prepare } = this.scene
-    if (!prepare?.length) return
+  public async PrepareNext(): Promise<void> {
+    const { prepareNext } = this.scene
+    if (!prepareNext?.length) return
+    this._log(LogPrefix, "PrepareNext")
 
     const activeTitle = this.scene.activeInput.title
-    for (let i = 0; i < prepare.length; i++) {
-      const prepareTitle = prepare[i].input
+    for (let i = 0; i < prepareNext.length; i++) {
+      const prepareTitle = prepareNext[i].input
       const activeKey = this.virtualKeyMap[activeTitle]
       const prepareKey = this.virtualKeyMap[prepareTitle]
 
@@ -59,17 +68,18 @@ export default class ScenePlayer {
       await API.Function("PTZMoveToVirtualInputPosition", { Input: prepareTitle }, (fmt, ...args) =>
         this._log(fmt, ...args)
       )
-      if (i < prepare.length - 1) this._log("ScenePlayer:", await Sleep(3, "Seconds")) // TODO: move to some kind of user settings later on?
+      // if (i < prepareNext.length - 1) this._log(LogPrefix, await Sleep(0.5, "Seconds")) // TODO: move to some kind of user settings later on?
     }
   }
 
   public async WillTransition(): Promise<void> {
-    this._log("ScenePlayer:", "WillTransition")
+    this._log(LogPrefix, "WillTransition")
     await this.callFunctions(this.scene.willTransition)
+    this._log(LogPrefix, await Sleep(1, "Second"))
   }
 
   public async TransitionOut(): Promise<void> {
-    this._log("ScenePlayer:", "TransitionOut")
+    this._log(LogPrefix, "TransitionOut")
     if (this.scene.transition) {
       await this.callFunction(this.scene.transition)
     }
@@ -93,7 +103,7 @@ export default class ScenePlayer {
       }
       await API.Function(vfc.function, vfc.params, (fmt, ...args) => this._log(fmt, ...args))
       const { amount, unit } = vfc.sleep ?? {}
-      if (amount) this._log("ScenePlayer:", await Sleep(amount, unit))
+      if (amount) this._log(LogPrefix, await Sleep(amount, unit))
     } catch (err) {
       console.log(err)
     }
@@ -101,12 +111,12 @@ export default class ScenePlayer {
 
   private async callFunctions(
     list: VmixFunctionCall[] = [],
-    delayMilliseconds: number = 1 * Time.Second
+    delayMilliseconds: number = 0
   ): Promise<void> {
     if (!list?.length) return
     for (let func of list) {
       await this.callFunction(func)
-      if (delayMilliseconds) this._log("ScenePlayer:", await Sleep(delayMilliseconds))
+      if (delayMilliseconds) this._log(LogPrefix, await Sleep(delayMilliseconds))
     }
   }
 

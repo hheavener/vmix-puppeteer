@@ -97,7 +97,7 @@ export type SceneProps = {
   /**
    * Inputs to prepare before next scene.
    */
-  prepare: PTZInput[]
+  prepareNext: PTZInput[]
   /**
    * Will be skipped if true.
    */

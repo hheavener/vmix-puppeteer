@@ -69,13 +69,13 @@ const MockProgram: ProgramProps = {
     {
       title: "Announcements",
       activeInput: { source: "REAR", title: "[REAR] - Center Stage (Speaker)" },
-      prepare: [{ source: "SOUTH", input: "[SOUTH] - Piano" }],
+      prepareNext: [{ source: "SOUTH", input: "[SOUTH] - Piano" }],
       willTransition: [{ function: "ScriptStart", params: { Value: "AlternateStinger" } }]
     },
     {
       title: "Gathering Music",
       activeInput: { source: "SOUTH", title: "[SOUTH] - Piano" },
-      prepare: [{ source: "REAR", input: "[REAR] - Pulpit" }],
+      prepareNext: [{ source: "REAR", input: "[REAR] - Pulpit" }],
       willTransition: [{ function: "ScriptStart", params: { Value: "AlternateStinger" } }]
     },
     {
@@ -88,7 +88,7 @@ const MockProgram: ProgramProps = {
         { function: "ScriptStart", params: { Value: "UpdatePipSource" } }
       ],
       // TODO: Show status popups or handle PIP
-      prepare: [
+      prepareNext: [
         { source: "NORTH", input: "[NORTH] - Lectern" },
         { source: "SOUTH", input: "[SOUTH] - Musicians" }
       ],
@@ -101,7 +101,7 @@ const MockProgram: ProgramProps = {
         // Runner will need to explicitly turn layer on and confirm source is correct
         layers: [{ index: 4, source: "Virtual - SOUTH Camera (CS)" }]
       },
-      prepare: [{ source: "NORTH", input: "[NORTH] - Lectern" }],
+      prepareNext: [{ source: "NORTH", input: "[NORTH] - Lectern" }],
       willTransition: [{ function: "ScriptStart", params: { Value: "AlternateStinger" } }]
     },
     {
@@ -120,7 +120,7 @@ const MockProgram: ProgramProps = {
         },
         transition: "Merge"
       },
-      prepare: [
+      prepareNext: [
         { source: "SOUTH", input: "[SOUTH] - Musicians" },
         { source: "REAR", input: "[REAR] - Center Stage (Full)" }
       ],
@@ -135,7 +135,7 @@ const MockProgram: ProgramProps = {
         { function: "SetDynamicValue2", params: { Value: "4" } },
         { function: "ScriptStart", params: { Value: "UpdatePipSource" } }
       ],
-      prepare: [{ source: "SOUTH", input: "[SOUTH] - Musicians" }],
+      prepareNext: [{ source: "SOUTH", input: "[SOUTH] - Musicians" }],
       willTransition: [{ function: "ScriptStart", params: { Value: "AlternateStinger" } }]
     },
     {
@@ -145,7 +145,7 @@ const MockProgram: ProgramProps = {
         title: "Virtual - PIP Slides",
         layers: [{ index: 4, source: "Virtual - SOUTH Camera (CS)" }]
       },
-      prepare: [{ source: "NORTH", input: "[NORTH] - Pulpit" }],
+      prepareNext: [{ source: "NORTH", input: "[NORTH] - Pulpit" }],
       willTransition: [{ function: "ScriptStart", params: { Value: "AlternateStinger" } }]
     },
     {
@@ -167,7 +167,7 @@ const MockProgram: ProgramProps = {
         transition: "Merge",
         willTransition: [{ function: "OverlayInput2Off", params: {} }]
       },
-      prepare: [{ source: "SOUTH", input: "[SOUTH] - Musicians" }],
+      prepareNext: [{ source: "SOUTH", input: "[SOUTH] - Musicians" }],
       willTransition: [{ function: "ScriptStart", params: { Value: "AlternateStinger" } }]
     },
     // TODO: Communion
@@ -178,7 +178,7 @@ const MockProgram: ProgramProps = {
         title: "Virtual - PIP Slides",
         layers: [{ index: 4, source: "Virtual - SOUTH Camera (CS)" }]
       },
-      prepare: [
+      prepareNext: [
         { source: "REAR", input: "[REAR] - Center Stage (Full)" },
         { source: "FRONT", input: "[FRONT] - Benediction" }
       ],
@@ -187,21 +187,18 @@ const MockProgram: ProgramProps = {
     {
       title: "Benediction",
       activeInput: { source: "REAR", title: "[REAR] - Center Stage (Full)" },
-      prepare: [
-        { source: "REAR", input: "[REAR] - Center Stage (Full)" },
-        { source: "FRONT", input: "[FRONT] - Benediction" }
-      ],
+      prepareNext: [{ source: "FRONT", input: "[FRONT] - Benediction" }],
       willTransition: [
-        { function: "ScriptStart", params: { Value: "AlternateStinger" } },
-        { function: "SelectTitlePreset", params: { Value: "2", Input: "Status Popups" } } // Should be "Stream Ended..."
+        // { function: "ScriptStart", params: { Value: "AlternateStinger" } },
+        { function: "SelectTitlePreset", params: { Value: "0", Input: "Status Popups" } } // Should be "Stream Ended..."
       ]
     },
     {
       title: "Stream End",
-      activeInput: { source: "REAR", title: "[REAR] - Center Stage (Full)" },
+      activeInput: { source: "REAR", title: "Stinger 1 - RED" },
       onTransitioned: [
-        { function: "ActiveInput", params: { Input: "Stinger 1 - RED" } },
-        { function: "SelectTitlePreset", params: { Value: "2", Input: "Status Popups" } },
+        // { function: "ActiveInput", params: { Input: "Stinger 1 - RED" } },
+        { function: "SelectTitlePreset", params: { Value: "0", Input: "Status Popups" } },
         {
           function: "OverlayInput2In",
           params: { Input: "Status Popups" },
@@ -210,7 +207,7 @@ const MockProgram: ProgramProps = {
         { function: "OverlayInput2Out", params: {}, sleep: { amount: 3, unit: "Seconds" } },
         { function: "StopStreaming", params: {} } // TODO: Move to action?
       ],
-      prepare: []
+      prepareNext: []
     }
   ]
 }
