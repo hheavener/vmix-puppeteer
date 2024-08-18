@@ -38,6 +38,10 @@ export const useProgramStore = defineStore("program", () => {
     await program.MoveToScene(sceneIdx)
   }
 
+  async function callAction(actionIdx: number) {
+    await scene.value?.CallAction(actionIdx)
+  }
+
   async function loadVmixPreset() {
     const { FileDialog } = window
     const p = await FileDialog.getVmixPreset()
@@ -56,6 +60,7 @@ export const useProgramStore = defineStore("program", () => {
     next,
     previous,
     jump,
+    callAction,
     scenes,
     scene,
     logs,

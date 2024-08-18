@@ -99,6 +99,7 @@ export default class ScenePlayer {
   public async CallAction(idx: number): Promise<void> {
     // TODO: Parameters from the DOM require serialization
     const action = JSON.parse(JSON.stringify(this.scene.actions?.[idx]))
+    // const action = this.scene.actions?.[idx]
     if (!action) return
     this._log(LogPrefix, "[Action]", action.title)
     await this.callFunction(action)
