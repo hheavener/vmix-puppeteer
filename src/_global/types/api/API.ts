@@ -49,7 +49,7 @@ export const API = {
       ...params
     })
     IPC.rendererInvoke("FileDialog:debug")(`API.Function OK: ${resOk}`)
-    logFunc?.("API.Function:", resOk ? "SUCCESS" : "FAILURE")
+    if (!resOk) logFunc?.("API.Function:", "FAILURE")
 
     return resOk
   },

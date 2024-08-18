@@ -1,4 +1,8 @@
-import { type VmixFunctionCall } from "@@/types/api/VmixFunction"
+import {
+  type VmixFunctionCall,
+  type VmixFunctionName,
+  type VmixFunctionParams
+} from "@@/types/api/VmixFunction"
 import { type Input, type SceneProps, type VmixTransition } from "@/model/types/scene"
 
 const LogPrefix = "ScenePlayer:"
@@ -13,7 +17,7 @@ export default class ScenePlayer {
 
   public title: string
   public disabled: boolean
-  public actions?: VmixFunctionCall[]
+  public actions?: (typeof this.scene)["actions"]
 
   constructor(scene: SceneProps, virtualKeyMap: Record<string, string>, logDest?: any[]) {
     this.scene = scene
@@ -24,28 +28,24 @@ export default class ScenePlayer {
     this.logDest = logDest
   }
 
-  // public async Prepare(): Promise<void> {
-  //   this._log("ScenePlayer:", "Prepare")
-  //   const
-  // }
-
   public async TransitionIn(): Promise<void> {
     this._log(LogPrefix, "TransitionIn")
-    const inputs = await API.GetActiveInputs()
-    const sceneInputTitle = this.scene.activeInput.title
-    if (sceneInputTitle !== inputs.output.title) {
-      await API.Function("Merge", { Input: sceneInputTitle }, (fmt, ...args) =>
-        this._log(fmt, ...args)
-      )
+    const { output: activeOutput } = await API.GetActiveInputs()
+    const sceneInput = this.scene.activeInput
+    if (sceneInput.title !== activeOutput.title) {
+      await this.API_Function("Merge", { Input: sceneInput.title })
       this._log(LogPrefix, await Sleep(1, "Second"))
     } else {
-      this._log(LogPrefix, `Cannot merge '${sceneInputTitle}' because of '${inputs.output.title}'`)
+      this._log(LogPrefix, `Cannot merge '${sceneInput.title}' because of '${activeOutput.title}'`)
     }
   }
 
   public async OnTransitioned(): Promise<void> {
+    const { onTransitioned } = this.scene
+    if (!onTransitioned?.length) return
     this._log(LogPrefix, "OnTransitioned")
-    await this.callFunctions(this.scene.onTransitioned)
+    await this.callFunctions(onTransitioned)
+    await this.previewAlternate()
   }
 
   public async PrepareNext(): Promise<void> {
@@ -65,11 +65,43 @@ export default class ScenePlayer {
         continue
       }
 
-      await API.Function("PTZMoveToVirtualInputPosition", { Input: prepareTitle }, (fmt, ...args) =>
-        this._log(fmt, ...args)
-      )
+      await this.API_Function("PTZMoveToVirtualInputPosition", { Input: prepareTitle })
       // if (i < prepareNext.length - 1) this._log(LogPrefix, await Sleep(0.5, "Seconds")) // TODO: move to some kind of user settings later on?
     }
+  }
+
+  public HasAlternateInput(): boolean {
+    return !!this.scene.alternate
+  }
+
+  public async Alternate(): Promise<void> {
+    if (!this.scene.alternate) return
+    this._log(LogPrefix, "Alternate")
+
+    const alt = this.scene.alternate
+    const { preview, output } = await API.GetActiveInputs()
+    const transition = async () => {
+      await this.API_Function(alt.transition || "Merge", { Input: "Preview" })
+    }
+    if (alt.input.title === output.title) {
+      const active = this.scene.activeInput
+      await this.API_Function("PreviewInput", { Input: active.title })
+      await this._log(LogPrefix, await Sleep(100, "Milliseconds"))
+      await transition()
+    } else {
+      if (alt.input.title !== preview.title) await this.previewAlternate()
+      await this.callFunctions(alt.willTransition)
+      this._log(LogPrefix, await Sleep(100, "Milliseconds"))
+      await transition()
+    }
+  }
+
+  public async CallAction(idx: number): Promise<void> {
+    // TODO: Parameters from the DOM require serialization
+    const action = JSON.parse(JSON.stringify(this.scene.actions?.[idx]))
+    if (!action) return
+    this._log(LogPrefix, "[Action]", action.title)
+    await this.callFunction(action)
   }
 
   public async WillTransition(): Promise<void> {
@@ -94,14 +126,33 @@ export default class ScenePlayer {
     return this.scene
   }
 
+  private async previewAlternate(): Promise<void> {
+    if (!this.scene.alternate) return
+    this._log(LogPrefix, "previewAlternate")
+
+    const alt = this.scene.alternate
+    const { preview, output } = await API.GetActiveInputs()
+    if (alt.input.title === preview.title) return
+
+    const altKey = this.virtualKeyMap[alt.input.title]
+    const outputKey = this.virtualKeyMap[output.title]
+
+    if (outputKey === altKey) {
+      return this._log(`WARNING: Cannot preview input '${alt.input.title}' which uses 
+        the same PTZ optic as the active output '${output.title}'`)
+    }
+
+    await this.API_Function("PreviewInput", { Input: alt.input.title })
+  }
+
   private async callFunction(vfc: VmixFunctionCall | VmixTransition): Promise<void> {
     console.log("ScenePlayer:callFunction")
     try {
       if (typeof vfc === "string") {
-        await API.Function(vfc, {}, (fmt, ...args) => this._log(fmt, ...args))
+        await this.API_Function(vfc, {})
         return
       }
-      await API.Function(vfc.function, vfc.params, (fmt, ...args) => this._log(fmt, ...args))
+      await this.API_Function(vfc.function, vfc.params)
       const { amount, unit } = vfc.sleep ?? {}
       if (amount) this._log(LogPrefix, await Sleep(amount, unit))
     } catch (err) {
@@ -118,6 +169,13 @@ export default class ScenePlayer {
       await this.callFunction(func)
       if (delayMilliseconds) this._log(LogPrefix, await Sleep(delayMilliseconds))
     }
+  }
+
+  private async API_Function(
+    name: VmixFunctionName | VmixTransition,
+    params: VmixFunctionParams
+  ): Promise<void> {
+    await API.Function(name, params, (fmt, ...args) => this._log(fmt, ...args))
   }
 
   private async _log(fmt: string, ...params: any[]): Promise<void> {

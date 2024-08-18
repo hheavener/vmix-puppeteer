@@ -26,6 +26,20 @@ a,
 .blue {
   color: var(--color-blue);
 }
+.green-bg {
+  color: white;
+  background: var(--color-green);
+}
+
+.orange-bg {
+  color: white;
+  background: var(--color-orange);
+}
+
+.blue-bg {
+  color: white;
+  background: var(--color-blue);
+}
 
 @media (hover: hover) {
   a:hover {

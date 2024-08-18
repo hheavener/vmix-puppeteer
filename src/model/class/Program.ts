@@ -78,7 +78,7 @@ export default class Program {
     this._log("<b>Program::MoveToScene[%d]</b> - %s", sceneIdx + 1, this.scenes[sceneIdx].title)
     this.activeIdx = sceneIdx
     const scene = this.scenes[sceneIdx]
-    await API.Function("Merge", { Input: scene.GetActiveInput().title })
+    // await API.Function("Merge", { Input: scene.GetActiveInput().title })
     await scene.TransitionIn()
     await scene.OnTransitioned()
     await scene.PrepareNext()

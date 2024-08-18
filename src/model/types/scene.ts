@@ -1,4 +1,4 @@
-import type { VmixFunctionCall } from "./VmixFunction"
+import type { VmixFunctionCall } from "@@/types/api/VmixFunction"
 
 // TODO: configure these through UI eventually?
 const NDISources = ["SOUTH", "REAR", "NORTH", "FRONT"] as const
@@ -64,7 +64,7 @@ export type Input = {
    * available for staging the next input in
    * a given scene.
    */
-  source?: NDISource
+  // source?: NDISource
   /**
    * The PIP information.
    */
@@ -75,13 +75,15 @@ export type PTZInput = {
   /**
    * The NDI source camera.
    */
-  source: NDISource
+  // source: NDISource
   /**
    * The name of the input containing the
    * position for this camera to move to.
    */
   input: string
 }
+
+type Action = { title: string } & VmixFunctionCall
 
 export type SceneProps = {
   /**
@@ -110,7 +112,7 @@ export type SceneProps = {
    * from PIP to no PIP for the same camera).
    */
   alternate?: {
-    input: Input | string
+    input: Input
     /**
      * // TODO: Allow user to configure default transition?
      */
@@ -127,7 +129,7 @@ export type SceneProps = {
    * Actions the user can perform at-will when
    * this scene is live.
    */
-  actions?: VmixFunctionCall[]
+  actions?: Action[]
   /**
    * Called when scene is transitioned.
    */

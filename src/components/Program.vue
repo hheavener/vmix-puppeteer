@@ -45,7 +45,21 @@ watch(store.logs, smoothScrollToBottom, { deep: true })
   <div v-else class="program">
     <div class="button-container">
       <button @click="store.previous"><< Previous</button>
-      <button @click="store.clearLogs">Clear Logs</button>
+      <!-- <button @click="store.clearLogs">Clear Logs</button> -->
+      <button
+        v-for="(action, idx) in store.scene?.actions"
+        @click="store.scene?.CallAction(idx)"
+        class="blue-bg"
+      >
+        {{ action.title }}
+      </button>
+      <button
+        v-if="store.scene?.HasAlternateInput()"
+        @click="store.scene?.Alternate"
+        class="green-bg"
+      >
+        Alternate
+      </button>
       <button @click="store.next">Next >></button>
     </div>
     <div class="program-container">
