@@ -10,9 +10,9 @@ if (!globalThis.Logs) globalThis.Logs = []
 if (!globalThis.API) globalThis.API = API
 if (!globalThis.Time) globalThis.Time = Time
 if (!globalThis.Sleep) globalThis.Sleep = Time.Sleep
-// Move this to a setting?
-if (!globalThis.API_URL) globalThis.API_URL = "http://127.0.0.1:8088/API"
-// if (!globalThis.API_URL) globalThis.API_URL = "http://192.168.1.232:8088/API"
+// Move this to a UI setting?
+// if (!globalThis.API_URL) globalThis.API_URL = "http://127.0.0.1:8088/API"
+if (!globalThis.API_URL) globalThis.API_URL = "http://192.168.1.232:8088/API"
 
 function initIPC(): IPC {
   return {
@@ -22,12 +22,12 @@ function initIPC(): IPC {
     },
     rendererInvoke: <T extends IPCChannelAction>(channelAction: T) => {
       return ((...args: any[]) => {
-        console.log("RENDER INVOKE:", channelAction, args)
+        // console.log("RENDER INVOKE:", channelAction, args)
         return ipcRenderer.invoke(channelAction, args)
       }) as InferChannelActionType<T>
     },
     mainHandle: (channelAction, listener) => {
-      console.log("MAIN HANDLE:", channelAction)
+      // console.log("MAIN HANDLE:", channelAction)
       return ipcMain.handle(channelAction, listener)
     }
   }

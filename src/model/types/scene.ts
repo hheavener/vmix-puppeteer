@@ -83,7 +83,7 @@ export type PTZInput = {
   input: string
 }
 
-type Action = { title: string } & VmixFunctionCall
+type Action = { label: string } & VmixFunctionCall
 
 export type SceneProps = {
   /**

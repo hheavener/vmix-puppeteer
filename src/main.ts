@@ -57,7 +57,7 @@ app.whenReady().then(() => {
           "img-src 'self' data:;",
           "script-src 'self' 'unsafe-inline';",
           "style-src-elem 'self' 'unsafe-inline';",
-          "connect-src 'self' *;"
+          "connect-src 'self';"
         ].join("")
       }
     })

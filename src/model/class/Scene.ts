@@ -8,9 +8,6 @@ import { type Input, type SceneProps, type VmixTransition } from "@/model/types/
 const LogPrefix = "ScenePlayer:"
 
 export default class ScenePlayer {
-  // private title: string
-  // private prepare: PTZInput
-  // private activeInput: Input
   private scene: SceneProps
   private virtualKeyMap: Record<string, string>
   private logDest: string[] | undefined
@@ -28,6 +25,11 @@ export default class ScenePlayer {
     this.logDest = logDest
   }
 
+  /*
+   * =====================
+   *      Transitions
+   * =====================
+   */
   public async TransitionIn(): Promise<void> {
     this._log(LogPrefix, "TransitionIn")
     const { output: activeOutput } = await API.GetActiveInputs()
@@ -40,6 +42,18 @@ export default class ScenePlayer {
     }
   }
 
+  public async TransitionOut(): Promise<void> {
+    this._log(LogPrefix, "TransitionOut")
+    if (this.scene.transition) {
+      await this.callFunction(this.scene.transition)
+    }
+  }
+
+  /*
+   * =============================
+   *      Pre/Post Operations
+   * =============================
+   */
   public async OnTransitioned(): Promise<void> {
     const { onTransitioned } = this.scene
     if (!onTransitioned?.length) return
@@ -66,14 +80,20 @@ export default class ScenePlayer {
       }
 
       await this.API_Function("PTZMoveToVirtualInputPosition", { Input: prepareTitle })
-      // if (i < prepareNext.length - 1) this._log(LogPrefix, await Sleep(0.5, "Seconds")) // TODO: move to some kind of user settings later on?
     }
   }
 
-  public HasAlternateInput(): boolean {
-    return !!this.scene.alternate
+  public async WillTransition(): Promise<void> {
+    this._log(LogPrefix, "WillTransition")
+    await this.callFunctions(this.scene.willTransition)
+    this._log(LogPrefix, await Sleep(1, "Second"))
   }
 
+  /*
+   * ==================================
+   *      User-Initiated Functions
+   * ==================================
+   */
   public async Alternate(): Promise<void> {
     if (!this.scene.alternate) return
     this._log(LogPrefix, "Alternate")
@@ -81,8 +101,10 @@ export default class ScenePlayer {
     const alt = this.scene.alternate
     const { preview, output } = await API.GetActiveInputs()
     const transition = async () => {
-      await this.API_Function(alt.transition || "Merge", { Input: "Preview" })
+      await this.API_Function(alt.transition || "Merge", {})
     }
+
+    if (alt.willTransition) await this.callFunctions(JSON.parse(JSON.stringify(alt.willTransition)))
     if (alt.input.title === output.title) {
       const active = this.scene.activeInput
       await this.API_Function("PreviewInput", { Input: active.title })
@@ -99,26 +121,17 @@ export default class ScenePlayer {
   public async CallAction(idx: number): Promise<void> {
     // TODO: Parameters from the DOM require serialization
     const action = JSON.parse(JSON.stringify(this.scene.actions?.[idx]))
-    // const action = this.scene.actions?.[idx]
     if (!action) return
     this._log(LogPrefix, "[Action]", action.title)
     await this.callFunction(action)
   }
 
-  public async WillTransition(): Promise<void> {
-    this._log(LogPrefix, "WillTransition")
-    await this.callFunctions(this.scene.willTransition)
-    this._log(LogPrefix, await Sleep(1, "Second"))
-  }
-
-  public async TransitionOut(): Promise<void> {
-    this._log(LogPrefix, "TransitionOut")
-    if (this.scene.transition) {
-      await this.callFunction(this.scene.transition)
-    }
-  }
-
-  // TODO: Input needs a class model?
+  /*
+   * =================
+   *      Getters
+   * =================
+   */
+  // TODO: Does input need a class instead of a basic type?
   public GetActiveInput(): Input {
     return this.scene.activeInput
   }
@@ -127,6 +140,15 @@ export default class ScenePlayer {
     return this.scene
   }
 
+  public HasAlternateInput(): boolean {
+    return !!this.scene.alternate
+  }
+
+  /*
+   * =================
+   *      Private
+   * =================
+   */
   private async previewAlternate(): Promise<void> {
     if (!this.scene.alternate) return
     this._log(LogPrefix, "previewAlternate")
@@ -137,8 +159,9 @@ export default class ScenePlayer {
 
     const altKey = this.virtualKeyMap[alt.input.title]
     const outputKey = this.virtualKeyMap[output.title]
+    console.log({ altKey, outputKey })
 
-    if (outputKey === altKey) {
+    if ((outputKey || altKey) && outputKey === altKey) {
       return this._log(`WARNING: Cannot preview input '${alt.input.title}' which uses 
         the same PTZ optic as the active output '${output.title}'`)
     }

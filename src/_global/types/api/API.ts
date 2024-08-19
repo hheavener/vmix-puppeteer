@@ -44,7 +44,7 @@ export const API = {
     IPC.rendererInvoke("FileDialog:debug")(msg)
     logFunc?.("API.Function:", `Name = ${functionName},`, "Params =", params)
 
-    const resOk = await IPC.rendererInvoke("Http:Get")(window.API_URL, {
+    const { resOk } = await IPC.rendererInvoke("Http:Get")(window.API_URL, {
       Function: functionName,
       ...params
     })
@@ -62,17 +62,14 @@ export const API = {
    * @returns
    */
   GetActiveInputs: async (): Promise<ActiveInputs> => {
-    const res = await fetch(window.API_URL, {
-      headers: { "Content-Type": "application/xml", Accept: "application/xml" }
-    }).catch((err) => console.log(err))
+    let { resOk, data: xml } = await IPC.rendererInvoke("Http:Get")(window.API_URL, {})
 
-    let xml: string
-    if (res?.status !== 200) {
+    if (!resOk) {
       // TODO: Remove this?
       console.log("vMix API unavailable - loading sample XML...")
       const sampleXml = await IPC.rendererInvoke("FileDialog:getSampleApiXmlFilePath")()
       xml = (await IPC.rendererInvoke("FileDialog:getFileContent")(sampleXml)) ?? ""
-    } else xml = await res.text()
+    }
 
     if (!xml) throw Error("Failed to load vMix API XML")
     const json = await IPC.rendererInvoke("XmlParser:ParseXml")(xml)

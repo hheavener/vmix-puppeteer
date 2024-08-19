@@ -4,6 +4,7 @@ import type { ProgramProps, SceneProps } from "@/model/types/scene"
 import Program from "@/model/class/Program"
 import type ScenePlayer from "@/model/class/Scene"
 import ProgramBuilder from "@/model/class/ProgramBuilder"
+import type { VmixFunctionCall } from "@@/types/api/VmixFunction"
 
 export const useProgramStore = defineStore("program", () => {
   let program: Program
@@ -21,6 +22,10 @@ export const useProgramStore = defineStore("program", () => {
       .SetLogDestination(logs.value)
       .Initialize()
     programLoaded.value = true
+  }
+
+  function getNextScene() {
+    return program.GetNextScene()
   }
 
   async function next() {
@@ -57,6 +62,7 @@ export const useProgramStore = defineStore("program", () => {
     programLoaded,
     loadVmixPreset,
     loadProgram,
+    getNextScene,
     next,
     previous,
     jump,
@@ -67,6 +73,33 @@ export const useProgramStore = defineStore("program", () => {
     clearLogs
   }
 })
+
+const NamedOperations: Record<string, VmixFunctionCall[]> = {
+  PrepPraiseBand: [
+    { function: "SetDynamicInput2", params: { Value: "Virtual - SOUTH Camera (RS)" } },
+    { function: "SetDynamicValue1", params: { Value: "" } },
+    { function: "SetDynamicValue2", params: { Value: 3 } },
+    { function: "ScriptStart", params: { Value: "UpdatePipSource" } },
+    {
+      function: "ScriptStart",
+      params: { Value: "UpdatePipPosition" },
+      sleep: { amount: 500, unit: "Milliseconds" }
+    }
+  ]
+}
+
+const NamedScenes: Record<string, SceneProps> = {
+  PraiseBand: {
+    title: "[Placeholder]",
+    activeInput: {
+      title: "Virtual - PIP Slides",
+      layers: [{ index: 4, source: "Virtual - SOUTH Camera (RS)" }]
+    },
+    alternate: { input: { title: "[SOUTH] - Musicians" }, transition: "Merge" },
+    prepareNext: [], // Needs to be declared per scene
+    willTransition: [{ function: "ScriptStart", params: { Value: "AlternateStinger" } }]
+  }
+}
 
 const MockProgram: ProgramProps = {
   vmixPreset: "",
@@ -92,34 +125,23 @@ const MockProgram: ProgramProps = {
     {
       title: "Call to Worship",
       activeInput: { title: "[REAR] - Pulpit" },
-      onTransitioned: [
-        { function: "SetDynamicInput2", params: { Value: "Virtual - SOUTH Camera (RS)" } },
-        { function: "SetDynamicValue1", params: { Value: "" } }, // Ensure PIP will be in correct corner
-        { function: "SetDynamicValue2", params: { Value: "3" } },
-        { function: "ScriptStart", params: { Value: "UpdatePipSource" } },
-        { function: "ScriptStart", params: { Value: "UpdatePipPosition" } }
-      ],
+      onTransitioned: NamedOperations.PrepPraiseBand,
       // TODO: Show status popups or handle PIP
       prepareNext: [{ input: "[NORTH] - Lectern" }, { input: "[SOUTH] - Musicians" }],
       willTransition: [{ function: "ScriptStart", params: { Value: "AlternateStinger" } }]
     },
     {
+      ...NamedScenes.PraiseBand,
       title: "Worship Music",
-      activeInput: {
-        title: "Virtual - PIP Slides",
-        // Runner will need to explicitly turn layer on and confirm source is correct
-        layers: [{ index: 4, source: "Virtual - SOUTH Camera (CS)" }]
-      },
-      prepareNext: [{ input: "[NORTH] - Lectern" }],
-      willTransition: [{ function: "ScriptStart", params: { Value: "AlternateStinger" } }]
+      prepareNext: [{ input: "[NORTH] - Lectern" }]
     },
     {
-      title: "Confession/Assurance/Etc",
+      title: "Liturgy",
       activeInput: { title: "[NORTH] - Lectern" },
       onTransitioned: [
         { function: "SetDynamicInput2", params: { Value: "Virtual - NORTH Camera (CS)" } },
         { function: "SetDynamicValue1", params: { Value: "" } }, // Ensure PIP will be in correct corner
-        { function: "SetDynamicValue2", params: { Value: "4" } },
+        { function: "SetDynamicValue2", params: { Value: 4 } },
         { function: "ScriptStart", params: { Value: "UpdatePipSource" } },
         { function: "ScriptStart", params: { Value: "UpdatePipPosition" } }
       ],
@@ -131,72 +153,73 @@ const MockProgram: ProgramProps = {
         transition: "Merge"
       },
       prepareNext: [{ input: "[SOUTH] - Musicians" }, { input: "[REAR] - Center Stage (Full)" }],
-      willTransition: [{ function: "ScriptStart", params: { Value: "AlternateStinger" } }]
+      willTransition: [
+        ...NamedOperations.PrepPraiseBand,
+        { function: "ScriptStart", params: { Value: "AlternateStinger" } }
+      ]
+    },
+    {
+      ...NamedScenes.PraiseBand,
+      title: "Song of Thanksgiving",
+      prepareNext: [{ input: "[REAR] - Center Stage (Full)" }]
     },
     {
       title: "Pastoral Prayer",
       activeInput: { title: "[REAR] - Center Stage (Full)" },
-      onTransitioned: [
-        { function: "SetDynamicInput2", params: { Value: "Virtual - SOUTH Camera (RS)" } },
-        { function: "SetDynamicValue1", params: { Value: "" } }, // Ensure PIP will be in correct corner
-        { function: "SetDynamicValue2", params: { Value: "3" } },
-        { function: "ScriptStart", params: { Value: "UpdatePipSource" } }
-      ],
+      onTransitioned: NamedOperations.PrepPraiseBand,
       prepareNext: [{ input: "[SOUTH] - Musicians" }],
       willTransition: [{ function: "ScriptStart", params: { Value: "AlternateStinger" } }]
     },
     {
-      title: "Song of Thanksgiving",
-      activeInput: {
-        title: "Virtual - PIP Slides",
-        layers: [{ index: 4, source: "Virtual - SOUTH Camera (CS)" }]
-      },
-      prepareNext: [{ input: "[NORTH] - Pulpit" }],
-      willTransition: [{ function: "ScriptStart", params: { Value: "AlternateStinger" } }]
+      ...NamedScenes.PraiseBand,
+      title: "Offertory",
+      prepareNext: [{ input: "[NORTH] - Pulpit" }]
     },
     {
       title: "Sermon",
       activeInput: { title: "[NORTH] - Pulpit" },
       onTransitioned: [
-        { function: "SelectTitlePreset", params: { Value: "4", Input: "Status Popups" } }, // Should be scripture
+        { function: "SetDynamicInput2", params: { Value: "Virtual - NORTH Camera (RS)" } },
+        { function: "SelectTitlePreset", params: { Value: 3, Input: "Status Popups" } }, // Should be scripture
         { function: "SetDynamicValue1", params: { Value: "" } }, // Ensure PIP will be in correct corner
-        { function: "SetDynamicValue2", params: { Value: "4" } },
-        { function: "ScriptStart", params: { Value: "UpdatePipSource" } }
+        { function: "SetDynamicValue2", params: { Value: 4 } },
+        { function: "ScriptStart", params: { Value: "UpdatePipSource" } },
+        { function: "ScriptStart", params: { Value: "UpdatePipPosition" } }
       ],
       actions: [
         {
-          title: "Toggle Scripture",
-          function: "OverlayInput2",
+          label: "Toggle Scripture",
+          function: "OverlayInput2In",
           params: { Input: "Status Popups" }
         }
       ],
       alternate: {
         input: {
           title: "Virtual - PIP Slides",
-          layers: [{ index: 4, source: "Virtual - NORTH Camera (CS)" }]
+          layers: [{ index: 4, source: "Virtual - NORTH Camera (RS)" }]
         },
         transition: "Merge",
-        willTransition: [{ function: "OverlayInput2Off", params: {} }]
+        willTransition: [{ function: "OverlayInput2Out", params: {} }]
       },
       prepareNext: [{ input: "[SOUTH] - Musicians" }],
-      willTransition: [{ function: "ScriptStart", params: { Value: "AlternateStinger" } }]
+      willTransition: [
+        ...NamedOperations.PrepPraiseBand,
+        { function: "ScriptStart", params: { Value: "AlternateStinger" } }
+      ]
     },
     // TODO: Communion
     {
+      ...NamedScenes.PraiseBand,
       title: "Song of Response",
-      activeInput: {
-        title: "Virtual - PIP Slides",
-        layers: [{ index: 4, source: "Virtual - SOUTH Camera (CS)" }]
-      },
-      prepareNext: [{ input: "[REAR] - Center Stage (Full)" }, { input: "[FRONT] - Benediction" }],
-      willTransition: [{ function: "ScriptStart", params: { Value: "AlternateStinger" } }]
+      // prepareNext: [{ input: "[REAR] - Center Stage (Full)" }, { input: "[FRONT] - Benediction" }],
+      prepareNext: [{ input: "[NORTH] - Pulpit" }, { input: "[FRONT] - Benediction" }]
     },
     {
       title: "Benediction",
-      activeInput: { title: "[REAR] - Center Stage (Full)" },
-      prepareNext: [{ input: "[FRONT] - Benediction" }],
+      // activeInput: { title: "[REAR] - Center Stage (Full)" },
+      activeInput: { title: "[NORTH] - Pulpit" },
+      prepareNext: [],
       willTransition: [
-        // { function: "ScriptStart", params: { Value: "AlternateStinger" } },
         { function: "SelectTitlePreset", params: { Value: "0", Input: "Status Popups" } } // Should be "Stream Ended..."
       ]
     },
@@ -204,7 +227,6 @@ const MockProgram: ProgramProps = {
       title: "Stream End",
       activeInput: { title: "Stinger 1 - RED" },
       onTransitioned: [
-        // { function: "ActiveInput", params: { Input: "Stinger 1 - RED" } },
         { function: "SelectTitlePreset", params: { Value: "0", Input: "Status Popups" } },
         {
           function: "OverlayInput2In",
@@ -212,7 +234,7 @@ const MockProgram: ProgramProps = {
           sleep: { amount: 10, unit: "Seconds" }
         },
         { function: "OverlayInput2Out", params: {}, sleep: { amount: 3, unit: "Seconds" } },
-        { function: "StopStreaming", params: {} } // TODO: Move to action?
+        { function: "StopStreaming", params: {} }
       ],
       prepareNext: []
     }

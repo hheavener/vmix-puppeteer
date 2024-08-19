@@ -2,9 +2,10 @@ import type { TimeUnit } from "../ipc/impl/Time"
 import FunctionReference from "./VmixFunctionReference"
 
 export type VmixFunctionName = (typeof FunctionReference)[number]["name"]
+// TODO: Make all of these able to be loaded async
 export type VmixFunctionParams = {
   Input?: string
-  Value?: string
+  Value?: string | number
   Duration?: number
   Channel?: number
   SelectedName?: string

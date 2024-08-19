@@ -45,5 +45,6 @@ function getVirtualKeyMap(preset: any): Record<string, string> {
     const title: string = i["@_Title"] || i["@_OriginalTitle"]
     vInputKeyMap[title] = key
   })
+  console.log("VirtualKeyMap:", vInputKeyMap)
   return vInputKeyMap
 }

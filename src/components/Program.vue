@@ -2,10 +2,11 @@
 import { useProgramStore } from "@/stores/program"
 import JsonViewer from "./JsonViewer.vue"
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/shadcn/ui/resizable"
-import { watch } from "vue"
+import { computed, watch } from "vue"
 
 const store = useProgramStore()
 const loadProgram = async () => await store.loadProgram()
+const sceneJson = computed(() => store.scene?.GetSceneProps())
 
 // TODO: Move logs container into separate component
 function smoothScrollToBottom() {
@@ -48,10 +49,10 @@ watch(store.logs, smoothScrollToBottom, { deep: true })
       <!-- <button @click="store.clearLogs">Clear Logs</button> -->
       <button
         v-for="(action, idx) in store.scene?.actions"
-        @click="store.scene?.CallAction(idx)"
+        @click="store.callAction(idx)"
         class="blue-bg"
       >
-        {{ action.title }}
+        {{ action.label }}
       </button>
       <button
         v-if="store.scene?.HasAlternateInput()"
@@ -73,7 +74,7 @@ watch(store.logs, smoothScrollToBottom, { deep: true })
       </ul>
       <ResizablePanelGroup id="resize-group" direction="vertical">
         <ResizablePanel :min-size="10" collapsible :default-size="1">
-          <JsonViewer v-if="store.scene" :json="store.scene?.GetSceneProps()" />
+          <JsonViewer v-if="sceneJson" :json="sceneJson" />
           <div v-else class="placeholder"><h2>No scene selected</h2></div>
         </ResizablePanel>
         <ResizableHandle />
@@ -108,6 +109,11 @@ watch(store.logs, smoothScrollToBottom, { deep: true })
 
   button {
     width: 150px;
+  }
+
+  &.tr {
+    position: fixed;
+    right: 80px;
   }
 }
 .program-container {
