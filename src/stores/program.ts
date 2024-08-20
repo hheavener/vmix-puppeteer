@@ -10,6 +10,7 @@ export const useProgramStore = defineStore("program", () => {
   let program: Program
   let vMixPreset: Ref<Object | null> = ref(null)
   let scene: Ref<ScenePlayer | undefined> = ref(undefined)
+  let nextScene: Ref<ScenePlayer | undefined> = ref(undefined)
   let scenes: Ref<SceneProps[] | undefined> = ref([])
   let programLoaded = ref(false)
   let logs: Ref<string[]> = ref([])
@@ -22,25 +23,25 @@ export const useProgramStore = defineStore("program", () => {
       .SetLogDestination(logs.value)
       .Initialize()
     programLoaded.value = true
-  }
-
-  function getNextScene() {
-    return program.GetNextScene()
+    nextScene.value = program.GetNextScene()
   }
 
   async function next() {
     scene.value = program.GetNextScene()
     await program.MoveToNextScene()
+    nextScene.value = program.GetNextScene()
   }
 
   async function previous() {
     scene.value = program.GetPreviousScene()
     await program.MoveToPreviousScene()
+    nextScene.value = program.GetNextScene()
   }
 
   async function jump(sceneIdx: number) {
     scene.value = program.GetScene(sceneIdx)
     await program.MoveToScene(sceneIdx)
+    nextScene.value = program.GetNextScene()
   }
 
   async function callAction(actionIdx: number) {
@@ -62,7 +63,7 @@ export const useProgramStore = defineStore("program", () => {
     programLoaded,
     loadVmixPreset,
     loadProgram,
-    getNextScene,
+    nextScene,
     next,
     previous,
     jump,
