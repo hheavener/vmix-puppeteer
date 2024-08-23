@@ -108,8 +108,8 @@ export default class Program {
       `<span class="${color}">${fmt}</span>`,
       ...params
     )
-    console.log(fmt, ...params)
-    this.logDest?.push(htmlMessage)
+    if (this.logDest) this.logDest?.push(htmlMessage)
+    else console.log(fmt, ...params)
     IPC.rendererInvoke("FileDialog:debug")(message)
   }
 }

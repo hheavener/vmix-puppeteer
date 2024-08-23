@@ -77,18 +77,18 @@ export const API = {
     const previewNumber = json.vmix.preview
     const inputs = json.vmix.inputs.input
 
+    const getInputInfo = (inputNumber: number): InputInfo => ({
+      number: String(inputNumber),
+      title: inputs[inputNumber - 1]["@_title"],
+      shortTitle: inputs[inputNumber - 1]["@_shortTitle"]
+    })
+
     return {
-      output: {
-        number: outputNumber,
-        title: inputs[outputNumber - 1]["@_title"]
-      },
-      preview: {
-        number: previewNumber,
-        title: inputs[previewNumber - 1]["@_title"]
-      }
+      output: getInputInfo(outputNumber),
+      preview: getInputInfo(previewNumber)
     }
   }
 }
 
-type InputInfo = { number: string; title: string }
+type InputInfo = { number: string; title: string; shortTitle: string }
 type ActiveInputs = { output: InputInfo; preview: InputInfo }

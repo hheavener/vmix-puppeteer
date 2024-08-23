@@ -81,7 +81,7 @@ watch(store.logs, smoothScrollToBottom, { deep: true })
               <div v-else class="placeholder"><h2>No scene selected</h2></div>
             </ResizablePanel>
             <ResizableHandle />
-            <ResizablePanel :min-size="10" collapsible :default-size="0">
+            <ResizablePanel :min-size="10" collapsible :default-size="1">
               <JsonViewer v-if="nextSceneJson" :json="nextSceneJson" />
               <div v-else class="placeholder"><h2>No next scene</h2></div>
             </ResizablePanel>

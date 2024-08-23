@@ -104,15 +104,24 @@ export default class ScenePlayer {
       await this.API_Function(alt.transition || "Merge", {})
     }
 
-    if (alt.willTransition) await this.callFunctions(JSON.parse(JSON.stringify(alt.willTransition)))
-    if (alt.input.title === output.title) {
+    console.log("Alternate Info:", {
+      active: { title: this.scene.activeInput.title },
+      alt: { title: alt.input.title },
+      output: { title: output.title, shortTitle: output.shortTitle }
+    })
+
+    if ([output.title, output.shortTitle].includes(alt.input.title)) {
       const active = this.scene.activeInput
       await this.API_Function("PreviewInput", { Input: active.title })
       await this._log(LogPrefix, await Sleep(100, "Milliseconds"))
       await transition()
     } else {
-      if (alt.input.title !== preview.title) await this.previewAlternate()
-      await this.callFunctions(alt.willTransition)
+      const altViewNotInPreview = ![preview.title, preview.shortTitle].includes(alt.input.title)
+      if (altViewNotInPreview) await this.previewAlternate()
+      if (alt.willTransition) {
+        const functionList = JSON.parse(JSON.stringify(alt.willTransition))
+        await this.callFunctions(functionList)
+      }
       this._log(LogPrefix, await Sleep(100, "Milliseconds"))
       await transition()
     }
@@ -209,8 +218,8 @@ export default class ScenePlayer {
       `<span class="${color}">${fmt}</span>`,
       ...params
     )
-    console.log(fmt, ...params)
-    this.logDest?.push(htmlMessage)
+    if (this.logDest) this.logDest?.push(htmlMessage)
+    else console.log(fmt, ...params)
     IPC.rendererInvoke("FileDialog:debug")(message)
   }
 }
