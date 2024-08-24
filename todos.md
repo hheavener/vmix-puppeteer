@@ -21,6 +21,6 @@ When creating a new program, it should be backed by a vmix preset file.
 
 - Programs should be given a unique name (possibly UUID also) and saved with a pointer to the vmix save file they were created from
 
-### Change API.Function to be IPC
+### Change `prepareNext` to `prepare`
 
-VMIX will likely block requests coming from client-side JS so this should be done with Node-Fetch or axios from the main process
+Currently, each scene knows how to prepare for the next scene. A better approach would be for each scene to specify what preparations it needs in order to be transitioned to correctly. The program could then call the next scene's prepare portion after transition to make sure it's setup.
