@@ -79,6 +79,15 @@ export default class Program {
     await scene.OnTransitionIn()
     await scene.TransitionIn()
     await scene.OnTransitioned()
+
+    if (scene.ShouldPrepareNext()) {
+      const nextSceneIdx = this.findNextEnabledScene()
+      if (nextSceneIdx !== null) {
+        const nextScene = this.GetScene(nextSceneIdx)
+        if (nextScene) await nextScene?.Prepare(true)
+      }
+    }
+
     return scene
   }
 

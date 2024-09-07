@@ -99,7 +99,7 @@ export type SceneProps = {
   /**
    * Inputs to prepare before next scene.
    */
-  prepare: Input[]
+  prepare?: Input[]
   /**
    * Will be skipped if true.
    */

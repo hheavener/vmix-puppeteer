@@ -46,6 +46,7 @@ export default class ScenePlayer {
 
     for (let layer of sceneInput.layers ?? []) {
       await this.API_Function("SetLayer", {
+        Input: sceneInput.title,
         Value: `${layer.index},${layer.input}`
       })
     }
@@ -81,29 +82,43 @@ export default class ScenePlayer {
    *      Pre/Post Operations
    * =============================
    */
-  public async Prepare(): Promise<void> {
-    const { prepare } = this.scene
-    if (!prepare?.length) return
-    this._log(LogPrefix, "Prepare")
+  public async Prepare(safePrepare: boolean = false): Promise<void> {
+    this._log(LogPrefix, "Prepare", safePrepare ? "(safe)" : "")
+    const { activeInput, prepare = [] } = this.scene
+    prepare.unshift(activeInput)
 
-    const activeTitle = this.scene.activeInput.title
+    const { output } = await API.GetActiveInputs()
+
     for (let input of prepare) {
       const { title, layers = [] } = input
-      const activeKey = this.virtualKeyMap[activeTitle]
-      const prepareKey = this.virtualKeyMap[title]
-
-      if (activeKey === prepareKey) {
+      // TODO: don't move camera if same as output
+      if (safePrepare && [output.title, output.shortTitle].includes(title)) {
         this._log(`WARNING: Cannot prepare input '${title}' which uses 
-          the same PTZ optic as the active input '${activeTitle}'`)
+          the same PTZ optic as the current output '${output.title}'`)
         continue
       }
-
       await this.API_Function("PTZMoveToVirtualInputPosition", { Input: title })
       for (let layer of layers) {
         await this.API_Function("SetLayer", {
+          Input: title,
           Value: `${layer.index},${layer.input}`
         })
       }
+    }
+
+    this._log(LogPrefix, await Sleep(200, "Milliseconds"))
+  }
+
+  public async PrepareAlternate(): Promise<void> {
+    if (!this.scene.alternate) return
+    this._log(LogPrefix, "PrepareAlternate")
+    const { input } = this.scene.alternate
+
+    for (let layer of input.layers ?? []) {
+      await this.API_Function("SetLayer", {
+        Input: input.title,
+        Value: `${layer.index},${layer.input}`
+      })
     }
 
     this._log(LogPrefix, await Sleep(200, "Milliseconds"))
@@ -175,6 +190,10 @@ export default class ScenePlayer {
 
   public HasAlternateInput(): boolean {
     return !!this.scene.alternate
+  }
+
+  public ShouldPrepareNext(): boolean {
+    return !!this.scene.prepareNextSceneOnTransition
   }
 
   /*

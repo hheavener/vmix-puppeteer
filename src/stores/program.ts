@@ -107,7 +107,10 @@ const NamedScenes: Record<string, (...args: any[]) => SceneProps> = {
       title: "Virtual - PIP Slides",
       layers: [{ index: 3, input: "Virtual - SOUTH Camera (RS)" }]
     },
-    alternate: { input: { title: "[SOUTH] - Musicians" }, transition: "Merge" },
+    alternate: {
+      input: { title: "[SOUTH] - Musicians" },
+      transition: "Merge"
+    },
     transition: { function: "ScriptStart", params: { Value: "AlternateStinger" } }
   })
 }
@@ -118,25 +121,25 @@ const MockProgram: ProgramProps = {
     {
       title: "Pre-Stream",
       activeInput: { title: "Proclaim - NDI Slides" },
-      prepare: [],
-      transition: { function: "ScriptStart", params: { Value: "AlternateStinger" } }
+      transition: { function: "ScriptStart", params: { Value: "AlternateStinger" } },
+      prepareNextSceneOnTransition: true
     },
     {
       title: "Announcements",
       activeInput: { title: "[REAR] - Center Stage (Speaker)" },
-      prepare: [{ title: "[REAR] - Center Stage (Speaker)" }],
-      transition: { function: "ScriptStart", params: { Value: "AlternateStinger" } }
+      // prepare: [{ title: "[REAR] - Center Stage (Speaker)" }],
+      transition: { function: "ScriptStart", params: { Value: "AlternateStinger" } },
+      prepareNextSceneOnTransition: true
     },
     {
       title: "Gathering Music",
       activeInput: { title: "[SOUTH] - Piano" },
-      prepare: [{ title: "[SOUTH] - Piano" }],
-      transition: { function: "ScriptStart", params: { Value: "AlternateStinger" } }
+      transition: { function: "ScriptStart", params: { Value: "AlternateStinger" } },
+      prepareNextSceneOnTransition: true
     },
     {
       title: "Call to Worship",
       activeInput: { title: "[REAR] - Pulpit" },
-      prepare: [{ title: "[REAR] - Pulpit" }],
       alternate: {
         input: {
           title: "Virtual - PIP Slides",
@@ -145,13 +148,13 @@ const MockProgram: ProgramProps = {
         transition: "Merge"
       },
       // TODO: Show status popups or handle PIP
-      transition: { function: "ScriptStart", params: { Value: "AlternateStinger" } }
+      transition: { function: "ScriptStart", params: { Value: "AlternateStinger" } },
+      prepareNextSceneOnTransition: true
     },
     NamedScenes.PraiseBand("Worship Music"),
     {
       title: "Liturgy",
       activeInput: { title: "[NORTH] - Lectern" },
-      prepare: [{ title: "[NORTH] - Lectern" }],
       onTransitioned: [
         { function: "SetDynamicInput2", params: { Value: "Virtual - NORTH Camera (CS)" } },
         { function: "SetDynamicValue1", params: { Value: "" } }, // Ensure PIP will be in correct corner
@@ -179,11 +182,22 @@ const MockProgram: ProgramProps = {
     {
       title: "Sermon",
       activeInput: { title: "[NORTH] - Pulpit" },
-      prepare: [],
+      onTransitioned: [
+        { function: "SetDynamicInput2", params: { Value: "Virtual - NORTH Camera (RS)" } },
+        { function: "SetDynamicValue1", params: { Value: "" } },
+        { function: "SetDynamicValue2", params: { Value: 4 } },
+        { function: "ScriptStart", params: { Value: "UpdatePipSource" } },
+        {
+          function: "ScriptStart",
+          params: { Value: "UpdatePipPosition" },
+          sleep: { amount: 500, unit: "Milliseconds" }
+        },
+        { function: "SelectTitlePreset", params: { Value: "3", Input: "Status Popups" } }
+      ],
       actions: [
         {
           label: "Toggle Scripture",
-          function: "OverlayInput2In",
+          function: "OverlayInput2",
           params: { Input: "Status Popups" }
         }
       ],
