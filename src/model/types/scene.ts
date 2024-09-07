@@ -44,7 +44,7 @@ export type LayerConfig = {
    * The input for the PIP.
    * (Be careful, this could create an infinite loop)
    */
-  source: string
+  input: string
   /**
    * (Experimental - Proposed)
    * Size scaling for the PIP
@@ -99,7 +99,7 @@ export type SceneProps = {
   /**
    * Inputs to prepare before next scene.
    */
-  prepareNext: PTZInput[]
+  prepare: Input[]
   /**
    * Will be skipped if true.
    */
@@ -113,16 +113,18 @@ export type SceneProps = {
    */
   alternate?: {
     input: Input
+    // prepare: Input[] // Needed?
     /**
      * // TODO: Allow user to configure default transition?
      */
     transition?: VmixTransition
-    willTransition?: VmixFunctionCall[]
     onTransitioned?: VmixFunctionCall[]
+    onTransitionOut?: VmixFunctionCall[]
   }
   /**
-   * The transition it should use to move to
-   * the next scene in the list.
+   * The transition to use when transitioning to this scene.
+   *
+   * Default: `"Merge"`
    */
   transition?: VmixTransition
   /**
@@ -131,13 +133,17 @@ export type SceneProps = {
    */
   actions?: Action[]
   /**
+   * Called right before scene is transitioned to.
+   */
+  onTransitionIn?: VmixFunctionCall[]
+  /**
    * Called when scene is transitioned.
    */
   onTransitioned?: VmixFunctionCall[]
   /**
-   * Called right before transitioning.
+   * Called right before transitioning to next scene.
    */
-  willTransition?: VmixFunctionCall[]
+  onTransitionOut?: VmixFunctionCall[]
   /**
    * (Experimental - Proposed)
    * The amount of time this scene should hold
@@ -149,6 +155,12 @@ export type SceneProps = {
    * The time this scene should start.
    */
   startTime?: Date
+  /**
+   * (Experimental - Proposed)
+   * Automatically prepare the next scene when this one
+   * is finished transitioning. Default to `false`.
+   */
+  prepareNextSceneOnTransition?: boolean
 }
 
 export type ProgramProps = {

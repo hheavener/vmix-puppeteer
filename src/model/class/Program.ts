@@ -44,28 +44,15 @@ export default class Program {
   public async MoveToNextScene(): Promise<Scene | undefined> {
     await this._log("Program:", "MoveToNextScene")
     const nextIdx = this.findNextEnabledScene()
-    const nextScene = nextIdx && this.scenes[nextIdx]
-    if (nextScene) {
-      const input = nextScene.GetActiveInput().title
-      await API.Function("PreviewInput", { Input: input }, (fmt, ...args) => {
-        this._log(fmt, ...args)
-      })
-    }
-
-    const current = this.scenes[this.activeIdx]
-    await current?.WillTransition()
-    await current?.TransitionOut()
-
-    if (nextIdx === null) return
-    return this.MoveToScene(nextIdx)
+    if (nextIdx !== null) return this.MoveToScene(nextIdx)
+    this._log("Program:", "FAILURE: No next scene found!")
   }
 
   public async MoveToPreviousScene(): Promise<Scene | undefined> {
     await this._log("Program::MoveToPreviousScene")
-    // TODO: Determine how to handle transition to a previous scene
     const prevIdx = this.findPreviousEnabledScene()
-    if (prevIdx === null) return
-    return this.MoveToScene(prevIdx)
+    if (prevIdx !== null) return this.MoveToScene(prevIdx)
+    this._log("Program:", "FAILURE: No previous scene found!")
   }
 
   public GetScene(sceneIdx: number): Scene | undefined {
@@ -73,15 +60,25 @@ export default class Program {
     return this.scenes[sceneIdx]
   }
 
-  public async MoveToScene(sceneIdx: number): Promise<Scene> {
+  public async MoveToScene(sceneIdx: number): Promise<Scene | undefined> {
+    const current = this.scenes[this.activeIdx]
+    await current?.OnTransitionOut()
+
     this._log("\n")
-    this._log("<b>Program::MoveToScene[%d]</b> - %s", sceneIdx + 1, this.scenes[sceneIdx].title)
+    const logFmt = "<b>Program::MoveToScene[%d]</b> - %s"
+    if (sceneIdx < 0 || sceneIdx > this.scenes.length - 1) {
+      this._log(logFmt, sceneIdx, "FAILURE: Scene out of bounds!")
+      return
+    }
+
+    this._log(logFmt, sceneIdx + 1, this.scenes[sceneIdx].title)
     this.activeIdx = sceneIdx
+
     const scene = this.scenes[sceneIdx]
-    // await API.Function("Merge", { Input: scene.GetActiveInput().title })
+    await scene.Prepare()
+    await scene.OnTransitionIn()
     await scene.TransitionIn()
     await scene.OnTransitioned()
-    await scene.PrepareNext()
     return scene
   }
 

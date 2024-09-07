@@ -30,30 +30,34 @@ export default class ScenePlayer {
    *      Transitions
    * =====================
    */
+  public async OnTransitionIn(): Promise<void> {
+    const { onTransitionIn = [] } = this.scene
+    if (onTransitionIn.length) {
+      this._log(LogPrefix, "OnTransitionIn")
+      const functionList = JSON.parse(JSON.stringify(onTransitionIn))
+      await this.callFunctions(functionList)
+    }
+  }
   public async TransitionIn(): Promise<void> {
     this._log(LogPrefix, "TransitionIn")
     const { output: activeOutput } = await API.GetActiveInputs()
-    const sceneInput = this.scene.activeInput
+    const { transition = "Merge", activeInput: sceneInput } = this.scene
+    await this.API_Function("PreviewInput", { Input: sceneInput.title })
+
+    for (let layer of sceneInput.layers ?? []) {
+      await this.API_Function("SetLayer", {
+        Value: `${layer.index},${layer.input}`
+      })
+    }
+
     if (sceneInput.title !== activeOutput.title) {
-      await this.API_Function("Merge", { Input: sceneInput.title })
+      await this.API_Function(transition, { Input: sceneInput.title })
       this._log(LogPrefix, await Sleep(1, "Second"))
     } else {
       this._log(LogPrefix, `Cannot merge '${sceneInput.title}' because of '${activeOutput.title}'`)
     }
   }
 
-  public async TransitionOut(): Promise<void> {
-    this._log(LogPrefix, "TransitionOut")
-    if (this.scene.transition) {
-      await this.callFunction(this.scene.transition)
-    }
-  }
-
-  /*
-   * =============================
-   *      Pre/Post Operations
-   * =============================
-   */
   public async OnTransitioned(): Promise<void> {
     const { onTransitioned } = this.scene
     if (!onTransitioned?.length) return
@@ -62,31 +66,43 @@ export default class ScenePlayer {
     await this.previewAlternate()
   }
 
-  public async PrepareNext(): Promise<void> {
-    const { prepareNext } = this.scene
-    if (!prepareNext?.length) return
-    this._log(LogPrefix, "PrepareNext")
+  public async OnTransitionOut(): Promise<void> {
+    const { onTransitionOut } = this.scene
+    if (!onTransitionOut?.length) return
+    this._log(LogPrefix, "OnTransitionOut")
+    await this.callFunctions(onTransitionOut)
+    this._log(LogPrefix, await Sleep(1, "Second"))
+  }
+
+  /*
+   * =============================
+   *      Pre/Post Operations
+   * =============================
+   */
+  public async Prepare(): Promise<void> {
+    const { prepare } = this.scene
+    if (!prepare?.length) return
+    this._log(LogPrefix, "Prepare")
 
     const activeTitle = this.scene.activeInput.title
-    for (let i = 0; i < prepareNext.length; i++) {
-      const prepareTitle = prepareNext[i].input
+    for (let input of prepare) {
+      const { title, layers = [] } = input
       const activeKey = this.virtualKeyMap[activeTitle]
-      const prepareKey = this.virtualKeyMap[prepareTitle]
+      const prepareKey = this.virtualKeyMap[title]
 
       if (activeKey === prepareKey) {
-        this._log(`WARNING: Cannot prepare input '${prepareTitle}' which uses 
+        this._log(`WARNING: Cannot prepare input '${title}' which uses 
           the same PTZ optic as the active input '${activeTitle}'`)
         continue
       }
 
-      await this.API_Function("PTZMoveToVirtualInputPosition", { Input: prepareTitle })
+      await this.API_Function("PTZMoveToVirtualInputPosition", { Input: title })
+      for (let layer of layers) {
+        await this.API_Function("SetLayer", {
+          Value: `${layer.index},${layer.input}`
+        })
+      }
     }
-  }
-
-  public async WillTransition(): Promise<void> {
-    this._log(LogPrefix, "WillTransition")
-    await this.callFunctions(this.scene.willTransition)
-    this._log(LogPrefix, await Sleep(1, "Second"))
   }
 
   /*
@@ -118,8 +134,8 @@ export default class ScenePlayer {
     } else {
       const altViewNotInPreview = ![preview.title, preview.shortTitle].includes(alt.input.title)
       if (altViewNotInPreview) await this.previewAlternate()
-      if (alt.willTransition) {
-        const functionList = JSON.parse(JSON.stringify(alt.willTransition))
+      if (alt.onTransitionOut) {
+        const functionList = JSON.parse(JSON.stringify(alt.onTransitionOut))
         await this.callFunctions(functionList)
       }
       this._log(LogPrefix, await Sleep(100, "Milliseconds"))
