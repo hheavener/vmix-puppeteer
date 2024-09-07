@@ -118,6 +118,7 @@ export type SceneProps = {
      * // TODO: Allow user to configure default transition?
      */
     transition?: VmixTransition
+    onTransitionIn?: VmixFunctionCall[]
     onTransitioned?: VmixFunctionCall[]
     onTransitionOut?: VmixFunctionCall[]
   }
@@ -126,7 +127,7 @@ export type SceneProps = {
    *
    * Default: `"Merge"`
    */
-  transition?: VmixTransition
+  transition?: VmixTransition | VmixFunctionCall
   /**
    * Actions the user can perform at-will when
    * this scene is live.

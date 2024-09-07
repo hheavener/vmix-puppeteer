@@ -51,7 +51,9 @@ export default class ScenePlayer {
     }
 
     if (sceneInput.title !== activeOutput.title) {
-      await this.API_Function(transition, { Input: sceneInput.title })
+      await (typeof transition === "string"
+        ? this.API_Function(transition, { Input: sceneInput.title })
+        : this.callFunction(transition))
       this._log(LogPrefix, await Sleep(1, "Second"))
     } else {
       this._log(LogPrefix, `Cannot merge '${sceneInput.title}' because of '${activeOutput.title}'`)
@@ -103,6 +105,8 @@ export default class ScenePlayer {
         })
       }
     }
+
+    this._log(LogPrefix, await Sleep(200, "Milliseconds"))
   }
 
   /*
@@ -130,12 +134,16 @@ export default class ScenePlayer {
       const active = this.scene.activeInput
       await this.API_Function("PreviewInput", { Input: active.title })
       await this._log(LogPrefix, await Sleep(100, "Milliseconds"))
+      if (alt.onTransitionOut) {
+        const functionList = JSON.parse(JSON.stringify(alt.onTransitionOut))
+        await this.callFunctions(functionList)
+      }
       await transition()
     } else {
       const altViewNotInPreview = ![preview.title, preview.shortTitle].includes(alt.input.title)
       if (altViewNotInPreview) await this.previewAlternate()
-      if (alt.onTransitionOut) {
-        const functionList = JSON.parse(JSON.stringify(alt.onTransitionOut))
+      if (alt.onTransitionIn) {
+        const functionList = JSON.parse(JSON.stringify(alt.onTransitionIn))
         await this.callFunctions(functionList)
       }
       this._log(LogPrefix, await Sleep(100, "Milliseconds"))
