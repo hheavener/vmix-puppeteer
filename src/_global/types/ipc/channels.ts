@@ -52,7 +52,7 @@ type ActionableChannelMember<T extends Record<string, Channel | ChannelMember>> 
 /**
  * Infers the type of a specific channel action.
  */
-export type InferChannelActionType<T extends IPCChannelAction> =
+export type ActionableSignature<T extends IPCChannelAction> =
   T extends `${infer Channel extends IPCChannel}:${infer Action}`
     ? Action extends keyof AllIPCChannels[Channel]
       ? AllIPCChannels[Channel][Action]

@@ -2,7 +2,7 @@
 import { contextBridge, ipcRenderer, ipcMain } from "electron"
 import { API } from "./types/api/API"
 import type { IPC } from "./types/ipc/IPC"
-import type { IPCChannelAction, InferChannelActionType } from "./types/ipc/channels"
+import type { IPCChannelAction, ActionableSignature } from "./types/ipc/channels"
 import { Time } from "./types/ipc/impl/Time"
 
 if (!globalThis.IPC) globalThis.IPC = initIPC()
@@ -24,7 +24,7 @@ function initIPC(): IPC {
       return ((...args: any[]) => {
         // console.log("RENDER INVOKE:", channelAction, args)
         return ipcRenderer.invoke(channelAction, args)
-      }) as InferChannelActionType<T>
+      }) as ActionableSignature<T>
     },
     mainHandle: (channelAction, listener) => {
       // console.log("MAIN HANDLE:", channelAction)
