@@ -1,13 +1,13 @@
 // All the Node.js APIs are available in the preload process.
 import {
   type IPCChannel,
-  type AllIPCChannels,
   type IPCChannelAction,
-  type InferChannelActionType
+  type InferChannelActionType,
+  type IPCChannelValue
 } from "./channels"
 
 export type IPC = {
-  exposeInMainWorld<T extends IPCChannel>(channel: T, api: AllIPCChannels[T]): void
+  exposeInMainWorld<T extends IPCChannel>(channel: T, value: IPCChannelValue<T>): void
   rendererInvoke<T extends IPCChannelAction>(channelAction: T): InferChannelActionType<T>
   mainHandle(
     channelAction: IPCChannelAction,

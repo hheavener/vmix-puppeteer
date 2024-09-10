@@ -148,9 +148,11 @@ const MockProgram: ProgramProps = {
         transition: "Merge"
       },
       // TODO: Show status popups or handle PIP
-      transition: { function: "ScriptStart", params: { Value: "AlternateStinger" } },
-      prepareNextSceneOnTransition: true
+      transition: { function: "ScriptStart", params: { Value: "AlternateStinger" } }
+      // prepareNextSceneOnTransition: true
     },
+    // TODO: Scene titles should be defined separately from scene content so duplicate scenes
+    // can have different titles and reference the same content
     NamedScenes.PraiseBand("Worship Music"),
     {
       title: "Liturgy",
@@ -194,11 +196,12 @@ const MockProgram: ProgramProps = {
         },
         { function: "SelectTitlePreset", params: { Value: "3", Input: "Status Popups" } }
       ],
+      // TODO: Actions should be stored separately and referenced from scenes
       actions: [
         {
           label: "Toggle Scripture",
           function: "OverlayInput2",
-          params: { Input: "Status Popups" }
+          params: { Input: "Status Popups" } // TODO: Define dynamic values that user can input through UI
         }
       ],
       alternate: {

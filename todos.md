@@ -24,3 +24,7 @@ When creating a new program, it should be backed by a vmix preset file.
 ### Change `prepareNext` to `prepare`
 
 Currently, each scene knows how to prepare for the next scene. A better approach would be for each scene to specify what preparations it needs in order to be transitioned to correctly. The program could then call the next scene's prepare portion after transition to make sure it's setup.
+
+### Add context menu to scene list
+
+This would allow access to scene methods such as Prepare() that can be called at any time
