@@ -68,7 +68,7 @@ app.whenReady().then(() => {
 app.on("window-all-closed", () => process.platform !== "darwin" && app.quit())
 app.on("open-file", (_, path) => console.yellow("OPENING", path))
 
-IPC.mainHandle({
+IPC.mainHandlers({
   "API:Function": (_, [func, args]) => API.Function(func, args),
   "API:GetActiveInputs": API.GetActiveInputs,
   "FileDialog:getFile": (_, [path, encoding]) => FileDialog.getFile(path, encoding),

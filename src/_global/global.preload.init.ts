@@ -30,7 +30,8 @@ function initIPC(): IPC {
         return ipcRenderer.invoke(channelAction, args)
       }) as IPCChannelActionSignature<T>
     },
-    mainHandle: (listeners) => {
+    mainHandle: (channelAction, listener) => ipcMain.handle(channelAction, listener),
+    mainHandlers: (listeners) => {
       for (const action of Object.keys(listeners) as IPCChannelAction[]) {
         // console.log("MAIN HANDLE:", action)
         const listener = listeners[action] as (
