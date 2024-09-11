@@ -18,7 +18,7 @@ type AllIPCChannels = {
   API_URL: ReadOnly<string>
   Http: typeof Http
   Util: typeof Util
-  Time: typeof Time
+  Time: ReadOnly<typeof Time>
   Sleep: typeof Time.Sleep
   FileDialog: typeof FileDialog
   XmlParser: typeof XmlParser

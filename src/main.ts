@@ -68,15 +68,19 @@ app.whenReady().then(() => {
 app.on("window-all-closed", () => process.platform !== "darwin" && app.quit())
 app.on("open-file", (_, path) => console.yellow("OPENING", path))
 
-IPC.mainHandle("FileDialog:getFile", (_, [path, encoding]) => FileDialog.getFile(path, encoding))
-IPC.mainHandle("FileDialog:getFilePath", FileDialog.getFilePath)
-IPC.mainHandle("FileDialog:getFileContent", (_, [path]) => FileDialog.getFileContent(path))
-IPC.mainHandle("FileDialog:getVmixPreset", (_, [zip]) => FileDialog.getVmixPreset(zip))
-IPC.mainHandle("FileDialog:getSampleApiXmlFilePath", FileDialog.getSampleApiXmlFilePath)
-IPC.mainHandle("Http:Get", (_, [url, params]) => Http.Get(url, params))
-IPC.mainHandle("Util:format", (_, [fmt, ...args]) => Util.format(fmt, ...args))
-IPC.mainHandle("LogStream:Push", (_, [fmt, ...args]) => LogStream.Push(fmt, ...args))
-IPC.mainHandle("LogStream:Get", LogStream.Get)
-IPC.mainHandle("LogStream:Clear", LogStream.Clear)
-IPC.mainHandle("XmlParser:ParseXml", (_, [xml]) => XmlParser.ParseXml(xml))
-IPC.mainHandle("FileDialog:debug", (_, [data]) => FileDialog.debug(data))
+IPC.mainHandle({
+  "API:Function": (_, [func, args]) => API.Function(func, args),
+  "API:GetActiveInputs": API.GetActiveInputs,
+  "FileDialog:getFile": (_, [path, encoding]) => FileDialog.getFile(path, encoding),
+  "FileDialog:getFilePath": FileDialog.getFilePath,
+  "FileDialog:getFileContent": (_, [path]) => FileDialog.getFileContent(path),
+  "FileDialog:getVmixPreset": (_, [zip]) => FileDialog.getVmixPreset(zip),
+  "FileDialog:getSampleApiXmlFilePath": FileDialog.getSampleApiXmlFilePath,
+  "Http:Get": (_, [url, params]) => Http.Get(url, params),
+  "Util:format": (_, [fmt, ...args]) => Util.format(fmt, ...args),
+  "LogStream:Push": (_, [fmt, ...args]) => LogStream.Push(fmt, ...args),
+  "LogStream:Get": LogStream.Get,
+  "LogStream:Clear": LogStream.Clear,
+  "XmlParser:ParseXml": (_, [xml]) => XmlParser.ParseXml(xml),
+  "FileDialog:debug": (_, [data]) => FileDialog.debug(data)
+})

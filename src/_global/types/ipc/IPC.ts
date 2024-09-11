@@ -10,11 +10,17 @@ import {
 export type IPC = {
   exposeInMainWorld<T extends IPCChannel>(channel: T, value: IPCChannelValue<T>): void
   rendererInvoke<T extends IPCChannelAction>(channelAction: T): IPCChannelActionSignature<T>
-  mainHandle<T extends IPCChannelAction>(
-    channelAction: T,
-    listener: (
+  // mainHandle<T extends IPCChannelAction>(
+  //   channelAction: T,
+  //   listener: (
+  //     event: Electron.IpcMainInvokeEvent,
+  //     args: IPCChannelActionParameters<IPCChannelActionSignature<T>>
+  //   ) => ReturnType<IPCChannelActionSignature<T>>
+  // ): void
+  mainHandle(handlers: {
+    [K in IPCChannelAction]: (
       event: Electron.IpcMainInvokeEvent,
-      args: IPCChannelActionParameters<IPCChannelActionSignature<T>>
-    ) => ReturnType<IPCChannelActionSignature<T>>
-  ): void
+      args: IPCChannelActionParameters<IPCChannelActionSignature<K>>
+    ) => ReturnType<IPCChannelActionSignature<K>>
+  }): void
 }
