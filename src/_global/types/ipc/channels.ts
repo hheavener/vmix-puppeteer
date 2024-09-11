@@ -7,13 +7,6 @@ import Time from "./impl/Time"
 import type { LogStream } from "./impl/LogStream"
 import type { Util } from "./impl/Util"
 
-/**
- * Indicates that the value for a given channel
- * is strictly for consuming and is not able to
- * be invoked as a function.
- */
-type ReadOnly<T> = T & { __readonly__: never }
-
 /*
  * =====================================
  *      List available IPC Channels
@@ -38,6 +31,12 @@ type AllIPCChannels = {
  *      Magic Allowing Type-Safe IPC Communication
  * ====================================================
  */
+/**
+ * Indicates that the value for a given channel
+ * is strictly for consuming and is not able to
+ * be invoked as a function.
+ */
+type ReadOnly<T> = T & { __readonly__: never }
 type FunctionType = (...params: any[]) => unknown
 type AsyncFunctionType = (...params: any[]) => Promise<unknown>
 type ChannelMember = string | boolean | number | any[] | FunctionType | AsyncFunctionType
@@ -50,9 +49,9 @@ type ActionableChannelMember<T extends Record<string, Channel | ChannelMember>> 
   [K in keyof T]: T[K] extends ReadOnly<T[K]> ? never : `${K & string}:${keyof T[K] & string}`
 }[keyof T]
 /**
- * Infers the type of a specific channel action.
+ * The type of a specific channel action.
  */
-export type ActionableSignature<T extends IPCChannelAction> =
+export type IPCChannelActionSignature<T extends IPCChannelAction> =
   T extends `${infer Channel extends IPCChannel}:${infer Action}`
     ? Action extends keyof AllIPCChannels[Channel]
       ? AllIPCChannels[Channel][Action]
@@ -71,3 +70,11 @@ export type IPCChannelValue<T extends keyof AllIPCChannels> =
  * Name of an available IPC Channel action.
  */
 export type IPCChannelAction = ActionableChannelMember<AllIPCChannels>
+/**
+ * Returns the parameters of an IPC Channel action as an array.
+ */
+export type IPCChannelActionParameters<T extends IPCChannelAction> = T extends (
+  ...args: infer P
+) => any
+  ? P
+  : never
