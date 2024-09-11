@@ -25,7 +25,7 @@ function initIPC(): IPC {
       contextBridge.exposeInMainWorld(channel, api)
     },
     rendererInvoke: <T extends IPCChannelAction>(channelAction: T) => {
-      return ((...args: IPCChannelActionParameters<IPCChannelActionSignature<T>>) => {
+      return ((...args: IPCChannelActionParameters<T>) => {
         // console.log("RENDER INVOKE:", channelAction, args)
         return ipcRenderer.invoke(channelAction, args)
       }) as IPCChannelActionSignature<T>

@@ -18,7 +18,7 @@ type AllIPCChannels = {
   API_URL: ReadOnly<string>
   Http: typeof Http
   Util: typeof Util
-  Time: ReadOnly<typeof Time>
+  Time: ReadOnly<Omit<typeof Time, "Sleep">>
   Sleep: typeof Time.Sleep
   FileDialog: typeof FileDialog
   XmlParser: typeof XmlParser
@@ -42,12 +42,31 @@ type AsyncFunctionType = (...params: any[]) => Promise<unknown>
 type ChannelMember = string | boolean | number | any[] | FunctionType | AsyncFunctionType
 type Channel = Record<string, ChannelMember>
 
+type IsObjectWithKeys<T> = T extends Function
+  ? false
+  : T extends object
+    ? keyof T extends never
+      ? false
+      : true
+    : false
+
 /**
  * Infers the available list of actions from all channels.
  */
 type ActionableChannelMember<T extends Record<string, Channel | ChannelMember>> = {
-  [K in keyof T]: T[K] extends ReadOnly<T[K]> ? never : `${K & string}:${keyof T[K] & string}`
+  [K in keyof T]: T[K] extends ReadOnly<T[K]>
+    ? never
+    : IsObjectWithKeys<T[K]> extends true
+      ? `${K & string}:${keyof T[K] & string}`
+      : `${K & string}`
 }[keyof T]
+// type ActionableChannelMember<T extends Record<string, Channel | ChannelMember>> = {
+//   [K in keyof T]: T[K] extends object
+//     ? T[K] extends ReadOnly<T[K]>
+//       ? never
+//       : `${K & string}:${keyof T[K] & string}`
+//     : `${K & string}`
+// }[keyof T]
 /**
  * The type of a specific channel action.
  */
@@ -56,15 +75,17 @@ export type IPCChannelActionSignature<T extends IPCChannelAction> =
     ? Action extends keyof AllIPCChannels[Channel]
       ? AllIPCChannels[Channel][Action]
       : never
-    : never
+    : T extends `${infer Action extends IPCChannel}`
+      ? AllIPCChannels[Action]
+      : never
 /**
  * Name of an available IPC Channel.
  */
 export type IPCChannel = keyof AllIPCChannels
 /**
- * Name of an available IPC Channel value.
+ * Value of an available IPC Channel.
  */
-export type IPCChannelValue<T extends keyof AllIPCChannels> =
+export type IPCChannelValue<T extends IPCChannel> =
   AllIPCChannels[T] extends ReadOnly<infer U> ? U : AllIPCChannels[T]
 /**
  * Name of an available IPC Channel action.
@@ -73,8 +94,5 @@ export type IPCChannelAction = ActionableChannelMember<AllIPCChannels>
 /**
  * Returns the parameters of an IPC Channel action as an array.
  */
-export type IPCChannelActionParameters<T extends IPCChannelAction> = T extends (
-  ...args: infer P
-) => any
-  ? P
-  : never
+export type IPCChannelActionParameters<T extends IPCChannelAction> =
+  IPCChannelActionSignature<T> extends (...args: infer Params) => any ? Params : never

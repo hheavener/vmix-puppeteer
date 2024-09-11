@@ -14,13 +14,13 @@ export type IPC = {
     channelAction: T,
     listener: (
       event: Electron.IpcMainInvokeEvent,
-      args: IPCChannelActionParameters<IPCChannelActionSignature<T>>
+      args: IPCChannelActionParameters<T>
     ) => ReturnType<IPCChannelActionSignature<T>>
   ): void
   mainHandlers(handlers: {
     [K in IPCChannelAction]: (
       event: Electron.IpcMainInvokeEvent,
-      args: IPCChannelActionParameters<IPCChannelActionSignature<K>>
+      args: IPCChannelActionParameters<K>
     ) => ReturnType<IPCChannelActionSignature<K>>
   }): void
 }

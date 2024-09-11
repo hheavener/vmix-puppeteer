@@ -82,5 +82,6 @@ IPC.mainHandlers({
   "LogStream:Get": LogStream.Get,
   "LogStream:Clear": LogStream.Clear,
   "XmlParser:ParseXml": (_, [xml]) => XmlParser.ParseXml(xml),
-  "FileDialog:debug": (_, [data]) => FileDialog.debug(data)
+  "FileDialog:debug": (_, [data]) => FileDialog.debug(data),
+  Sleep: (_, [amount, unit]) => Time.Sleep(amount, unit)
 })
