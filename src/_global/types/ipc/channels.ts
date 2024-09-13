@@ -42,6 +42,12 @@ type AsyncFunctionType = (...params: any[]) => Promise<unknown>
 type ChannelMember = string | boolean | number | any[] | FunctionType | AsyncFunctionType
 type Channel = Record<string, ChannelMember>
 
+/**
+ * Determines if a type is an object with keys.
+ *
+ * TS treats many types as objects, so this checks
+ * to see if it's a hashmap-type object.
+ */
 type IsObjectWithKeys<T> = T extends Function
   ? false
   : T extends object
@@ -60,13 +66,7 @@ type ActionableChannelMember<T extends Record<string, Channel | ChannelMember>> 
       ? `${K & string}:${keyof T[K] & string}`
       : `${K & string}`
 }[keyof T]
-// type ActionableChannelMember<T extends Record<string, Channel | ChannelMember>> = {
-//   [K in keyof T]: T[K] extends object
-//     ? T[K] extends ReadOnly<T[K]>
-//       ? never
-//       : `${K & string}:${keyof T[K] & string}`
-//     : `${K & string}`
-// }[keyof T]
+
 /**
  * The type of a specific channel action.
  */
@@ -78,6 +78,7 @@ export type IPCChannelActionSignature<T extends IPCChannelAction> =
     : T extends `${infer Action extends IPCChannel}`
       ? AllIPCChannels[Action]
       : never
+
 /**
  * Name of an available IPC Channel.
  */
