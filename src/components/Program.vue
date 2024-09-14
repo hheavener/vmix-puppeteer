@@ -66,11 +66,20 @@ watch(store.logs, smoothScrollToBottom, { deep: true })
     </div>
     <div class="program-container">
       <ul class="scene-list">
-        <li v-for="(scene, idx) of store.scenes" :key="idx" @click="store.jump(idx)">
-          <div v-if="scene.title === store.scene?.title" class="active">
-            {{ scene.title }}
+        <li v-for="(scene, idx) of store.scenes" :key="idx" :disabled="scene.disabled">
+          <input
+            id="{{ idx }}_{{ toggle }}"
+            @click="scene.disabled = !scene.disabled"
+            type="checkbox"
+            :checked="!scene.disabled"
+          />
+          <div @click="store.jump(idx)">
+            <div v-if="scene.title === store.scene?.title" class="active">
+              {{ scene.title }}
+            </div>
+            <div v-else-if="scene.disabled" class="disabled">{{ scene.title }}</div>
+            <div v-else>{{ scene.title }}</div>
           </div>
-          <div v-else>{{ scene.title }}</div>
         </li>
       </ul>
       <ResizablePanelGroup id="resize-group" direction="vertical">
@@ -106,9 +115,21 @@ watch(store.logs, smoothScrollToBottom, { deep: true })
   position: relative;
 }
 .scene-list {
+  li {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+
+    &[disabled="true"] {
+      color: #464646;
+    }
+  }
   li:hover {
     cursor: pointer;
     color: var(--color-green-light);
+  }
+  li[disabled="true"]:hover {
+    cursor: default;
   }
 }
 .button-container {

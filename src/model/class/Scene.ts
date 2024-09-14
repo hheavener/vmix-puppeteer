@@ -4,6 +4,7 @@ import {
   type VmixFunctionParams
 } from "@@/types/api/VmixFunction"
 import { type Input, type SceneProps, type VmixTransition } from "@/model/types/scene"
+import { PreventWhenDisabled } from "../decorators/PreventWhenDisabled"
 
 const LogPrefix = "ScenePlayer:"
 
@@ -12,8 +13,8 @@ export default class ScenePlayer {
   private virtualKeyMap: Record<string, string>
   private logDest: string[] | undefined
 
-  public title: string
   public disabled: boolean
+  public title: string
   public actions?: (typeof this.scene)["actions"]
 
   constructor(scene: SceneProps, virtualKeyMap: Record<string, string>, logDest?: any[]) {
@@ -30,6 +31,7 @@ export default class ScenePlayer {
    *      Transitions
    * =====================
    */
+  @PreventWhenDisabled
   public async OnTransitionIn(): Promise<void> {
     const { onTransitionIn = [] } = this.scene
     if (onTransitionIn.length) {
@@ -38,6 +40,8 @@ export default class ScenePlayer {
       await this.callFunctions(functionList)
     }
   }
+
+  @PreventWhenDisabled
   public async TransitionIn(): Promise<void> {
     this._log(LogPrefix, "TransitionIn")
     const { output: activeOutput } = await API.GetActiveInputs()
@@ -61,6 +65,7 @@ export default class ScenePlayer {
     }
   }
 
+  @PreventWhenDisabled
   public async OnTransitioned(): Promise<void> {
     const { onTransitioned } = this.scene
     if (!onTransitioned?.length) return
@@ -69,6 +74,7 @@ export default class ScenePlayer {
     await this.previewAlternate()
   }
 
+  @PreventWhenDisabled
   public async OnTransitionOut(): Promise<void> {
     const { onTransitionOut } = this.scene
     if (!onTransitionOut?.length) return
@@ -82,6 +88,7 @@ export default class ScenePlayer {
    *      Pre/Post Operations
    * =============================
    */
+  @PreventWhenDisabled
   public async Prepare(safePrepare: boolean = false): Promise<void> {
     this._log(LogPrefix, "Prepare", safePrepare ? "(safe)" : "")
     const { activeInput, prepare = [] } = this.scene
@@ -109,6 +116,7 @@ export default class ScenePlayer {
     this._log(LogPrefix, await Sleep(200, "Milliseconds"))
   }
 
+  @PreventWhenDisabled
   public async PrepareAlternate(): Promise<void> {
     if (!this.scene.alternate) return
     this._log(LogPrefix, "PrepareAlternate")
@@ -129,6 +137,7 @@ export default class ScenePlayer {
    *      User-Initiated Functions
    * ==================================
    */
+  @PreventWhenDisabled
   public async Alternate(): Promise<void> {
     if (!this.scene.alternate) return
     this._log(LogPrefix, "Alternate")
@@ -166,6 +175,7 @@ export default class ScenePlayer {
     }
   }
 
+  @PreventWhenDisabled
   public async CallAction(idx: number): Promise<void> {
     // TODO: Parameters from the DOM require serialization
     const action = JSON.parse(JSON.stringify(this.scene.actions?.[idx]))

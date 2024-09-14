@@ -20,8 +20,9 @@
     "outDir": "dist",
     "moduleResolution": "node",
     "resolveJsonModule": true,
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    // "experimentalDecorators": true,
+    // "emitDecoratorMetadata": true,
+    "lib": ["DOM", "ESNext"]
   },
   "include": ["global.d.ts"]
 }

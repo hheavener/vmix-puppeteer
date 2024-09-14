@@ -6,22 +6,22 @@ import type ScenePlayer from "@/model/class/Scene"
 import ProgramBuilder from "@/model/class/ProgramBuilder"
 
 export const useProgramStore = defineStore("program", () => {
-  let program: Program
+  let program: Program = new Program({} as ProgramProps, null, [])
   let vMixPreset: Ref<Object | null> = ref(null)
   let scene: Ref<ScenePlayer | undefined> = ref(undefined)
   let nextScene: Ref<ScenePlayer | undefined> = ref(undefined)
-  let scenes: Ref<SceneProps[] | undefined> = ref([])
+  let scenes: Ref<ScenePlayer[] | undefined> = ref([])
   let programLoaded = ref(false)
   let logs: Ref<string[]> = ref([])
 
   async function loadProgram(): Promise<void> {
     // TODO: load saved program
-    scenes.value = MockProgram.scenes
     program = await new ProgramBuilder()
       .From(MockProgram)
       .SetLogDestination(logs.value)
       .Initialize()
     programLoaded.value = true
+    scenes.value = program.GetScenes()
     nextScene.value = program.GetNextScene()
   }
 
@@ -53,6 +53,14 @@ export const useProgramStore = defineStore("program", () => {
     if (p) vMixPreset.value = p
   }
 
+  function toggleSceneDisabled(sceneIdx: number) {
+    const scene = program.GetScene(sceneIdx)
+    if (!scene) return
+    console.log("ProgramStore: %s scene %d", scene.disabled ? "Enabling" : "Disabling", sceneIdx)
+    scene.disabled = !scene.disabled
+    scenes.value = program.GetScenes()
+  }
+
   function clearLogs() {
     logs.value.length = 0
   }
@@ -70,6 +78,7 @@ export const useProgramStore = defineStore("program", () => {
     scenes,
     scene,
     logs,
+    toggleSceneDisabled,
     clearLogs
   }
 })

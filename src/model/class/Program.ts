@@ -55,12 +55,18 @@ export default class Program {
     this._log("Program:", "FAILURE: No previous scene found!")
   }
 
+  public GetScenes(): Scene[] | undefined {
+    return this.scenes
+  }
+
   public GetScene(sceneIdx: number): Scene | undefined {
     if (sceneIdx < 0 || sceneIdx > this.scenes.length - 1) return
     return this.scenes[sceneIdx]
   }
 
   public async MoveToScene(sceneIdx: number): Promise<Scene | undefined> {
+    const scene = this.scenes[sceneIdx]
+    if (scene.disabled) return
     const current = this.scenes[this.activeIdx]
     await current?.OnTransitionOut()
 
@@ -74,7 +80,6 @@ export default class Program {
     this._log(logFmt, sceneIdx + 1, this.scenes[sceneIdx].title)
     this.activeIdx = sceneIdx
 
-    const scene = this.scenes[sceneIdx]
     await scene.Prepare()
     await scene.OnTransitionIn()
     await scene.TransitionIn()
