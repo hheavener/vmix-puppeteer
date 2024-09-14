@@ -4,6 +4,7 @@ import type { ProgramProps, SceneProps } from "@/model/types/scene"
 import Program from "@/model/class/Program"
 import type ScenePlayer from "@/model/class/Scene"
 import ProgramBuilder from "@/model/class/ProgramBuilder"
+import type { VmixFunctionCall } from "@@/types/api/VmixFunction"
 
 export const useProgramStore = defineStore("program", () => {
   let program: Program = new Program({} as ProgramProps, null, [])
@@ -83,35 +84,35 @@ export const useProgramStore = defineStore("program", () => {
   }
 })
 
-// const NamedOperations: Record<string, VmixFunctionCall[]> = {
-//   PrepPraiseBand: [
-//     { function: "SetDynamicInput2", params: { Value: "Virtual - SOUTH Camera (RS)" } },
-//     { function: "SetDynamicValue1", params: { Value: "" } },
-//     { function: "SetDynamicValue2", params: { Value: 3 } },
-//     { function: "ScriptStart", params: { Value: "UpdatePipSource" } },
-//     {
-//       function: "ScriptStart",
-//       params: { Value: "UpdatePipPosition" },
-//       sleep: { amount: 500, unit: "Milliseconds" }
-//     }
-//   ]
-// }
+function PIP(
+  camera: string,
+  position: "Top Left" | "Top Right" | "Bottom Left" | "Bottom Right",
+  sleepMs = 0
+): VmixFunctionCall[] {
+  const PosMap = {
+    "Bottom Left": 1,
+    "Top Left": 2,
+    "Top Right": 3,
+    "Bottom Right": 4
+  }
+  return [
+    { function: "SetDynamicInput2", params: { Value: camera } },
+    { function: "SetDynamicValue1", params: { Value: "" } },
+    { function: "SetDynamicValue2", params: { Value: position } },
+    { function: "ScriptStart", params: { Value: "UpdatePipSource" } },
+    {
+      function: "ScriptStart",
+      params: { Value: "UpdatePipPosition" },
+      sleep: { amount: sleepMs, unit: "Milliseconds" }
+    }
+  ]
+}
 
 const NamedScenes: Record<string, (...args: any[]) => SceneProps> = {
   PraiseBand: (title: string) => ({
     title: title,
     prepare: [{ title: "[SOUTH] - Musicians" }], // Needs to be declared per scene
-    onTransitionIn: [
-      { function: "SetDynamicInput2", params: { Value: "Virtual - SOUTH Camera (RS)" } },
-      { function: "SetDynamicValue1", params: { Value: "" } },
-      { function: "SetDynamicValue2", params: { Value: 3 } },
-      { function: "ScriptStart", params: { Value: "UpdatePipSource" } },
-      {
-        function: "ScriptStart",
-        params: { Value: "UpdatePipPosition" },
-        sleep: { amount: 500, unit: "Milliseconds" }
-      }
-    ],
+    onTransitionIn: PIP("Virtual - SOUTH Camera (RS)", "Top Right", 500),
     activeInput: {
       title: "Virtual - PIP Slides",
       layers: [{ index: 3, input: "Virtual - SOUTH Camera (RS)" }]
@@ -149,6 +150,17 @@ const MockProgram: ProgramProps = {
     {
       title: "Call to Worship",
       activeInput: { title: "[REAR] - Pulpit" },
+      onTransitioned: [
+        // TODO: Ensure this is correct
+        { function: "SelectTitlePreset", params: { Value: "2", Input: "Status Popups" } }
+      ],
+      actions: [
+        {
+          label: "Toggle Call to Worship",
+          function: "OverlayInput2",
+          params: { Input: "Status Popups" } // TODO: Define dynamic values that user can input through UI
+        }
+      ],
       alternate: {
         input: {
           title: "Virtual - PIP Slides",
@@ -156,23 +168,27 @@ const MockProgram: ProgramProps = {
         },
         transition: "Merge"
       },
-      // TODO: Show status popups or handle PIP
       transition: { function: "ScriptStart", params: { Value: "AlternateStinger" } }
       // prepareNextSceneOnTransition: true
     },
-    // TODO: Scene titles should be defined separately from scene content so duplicate scenes
-    // can have different titles and reference the same content
-    NamedScenes.PraiseBand("Worship Music"),
+    {
+      title: "PRAISE BAND",
+      prepare: [{ title: "[SOUTH] - Musicians" }], // Needs to be declared per scene
+      onTransitionIn: PIP("Virtual - SOUTH Camera (RS)", "Top Right", 500),
+      activeInput: {
+        title: "Virtual - PIP Slides",
+        layers: [{ index: 3, input: "Virtual - SOUTH Camera (RS)" }]
+      },
+      alternate: {
+        input: { title: "[SOUTH] - Musicians" },
+        transition: "Merge"
+      },
+      transition: { function: "ScriptStart", params: { Value: "AlternateStinger" } }
+    },
     {
       title: "Liturgy",
       activeInput: { title: "[NORTH] - Lectern" },
-      onTransitioned: [
-        { function: "SetDynamicInput2", params: { Value: "Virtual - NORTH Camera (CS)" } },
-        { function: "SetDynamicValue1", params: { Value: "" } }, // Ensure PIP will be in correct corner
-        { function: "SetDynamicValue2", params: { Value: 4 } },
-        { function: "ScriptStart", params: { Value: "UpdatePipSource" } },
-        { function: "ScriptStart", params: { Value: "UpdatePipPosition" } }
-      ],
+      onTransitioned: PIP("Virtual - NORTH Camera (CS)", "Bottom Right"),
       alternate: {
         input: {
           title: "Virtual - PIP Slides",
@@ -182,27 +198,29 @@ const MockProgram: ProgramProps = {
       },
       transition: { function: "ScriptStart", params: { Value: "AlternateStinger" } }
     },
-    NamedScenes.PraiseBand("Song of Thanksgiving"),
     {
-      title: "Pastoral Prayer",
+      // prepare: [{ title: "[REAR] - Center Stage (Full)" }],
+      title: "Prayer (Stage)",
       activeInput: { title: "[REAR] - Center Stage (Full)" },
-      prepare: [{ title: "[REAR] - Center Stage (Full)" }],
       transition: { function: "ScriptStart", params: { Value: "AlternateStinger" } }
     },
-    NamedScenes.PraiseBand("Offertory"),
+    {
+      // prepare: [{ title: "[REAR] - Center Stage (Full)" }],
+      title: "Prayer (Lectern)",
+      activeInput: { title: "[NORTH] - Lectern" },
+      transition: { function: "ScriptStart", params: { Value: "AlternateStinger" } }
+    },
+    {
+      // prepare: [{ title: "[REAR] - Center Stage (Full)" }],
+      title: "Prayer (Floor)",
+      activeInput: { title: "[REAR] - Center Stage (Floor)" },
+      transition: { function: "ScriptStart", params: { Value: "AlternateStinger" } }
+    },
     {
       title: "Sermon",
       activeInput: { title: "[NORTH] - Pulpit" },
       onTransitioned: [
-        { function: "SetDynamicInput2", params: { Value: "Virtual - NORTH Camera (RS)" } },
-        { function: "SetDynamicValue1", params: { Value: "" } },
-        { function: "SetDynamicValue2", params: { Value: 4 } },
-        { function: "ScriptStart", params: { Value: "UpdatePipSource" } },
-        {
-          function: "ScriptStart",
-          params: { Value: "UpdatePipPosition" },
-          sleep: { amount: 500, unit: "Milliseconds" }
-        },
+        ...PIP("Virtual - NORTH Camera (RS)", "Bottom Right", 500),
         { function: "SelectTitlePreset", params: { Value: "3", Input: "Status Popups" } }
       ],
       // TODO: Actions should be stored separately and referenced from scenes
@@ -224,22 +242,9 @@ const MockProgram: ProgramProps = {
       transition: { function: "ScriptStart", params: { Value: "AlternateStinger" } }
     },
     // TODO: Communion
-    NamedScenes.PraiseBand("Song of Response"),
-    {
-      title: "Benediction (Stage)",
-      activeInput: { title: "[REAR] - Center Stage (Full)" },
-      prepare: [{ title: "[NORTH] - Pulpit" }, { title: "[FRONT] - Benediction" }]
-    },
-    {
-      title: "Benediction (Pulpit)",
-      activeInput: { title: "[NORTH] - Pulpit" },
-      prepare: [{ title: "[NORTH] - Pulpit" }, { title: "[FRONT] - Benediction" }]
-    },
-    {
-      title: "Benediction (Doors)",
-      activeInput: { title: "[FRONT] - Benediction" },
-      prepare: [{ title: "[NORTH] - Pulpit" }, { title: "[FRONT] - Benediction" }]
-    },
+    { title: "Benediction (Stage)", activeInput: { title: "[REAR] - Center Stage (Full)" } },
+    { title: "Benediction (Pulpit)", activeInput: { title: "[NORTH] - Pulpit" } },
+    { title: "Benediction (Doors)", activeInput: { title: "[FRONT] - Benediction" } },
     {
       title: "Stream End",
       activeInput: { title: "Stinger 1 - RED" },

@@ -28,3 +28,7 @@ Currently, each scene knows how to prepare for the next scene. A better approach
 ### Add context menu to scene list
 
 This would allow access to scene methods such as Prepare() that can be called at any time
+
+### Add support for `$ref` property in scene JSON
+
+This property will allow for a scene to reference another scene by name or ID and utilize the same properties as the referenced scene with a different title.
