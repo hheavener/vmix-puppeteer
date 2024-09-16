@@ -32,3 +32,7 @@ This would allow access to scene methods such as Prepare() that can be called at
 ### Add support for `$ref` property in scene JSON
 
 This property will allow for a scene to reference another scene by name or ID and utilize the same properties as the referenced scene with a different title.
+
+### Change `active` and `alternate`
+
+These views should be `primary` and `secondary` and there should be explicit actions for bringing up either view.

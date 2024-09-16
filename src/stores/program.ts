@@ -98,7 +98,7 @@ function PIP(
   return [
     { function: "SetDynamicInput2", params: { Value: camera } },
     { function: "SetDynamicValue1", params: { Value: "" } },
-    { function: "SetDynamicValue2", params: { Value: position } },
+    { function: "SetDynamicValue2", params: { Value: PosMap[position] } },
     { function: "ScriptStart", params: { Value: "UpdatePipSource" } },
     {
       function: "ScriptStart",
@@ -150,17 +150,7 @@ const MockProgram: ProgramProps = {
     {
       title: "Call to Worship",
       activeInput: { title: "[REAR] - Pulpit" },
-      onTransitioned: [
-        // TODO: Ensure this is correct
-        { function: "SelectTitlePreset", params: { Value: "2", Input: "Status Popups" } }
-      ],
-      actions: [
-        {
-          label: "Toggle Call to Worship",
-          function: "OverlayInput2",
-          params: { Input: "Status Popups" } // TODO: Define dynamic values that user can input through UI
-        }
-      ],
+      onTransitioned: PIP("Virtual - REAR Camera (CS)", "Bottom Right"),
       alternate: {
         input: {
           title: "Virtual - PIP Slides",
