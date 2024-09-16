@@ -95,23 +95,14 @@ export type SceneProps = {
    * Can it know which inputs to point where
    * based on reading ahead?
    */
-  activeInput: Input
+  primaryView: Input
   /**
-   * Inputs to prepare before next scene.
+   * An secondary view for the scene.
+   *
+   * This allows user to switch views back/forth
+   * for a given scene.
    */
-  prepare?: Input[]
-  /**
-   * Will be skipped if true.
-   */
-  disabled?: boolean
-  /**
-   * The input to preview. This will allow us
-   * to toggle inputs back/forth for a given
-   * scene when there are multiple transitions
-   * to/from the same two inputs (such as going
-   * from PIP to no PIP for the same camera).
-   */
-  alternate?: {
+  secondaryView?: {
     input: Input
     // prepare: Input[] // Needed?
     /**
@@ -122,6 +113,14 @@ export type SceneProps = {
     onTransitioned?: VmixFunctionCall[]
     onTransitionOut?: VmixFunctionCall[]
   }
+  /**
+   * Inputs to prepare before next scene.
+   */
+  prepare?: Input[]
+  /**
+   * Will be skipped if true.
+   */
+  disabled?: boolean
   /**
    * The transition to use when transitioning to this scene.
    *

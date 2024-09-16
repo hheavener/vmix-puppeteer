@@ -5,6 +5,7 @@
   --color-green-light: #00f2a1;
   --color-orange: #eab658;
   --color-blue: #4988e7;
+  --color-error: #e83c25;
 }
 
 #app {
@@ -26,6 +27,11 @@ a,
 .blue {
   color: var(--color-blue);
 }
+
+.error {
+  color: var(--color-error);
+}
+
 .green-bg {
   color: white;
   background: var(--color-green);

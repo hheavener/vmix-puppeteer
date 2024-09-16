@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue"
-import Program from "./components/Program.vue"
+import Program from "./components/Program/Program.vue"
 
 // const counter = useCounterStore()
 const isHidden = ref(false)

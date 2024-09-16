@@ -45,7 +45,7 @@ export default class ScenePlayer {
   public async TransitionIn(): Promise<void> {
     this._log(LogPrefix, "TransitionIn")
     const { output: activeOutput } = await API.GetActiveInputs()
-    const { transition = "Merge", activeInput: sceneInput } = this.scene
+    const { transition = "Merge", primaryView: sceneInput } = this.scene
     await this.API_Function("PreviewInput", { Input: sceneInput.title })
 
     for (let layer of sceneInput.layers ?? []) {
@@ -71,7 +71,7 @@ export default class ScenePlayer {
     if (!onTransitioned?.length) return
     this._log(LogPrefix, "OnTransitioned")
     await this.callFunctions(onTransitioned)
-    await this.previewAlternate()
+    await this.previewSecondary()
   }
 
   @PreventWhenDisabled
@@ -91,8 +91,8 @@ export default class ScenePlayer {
   @PreventWhenDisabled
   public async Prepare(safePrepare: boolean = false): Promise<void> {
     this._log(LogPrefix, "Prepare", safePrepare ? "(safe)" : "")
-    const { activeInput, prepare = [] } = this.scene
-    prepare.unshift(activeInput)
+    const { primaryView, prepare = [] } = this.scene
+    prepare.unshift(primaryView)
 
     const { output } = await API.GetActiveInputs()
 
@@ -117,10 +117,10 @@ export default class ScenePlayer {
   }
 
   @PreventWhenDisabled
-  public async PrepareAlternate(): Promise<void> {
-    if (!this.scene.alternate) return
-    this._log(LogPrefix, "PrepareAlternate")
-    const { input } = this.scene.alternate
+  public async PrepareSecondary(): Promise<void> {
+    if (!this.scene.secondaryView) return
+    this._log(LogPrefix, "PrepareSecondary")
+    const { input } = this.scene.secondaryView
 
     for (let layer of input.layers ?? []) {
       await this.API_Function("SetLayer", {
@@ -139,35 +139,37 @@ export default class ScenePlayer {
    */
   @PreventWhenDisabled
   public async Alternate(): Promise<void> {
-    if (!this.scene.alternate) return
+    if (!this.scene.secondaryView) return
     this._log(LogPrefix, "Alternate")
 
-    const alt = this.scene.alternate
+    const secondary = this.scene.secondaryView
     const { preview, output } = await API.GetActiveInputs()
     const transition = async () => {
-      await this.API_Function(alt.transition || "Merge", {})
+      await this.API_Function(secondary.transition || "Merge", {})
     }
 
     console.log("Alternate Info:", {
-      active: { title: this.scene.activeInput.title },
-      alt: { title: alt.input.title },
+      primary: { title: this.scene.primaryView.title },
+      secondary: { title: secondary.input.title },
       output: { title: output.title, shortTitle: output.shortTitle }
     })
 
-    if ([output.title, output.shortTitle].includes(alt.input.title)) {
-      const active = this.scene.activeInput
+    if ([output.title, output.shortTitle].includes(secondary.input.title)) {
+      const active = this.scene.primaryView
       await this.API_Function("PreviewInput", { Input: active.title })
       await this._log(LogPrefix, await Sleep(100, "Milliseconds"))
-      if (alt.onTransitionOut) {
-        const functionList = JSON.parse(JSON.stringify(alt.onTransitionOut))
+      if (secondary.onTransitionOut) {
+        const functionList = JSON.parse(JSON.stringify(secondary.onTransitionOut))
         await this.callFunctions(functionList)
       }
       await transition()
     } else {
-      const altViewNotInPreview = ![preview.title, preview.shortTitle].includes(alt.input.title)
-      if (altViewNotInPreview) await this.previewAlternate()
-      if (alt.onTransitionIn) {
-        const functionList = JSON.parse(JSON.stringify(alt.onTransitionIn))
+      const secondaryNotInPreview = ![preview.title, preview.shortTitle].includes(
+        secondary.input.title
+      )
+      if (secondaryNotInPreview) await this.previewSecondary()
+      if (secondary.onTransitionIn) {
+        const functionList = JSON.parse(JSON.stringify(secondary.onTransitionIn))
         await this.callFunctions(functionList)
       }
       this._log(LogPrefix, await Sleep(100, "Milliseconds"))
@@ -191,15 +193,15 @@ export default class ScenePlayer {
    */
   // TODO: Does input need a class instead of a basic type?
   public GetActiveInput(): Input {
-    return this.scene.activeInput
+    return this.scene.primaryView
   }
 
   public GetSceneProps(): SceneProps {
     return this.scene
   }
 
-  public HasAlternateInput(): boolean {
-    return !!this.scene.alternate
+  public HasSecondaryView(): boolean {
+    return !!this.scene.secondaryView
   }
 
   public ShouldPrepareNext(): boolean {
@@ -211,11 +213,11 @@ export default class ScenePlayer {
    *      Private
    * =================
    */
-  private async previewAlternate(): Promise<void> {
-    if (!this.scene.alternate) return
-    this._log(LogPrefix, "previewAlternate")
+  private async previewSecondary(): Promise<void> {
+    if (!this.scene.secondaryView) return
+    this._log(LogPrefix, "previewSecondary")
 
-    const alt = this.scene.alternate
+    const alt = this.scene.secondaryView
     const { preview, output } = await API.GetActiveInputs()
     if (alt.input.title === preview.title) return
 
@@ -269,7 +271,7 @@ export default class ScenePlayer {
     const message = await IPC.rendererInvoke("Util:format")(fmt, ...params)
     const htmlMessage = await IPC.rendererInvoke("Util:format")(
       `<span class="${color}">${fmt}</span>`,
-      ...params
+      ...(params?.[0] === "FAILURE" ? [`<span class="error">${params[0]}</span>`] : params)
     )
     if (this.logDest) this.logDest?.push(htmlMessage)
     else console.log(fmt, ...params)

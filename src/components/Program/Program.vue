@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useProgramStore } from "@/stores/program"
-import JsonViewer from "./JsonViewer.vue"
+import JsonViewer from "../JsonViewer.vue"
+import SceneList from "./_SceneList.vue"
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/shadcn/ui/resizable"
 import { computed, watch } from "vue"
 
@@ -56,7 +57,7 @@ watch(store.logs, smoothScrollToBottom, { deep: true })
         {{ action.label }}
       </button>
       <button
-        v-if="store.scene?.HasAlternateInput()"
+        v-if="store.scene?.HasSecondaryView()"
         @click="store.scene?.Alternate"
         class="green-bg"
       >
@@ -65,23 +66,7 @@ watch(store.logs, smoothScrollToBottom, { deep: true })
       <button @click="store.next">Next >></button>
     </div>
     <div class="program-container">
-      <ul class="scene-list">
-        <li v-for="(scene, idx) of store.scenes" :key="idx" :disabled="scene.disabled">
-          <input
-            id="{{ idx }}_{{ toggle }}"
-            @click="scene.disabled = !scene.disabled"
-            type="checkbox"
-            :checked="!scene.disabled"
-          />
-          <div @click="store.jump(idx)">
-            <div v-if="scene.title === store.scene?.title" class="active">
-              {{ scene.title }}
-            </div>
-            <div v-else-if="scene.disabled" class="disabled">{{ scene.title }}</div>
-            <div v-else>{{ scene.title }}</div>
-          </div>
-        </li>
-      </ul>
+      <SceneList />
       <ResizablePanelGroup id="resize-group" direction="vertical">
         <ResizablePanel :min-size="10" collapsible :default-size="1">
           <ResizablePanelGroup id="resize-group-2" direction="horizontal">
@@ -114,7 +99,7 @@ watch(store.logs, smoothScrollToBottom, { deep: true })
   max-height: 20vh;
   position: relative;
 }
-.scene-list {
+/* .scene-list {
   li {
     display: flex;
     flex-direction: row;
@@ -131,7 +116,7 @@ watch(store.logs, smoothScrollToBottom, { deep: true })
   li[disabled="true"]:hover {
     cursor: default;
   }
-}
+} */
 .button-container {
   display: grid;
   grid-auto-flow: column;
@@ -198,17 +183,16 @@ watch(store.logs, smoothScrollToBottom, { deep: true })
   border-left: 1px solid;
   border-right: 1px solid;
 }
-.active {
-  color: var(--color-green);
-}
-ul {
-  list-style: none;
-  padding: 10px 20px;
-  display: inline-block;
+#log-container {
+  ul {
+    list-style: none;
+    padding: 10px 20px;
+    display: inline-block;
 
-  li {
-    display: block;
-    height: 24px;
+    li {
+      display: block;
+      height: 24px;
+    }
   }
 }
 .placeholder {

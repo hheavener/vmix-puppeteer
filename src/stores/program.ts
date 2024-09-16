@@ -54,14 +54,6 @@ export const useProgramStore = defineStore("program", () => {
     if (p) vMixPreset.value = p
   }
 
-  function toggleSceneDisabled(sceneIdx: number) {
-    const scene = program.GetScene(sceneIdx)
-    if (!scene) return
-    console.log("ProgramStore: %s scene %d", scene.disabled ? "Enabling" : "Disabling", sceneIdx)
-    scene.disabled = !scene.disabled
-    scenes.value = program.GetScenes()
-  }
-
   function clearLogs() {
     logs.value.length = 0
   }
@@ -79,7 +71,6 @@ export const useProgramStore = defineStore("program", () => {
     scenes,
     scene,
     logs,
-    toggleSceneDisabled,
     clearLogs
   }
 })
@@ -113,11 +104,11 @@ const NamedScenes: Record<string, (...args: any[]) => SceneProps> = {
     title: title,
     prepare: [{ title: "[SOUTH] - Musicians" }], // Needs to be declared per scene
     onTransitionIn: PIP("Virtual - SOUTH Camera (RS)", "Top Right", 500),
-    activeInput: {
+    primaryView: {
       title: "Virtual - PIP Slides",
       layers: [{ index: 3, input: "Virtual - SOUTH Camera (RS)" }]
     },
-    alternate: {
+    secondaryView: {
       input: { title: "[SOUTH] - Musicians" },
       transition: "Merge"
     },
@@ -130,28 +121,28 @@ const MockProgram: ProgramProps = {
   scenes: [
     {
       title: "Pre-Stream",
-      activeInput: { title: "Proclaim - NDI Slides" },
+      primaryView: { title: "Proclaim - NDI Slides" },
       transition: { function: "ScriptStart", params: { Value: "AlternateStinger" } },
       prepareNextSceneOnTransition: true
     },
     {
       title: "Announcements",
-      activeInput: { title: "[REAR] - Center Stage (Speaker)" },
+      primaryView: { title: "[REAR] - Center Stage (Speaker)" },
       // prepare: [{ title: "[REAR] - Center Stage (Speaker)" }],
       transition: { function: "ScriptStart", params: { Value: "AlternateStinger" } },
       prepareNextSceneOnTransition: true
     },
     {
       title: "Gathering Music",
-      activeInput: { title: "[SOUTH] - Piano" },
+      primaryView: { title: "[SOUTH] - Piano" },
       transition: { function: "ScriptStart", params: { Value: "AlternateStinger" } },
       prepareNextSceneOnTransition: true
     },
     {
       title: "Call to Worship",
-      activeInput: { title: "[REAR] - Pulpit" },
+      primaryView: { title: "[REAR] - Pulpit" },
       onTransitioned: PIP("Virtual - REAR Camera (CS)", "Bottom Right"),
-      alternate: {
+      secondaryView: {
         input: {
           title: "Virtual - PIP Slides",
           layers: [{ index: 4, input: "Virtual - REAR Camera (CS)" }]
@@ -165,11 +156,11 @@ const MockProgram: ProgramProps = {
       title: "PRAISE BAND",
       prepare: [{ title: "[SOUTH] - Musicians" }], // Needs to be declared per scene
       onTransitionIn: PIP("Virtual - SOUTH Camera (RS)", "Top Right", 500),
-      activeInput: {
+      primaryView: {
         title: "Virtual - PIP Slides",
         layers: [{ index: 3, input: "Virtual - SOUTH Camera (RS)" }]
       },
-      alternate: {
+      secondaryView: {
         input: { title: "[SOUTH] - Musicians" },
         transition: "Merge"
       },
@@ -177,9 +168,9 @@ const MockProgram: ProgramProps = {
     },
     {
       title: "Liturgy",
-      activeInput: { title: "[NORTH] - Lectern" },
+      primaryView: { title: "[NORTH] - Lectern" },
       onTransitioned: PIP("Virtual - NORTH Camera (CS)", "Bottom Right"),
-      alternate: {
+      secondaryView: {
         input: {
           title: "Virtual - PIP Slides",
           layers: [{ index: 4, input: "Virtual - NORTH Camera (CS)" }]
@@ -191,24 +182,24 @@ const MockProgram: ProgramProps = {
     {
       // prepare: [{ title: "[REAR] - Center Stage (Full)" }],
       title: "Prayer (Stage)",
-      activeInput: { title: "[REAR] - Center Stage (Full)" },
+      primaryView: { title: "[REAR] - Center Stage (Full)" },
       transition: { function: "ScriptStart", params: { Value: "AlternateStinger" } }
     },
     {
       // prepare: [{ title: "[REAR] - Center Stage (Full)" }],
       title: "Prayer (Lectern)",
-      activeInput: { title: "[NORTH] - Lectern" },
+      primaryView: { title: "[NORTH] - Lectern" },
       transition: { function: "ScriptStart", params: { Value: "AlternateStinger" } }
     },
     {
       // prepare: [{ title: "[REAR] - Center Stage (Full)" }],
       title: "Prayer (Floor)",
-      activeInput: { title: "[REAR] - Center Stage (Floor)" },
+      primaryView: { title: "[REAR] - Center Stage (Floor)" },
       transition: { function: "ScriptStart", params: { Value: "AlternateStinger" } }
     },
     {
       title: "Sermon",
-      activeInput: { title: "[NORTH] - Pulpit" },
+      primaryView: { title: "[NORTH] - Pulpit" },
       onTransitioned: [
         ...PIP("Virtual - NORTH Camera (RS)", "Bottom Right", 500),
         { function: "SelectTitlePreset", params: { Value: "3", Input: "Status Popups" } }
@@ -221,7 +212,7 @@ const MockProgram: ProgramProps = {
           params: { Input: "Status Popups" } // TODO: Define dynamic values that user can input through UI
         }
       ],
-      alternate: {
+      secondaryView: {
         input: {
           title: "Virtual - PIP Slides",
           layers: [{ index: 4, input: "Virtual - NORTH Camera (RS)" }]
@@ -232,12 +223,12 @@ const MockProgram: ProgramProps = {
       transition: { function: "ScriptStart", params: { Value: "AlternateStinger" } }
     },
     // TODO: Communion
-    { title: "Benediction (Stage)", activeInput: { title: "[REAR] - Center Stage (Full)" } },
-    { title: "Benediction (Pulpit)", activeInput: { title: "[NORTH] - Pulpit" } },
-    { title: "Benediction (Doors)", activeInput: { title: "[FRONT] - Benediction" } },
+    { title: "Benediction (Stage)", primaryView: { title: "[REAR] - Center Stage (Full)" } },
+    { title: "Benediction (Pulpit)", primaryView: { title: "[NORTH] - Pulpit" } },
+    { title: "Benediction (Doors)", primaryView: { title: "[FRONT] - Benediction" } },
     {
       title: "Stream End",
-      activeInput: { title: "Stinger 1 - RED" },
+      primaryView: { title: "Stinger 1 - RED" },
       prepare: [],
       onTransitioned: [
         { function: "SelectTitlePreset", params: { Value: "0", Input: "Status Popups" } },
