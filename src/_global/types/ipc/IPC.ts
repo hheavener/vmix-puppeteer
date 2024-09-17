@@ -8,7 +8,11 @@ import {
 } from "./channels"
 
 export type IPC = {
+  /**
+   * // TODO: Create method like `mainHandlers` for preload.js
+   */
   exposeInMainWorld<T extends IPCChannel>(channel: T, value: IPCChannelValue<T>): void
+  exposeMainWorldInterface(channels: { [K in IPCChannel]: IPCChannelValue<K> }): void
   rendererInvoke<T extends IPCChannelAction>(channelAction: T): IPCChannelActionSignature<T>
   mainHandle<T extends IPCChannelAction>(
     channelAction: T,

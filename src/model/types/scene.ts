@@ -82,8 +82,21 @@ export type PTZInput = {
    */
   input: string
 }
+// TODO: Split between ActionDefinition and ActionReference (with params)
+// TODO:
+export type Action = {
+  label?: string
+  params?: Array<{
+    name: string
+    value: string
+  }>
+  functions: VmixFunctionCall[]
+}
 
-type Action = { label: string } & VmixFunctionCall
+type ActionRef = {
+  $ref: string
+  params?: Record<string, string>
+}
 
 export type SceneProps = {
   /**
@@ -91,9 +104,7 @@ export type SceneProps = {
    */
   title: string
   /**
-   * How smart can we make a chain of scenes?
-   * Can it know which inputs to point where
-   * based on reading ahead?
+   * The primary view for the scene.
    */
   primaryView: Input
   /**
@@ -166,4 +177,5 @@ export type SceneProps = {
 export type ProgramProps = {
   vmixPreset: string
   scenes: SceneProps[]
+  actions?: Action[]
 }

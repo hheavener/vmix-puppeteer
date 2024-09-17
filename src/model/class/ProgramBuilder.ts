@@ -24,13 +24,13 @@ export default class ProgramBuilder {
   }
 
   private createStep() {
-    const { FileDialog, Util } = window
+    // const { FileDialog, Util } = window
     return {
       Initialize: async (): Promise<Program> => {
         const vmixPresetJson = await window.FileDialog.getVmixPreset(this.program!.vmixPreset)
         this.vmixPresetJson = vmixPresetJson
         const virtualKeyMap = getVirtualKeyMap(vmixPresetJson)
-        FileDialog.debug(await Util.format("ProgramBuilder::KeyMap:", virtualKeyMap))
+        // FileDialog.debug(await Util.format("ProgramBuilder::KeyMap:", virtualKeyMap))
         this.scenes = this.program!.scenes.map((s) => new Scene(s, virtualKeyMap, this.logDest))
         return new Program(this.program!, this.vmixPresetJson, this.scenes, this.logDest)
       }

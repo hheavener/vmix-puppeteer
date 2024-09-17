@@ -3,6 +3,7 @@ import { contextBridge, ipcMain, ipcRenderer } from "electron"
 import { API } from "./types/api/API"
 import type { IPC } from "./types/ipc/IPC"
 import type {
+  IPCChannel,
   IPCChannelAction,
   IPCChannelActionParameters,
   IPCChannelActionSignature
@@ -20,9 +21,12 @@ if (!globalThis.API_URL) globalThis.API_URL = "http://192.168.1.232:8088/API"
 
 function initIPC(): IPC {
   return {
-    exposeInMainWorld: (channel, api) => {
-      console.log("EXPOSE MAIN:", channel)
-      contextBridge.exposeInMainWorld(channel, api)
+    exposeInMainWorld: (channel, api) => contextBridge.exposeInMainWorld(channel, api),
+    mainHandle: (channelAction, listener) => ipcMain.handle(channelAction, listener),
+    exposeMainWorldInterface: (channels) => {
+      const channelNames = Object.keys(channels) as IPCChannel[]
+      channelNames.forEach((c) => contextBridge.exposeInMainWorld(c, channels[c]))
+      contextBridge.exposeInMainWorld("IPCChannels", channelNames)
     },
     rendererInvoke: <T extends IPCChannelAction>(channelAction: T) => {
       return ((...args: IPCChannelActionParameters<T>) => {
@@ -30,7 +34,6 @@ function initIPC(): IPC {
         return ipcRenderer.invoke(channelAction, args)
       }) as IPCChannelActionSignature<T>
     },
-    mainHandle: (channelAction, listener) => ipcMain.handle(channelAction, listener),
     mainHandlers: (listeners) => {
       for (const action of Object.keys(listeners) as IPCChannelAction[]) {
         // console.log("MAIN HANDLE:", action)

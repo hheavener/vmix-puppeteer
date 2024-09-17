@@ -208,8 +208,13 @@ const MockProgram: ProgramProps = {
       actions: [
         {
           label: "Toggle Scripture",
-          function: "OverlayInput2",
-          params: { Input: "Status Popups" } // TODO: Define dynamic values that user can input through UI
+          functions: [
+            {
+              function: "OverlayInput2",
+              // TODO: Define dynamic values that user can input through UI
+              params: { Input: "Status Popups" }
+            }
+          ]
         }
       ],
       secondaryView: {

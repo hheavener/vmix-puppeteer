@@ -1,10 +1,11 @@
 import { API as APIImpl } from "./types/api/API"
 import type { APP } from "./types/app/APP"
 import type { IPC } from "./types/ipc/IPC"
-import type FileDialog from "./types/ipc/impl/FileDialog"
+import type { AllIPCChannels } from "./types/ipc/channels"
+// import type FileDialog from "./types/ipc/impl/FileDialog"
 import { Time as TimeImpl } from "./types/ipc/impl/Time"
-import type { Util } from "./types/ipc/impl/Util"
-import type { LogStream as LogStreamImpl } from "./types/ipc/impl/LogStream"
+// import type { Util } from "./types/ipc/impl/Util"
+// import type { LogStream as LogStreamImpl } from "./types/ipc/impl/LogStream"
 
 /* eslint-disable no-var */
 export {}
@@ -21,24 +22,17 @@ declare global {
   /**
    * Directory for storing app data.
    */
+  var API_URL: string // TODO: Global?? Should this be program-specific?
   var APP_DATA_DIR: string
-  var API_URL: string
-  var API: typeof APIImpl
-  var IPC: IPC
-  var APP: APP
   var console: NodeJS.Console
+  var APP: APP
+  var IPC: IPC
+  var API: typeof APIImpl
   var Time: typeof TimeImpl
   var Sleep: typeof Time.Sleep
-  var LogStream: typeof LogStreamImpl
   var Logs: string[]
 
-  interface Window {
-    FileDialog: typeof FileDialog
-    LogStream: typeof LogStreamImpl
-    Logs: string[]
-    Time: typeof TimeImpl
-    Util: typeof Util
-  }
+  interface Window extends AllIPCChannels {}
 
   interface Console {
     red(message?: any, ...optionalParams: any[]): void

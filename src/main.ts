@@ -83,5 +83,7 @@ IPC.mainHandlers({
   "LogStream:Push": (_, [fmt, ...args]) => LogStream.Push(fmt, ...args),
   "Util:format": (_, [fmt, ...args]) => Util.format(fmt, ...args),
   "XmlParser:ParseXml": (_, [xml]) => XmlParser.ParseXml(xml),
-  Sleep: (_, [amount, unit]) => Time.Sleep(amount, unit)
+  Sleep: (_, [amount, unit]) => Sleep(amount, unit)
 })
+
+// ipcMain.on("test-event", (_, data) => console.log(data))

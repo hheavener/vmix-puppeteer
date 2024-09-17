@@ -14,27 +14,28 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 })
 
-IPC.exposeInMainWorld("IPC", IPC)
-IPC.exposeInMainWorld("API", API)
-IPC.exposeInMainWorld("API_URL", globalThis.API_URL)
-IPC.exposeInMainWorld("Time", Time)
-IPC.exposeInMainWorld("Sleep", Time.Sleep)
-IPC.exposeInMainWorld("Logs", Logs)
-IPC.exposeInMainWorld("FileDialog", {
-  getFile: IPC.rendererInvoke("FileDialog:getFile"),
-  getFilePath: IPC.rendererInvoke("FileDialog:getFilePath"),
-  getFileContent: IPC.rendererInvoke("FileDialog:getFileContent"),
-  getVmixPreset: IPC.rendererInvoke("FileDialog:getVmixPreset"),
-  debug: IPC.rendererInvoke("FileDialog:debug"),
-  getSampleApiXmlFilePath: IPC.rendererInvoke("FileDialog:getSampleApiXmlFilePath")
-})
-IPC.exposeInMainWorld("Http", { Get: IPC.rendererInvoke("Http:Get") })
-IPC.exposeInMainWorld("XmlParser", { ParseXml: IPC.rendererInvoke("XmlParser:ParseXml") })
-IPC.exposeInMainWorld("Util", { format: IPC.rendererInvoke("Util:format") })
-IPC.exposeInMainWorld("LogStream", {
-  Push: IPC.rendererInvoke("LogStream:Push"),
-  Get: IPC.rendererInvoke("LogStream:Get"),
-  Clear: IPC.rendererInvoke("LogStream:Clear")
+IPC.exposeMainWorldInterface({
+  API,
+  API_URL,
+  FileDialog: {
+    getFile: IPC.rendererInvoke("FileDialog:getFile"),
+    getFilePath: IPC.rendererInvoke("FileDialog:getFilePath"),
+    getFileContent: IPC.rendererInvoke("FileDialog:getFileContent"),
+    getVmixPreset: IPC.rendererInvoke("FileDialog:getVmixPreset"),
+    debug: IPC.rendererInvoke("FileDialog:debug"),
+    getSampleApiXmlFilePath: IPC.rendererInvoke("FileDialog:getSampleApiXmlFilePath")
+  },
+  Http: { Get: IPC.rendererInvoke("Http:Get") },
+  Logs,
+  LogStream: {
+    Clear: IPC.rendererInvoke("LogStream:Clear"),
+    Get: IPC.rendererInvoke("LogStream:Get"),
+    Push: IPC.rendererInvoke("LogStream:Push")
+  },
+  Sleep: Time.Sleep,
+  Time,
+  Util: { format: IPC.rendererInvoke("Util:format") },
+  XmlParser: { ParseXml: IPC.rendererInvoke("XmlParser:ParseXml") }
 })
 
 // ipcRenderer.on("test-event", (e, data) => console.log(data))

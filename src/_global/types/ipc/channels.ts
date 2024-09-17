@@ -1,5 +1,4 @@
 import type { API } from "../api/API"
-import type { IPC } from "./IPC"
 import FileDialog from "./impl/FileDialog"
 import Http from "./impl/Http"
 import XmlParser from "./impl/XmlParser"
@@ -12,8 +11,7 @@ import type { Util } from "./impl/Util"
  *      List available IPC Channels
  * =====================================
  */
-type AllIPCChannels = {
-  IPC: ReadOnly<IPC>
+export type AllIPCChannels = {
   API: typeof API
   API_URL: ReadOnly<string>
   Http: typeof Http

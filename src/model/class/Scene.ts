@@ -3,7 +3,7 @@ import {
   type VmixFunctionName,
   type VmixFunctionParams
 } from "@@/types/api/VmixFunction"
-import { type Input, type SceneProps, type VmixTransition } from "@/model/types/scene"
+import { type Action, type Input, type SceneProps, type VmixTransition } from "@/model/types/scene"
 import { PreventWhenDisabled } from "../decorators/PreventWhenDisabled"
 
 const LogPrefix = "ScenePlayer:"
@@ -180,10 +180,10 @@ export default class ScenePlayer {
   @PreventWhenDisabled
   public async CallAction(idx: number): Promise<void> {
     // TODO: Parameters from the DOM require serialization
-    const action = JSON.parse(JSON.stringify(this.scene.actions?.[idx]))
+    const action: Action = JSON.parse(JSON.stringify(this.scene.actions?.[idx]))
     if (!action) return
-    this._log(LogPrefix, "[Action]", action.title)
-    await this.callFunction(action)
+    this._log(LogPrefix, "[Action]", action.label)
+    await this.callFunctions(action.functions)
   }
 
   /*
@@ -267,14 +267,15 @@ export default class ScenePlayer {
   }
 
   private async _log(fmt: string, ...params: any[]): Promise<void> {
+    const { FileDialog, Util } = window
     const color = fmt.startsWith("API") ? "blue" : "orange"
-    const message = await IPC.rendererInvoke("Util:format")(fmt, ...params)
-    const htmlMessage = await IPC.rendererInvoke("Util:format")(
+    const message = await Util.format(fmt, ...params)
+    const htmlMessage = await Util.format(
       `<span class="${color}">${fmt}</span>`,
       ...(params?.[0] === "FAILURE" ? [`<span class="error">${params[0]}</span>`] : params)
     )
     if (this.logDest) this.logDest?.push(htmlMessage)
     else console.log(fmt, ...params)
-    IPC.rendererInvoke("FileDialog:debug")(message)
+    FileDialog.debug(message)
   }
 }
