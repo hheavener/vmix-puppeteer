@@ -36,3 +36,7 @@ This property will allow for a scene to reference another scene by name or ID an
 ### Change `active` and `alternate`
 
 These views should be `primary` and `secondary` and there should be explicit actions for bringing up either view.
+
+### Make scenes separate from a Program
+
+Scenes can be created in isolation, given an ID, and programs will just be a list of scene IDs. This allows for different programs to be created using the same scenes. It also will allow for a UI component that allows a scene to be transitioned to from a list of scenes which might not be included in the current program.

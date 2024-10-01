@@ -113,14 +113,12 @@ export default class Program {
   }
 
   private async _log(fmt: string, ...params: any[]): Promise<void> {
+    const { Util, FileDialog } = window
     const color = fmt.startsWith("API") ? "blue" : "green"
-    const message = await IPC.rendererInvoke("Util:format")(fmt, ...params)
-    const htmlMessage = await IPC.rendererInvoke("Util:format")(
-      `<span class="${color}">${fmt}</span>`,
-      ...params
-    )
+    const message = await Util.format(fmt, ...params)
+    const htmlMessage = await Util.format(`<span class="${color}">${fmt}</span>`, ...params)
     if (this.logDest) this.logDest?.push(htmlMessage)
     else console.log(fmt, ...params)
-    IPC.rendererInvoke("FileDialog:debug")(message)
+    FileDialog.debug(message)
   }
 }

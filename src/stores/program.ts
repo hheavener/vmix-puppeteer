@@ -122,7 +122,7 @@ const MockProgram: ProgramProps = {
     {
       title: "Pre-Stream",
       primaryView: { title: "Proclaim - NDI Slides" },
-      transition: { function: "ScriptStart", params: { Value: "AlternateStinger" } },
+      // transition: { function: "ScriptStart", params: { Value: "AlternateStinger" } },
       prepareNextSceneOnTransition: true
     },
     {
@@ -139,8 +139,22 @@ const MockProgram: ProgramProps = {
       prepareNextSceneOnTransition: true
     },
     {
-      title: "Call to Worship",
+      title: "Call to Worship - Pulpit",
       primaryView: { title: "[REAR] - Pulpit" },
+      onTransitioned: PIP("Virtual - REAR Camera (CS)", "Bottom Right"),
+      secondaryView: {
+        input: {
+          title: "Virtual - PIP Slides",
+          layers: [{ index: 4, input: "Virtual - REAR Camera (CS)" }]
+        },
+        transition: "Merge"
+      },
+      transition: { function: "ScriptStart", params: { Value: "AlternateStinger" } }
+      // prepareNextSceneOnTransition: true
+    },
+    {
+      title: "Call to Worship - Lectern",
+      primaryView: { title: "[REAR] - Lectern" },
       onTransitioned: PIP("Virtual - REAR Camera (CS)", "Bottom Right"),
       secondaryView: {
         input: {
@@ -167,6 +181,20 @@ const MockProgram: ProgramProps = {
       transition: { function: "ScriptStart", params: { Value: "AlternateStinger" } }
     },
     {
+      title: "PRAISE BAND ALT",
+      prepare: [{ title: "[SOUTH] - Piano Wide" }], // Needs to be declared per scene
+      onTransitionIn: PIP("Virtual - SOUTH Camera (RS)", "Top Right", 500),
+      primaryView: {
+        title: "Virtual - PIP Slides",
+        layers: [{ index: 3, input: "Virtual - SOUTH Camera (RS)" }]
+      },
+      secondaryView: {
+        input: { title: "[SOUTH] - Piano Wide" },
+        transition: "Merge"
+      },
+      transition: { function: "ScriptStart", params: { Value: "AlternateStinger" } }
+    },
+    {
       title: "Liturgy",
       primaryView: { title: "[NORTH] - Lectern" },
       onTransitioned: PIP("Virtual - NORTH Camera (CS)", "Bottom Right"),
@@ -177,6 +205,37 @@ const MockProgram: ProgramProps = {
         },
         transition: "Merge"
       },
+      transition: { function: "ScriptStart", params: { Value: "AlternateStinger" } }
+    },
+    {
+      title: "Missions Update",
+      primaryView: { title: "Missions" },
+      onTransitioned: [
+        { function: "SelectTitlePreset", params: { Value: "5", Input: "Status Popups" } },
+        {
+          function: "OverlayInput2In",
+          params: { Input: "Status Popups" },
+          sleep: { amount: 10, unit: "Seconds" }
+        }
+      ],
+      onTransitionOut: [
+        {
+          function: "OverlayInput2Out",
+          params: {},
+          sleep: { amount: 10, unit: "Seconds" }
+        }
+      ],
+      actions: [
+        {
+          label: "Toggle Popup",
+          functions: [
+            {
+              function: "OverlayInput2",
+              params: { Input: "Status Popups" }
+            }
+          ]
+        }
+      ],
       transition: { function: "ScriptStart", params: { Value: "AlternateStinger" } }
     },
     {
